@@ -279,6 +279,61 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Lightbox styles */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            cursor: zoom-out;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            cursor: default;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+            z-index: 1001;
+            line-height: 1;
+        }
+
+        .lightbox-close:hover {
+            color: #ccc;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
     </style>
     <!-- 引入配置文件 -->
     <script src="config.js"></script>
@@ -315,15 +370,15 @@
         <h2>📸 Screenshots</h2>
         <div class="screenshots-grid">
             <div class="screenshot-card">
-                <img src="screenshots/activation_page-trial.png" alt="Activation Page - Trial" loading="lazy">
+                <img src="screenshots/activation_page-trial.png" alt="Activation Page - Trial" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
                 <div class="caption">Activation Page - Trial Version</div>
             </div>
             <div class="screenshot-card">
-                <img src="screenshots/activation_page-activated.png" alt="Activation Page - Activated" loading="lazy">
+                <img src="screenshots/activation_page-activated.png" alt="Activation Page - Activated" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
                 <div class="caption">Activation Page - Activated Successfully</div>
             </div>
             <div class="screenshot-card">
-                <img src="screenshots/main_page.png" alt="Main Page" loading="lazy">
+                <img src="screenshots/main_page.png" alt="Main Page" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
                 <div class="caption">Main Application Interface</div>
             </div>
         </div>
@@ -384,5 +439,51 @@
             <p>SSH Config Manager - Manage your SSH connections efficiently</p>
         </div>
     </div>
+
+    <!-- Lightbox overlay -->
+    <div class="lightbox-overlay" id="lightbox">
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <img src="" alt="Screenshot Preview" id="lightbox-img">
+    </div>
+
+    <script>
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const screenshotImgs = document.querySelectorAll('.screenshot-img');
+
+        // Open lightbox on image click
+        screenshotImgs.forEach(img => {
+            img.addEventListener('click', function() {
+                lightboxImg.src = this.src;
+                lightboxImg.alt = this.alt;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox on close button click
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        // Close lightbox on overlay click
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close lightbox on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    </script>
 </body>
 </html>
