@@ -1,7 +1,17 @@
 # SSH Config Manager
 
-​This is a tool to manage SSH connections in groups, using the same format with ~/.ssh/config; support connectivity test and call wezterm to make connection​.
+​This is a webui tool to manage SSH connections in groups, using the same format with ~/.ssh/config; support connectivity testing and launching connections via morden terminal emulators and system default terminal.
 
-The config file of custom groups is stored in a self-defined folder, you can also use it manually like `ssh -F ~/my_ssh_config/test_group.config my_host​`, or use in other tools which support ssh config format.
+|               Terminal Supported                                   | Windows| Linux | macOS|
+|                 :---                                               | :---: | :---: | :---:|
+| [Wezterm](https://wezterm.org/)                                    |   ✅  |   ✅  |  ❔  |
+| [Alacritty](https://alacritty.org/)                                |   ✅¹ |   ✅¹ |  ❔  |
+| [Kitty](https://github.com/kovidgoyal/kitty)                       |   ➖  |   ✅¹ |  ❔  |
+| [Windows Terminal](https://github.com/microsoft/terminal)          |   ✅  |   ➖  |  ➖  |
+| [Konsole](https://konsole.kde.org/)                                |   ✅¹ |   ✅² |  ❔  |   
+| [GNOME Terminal](https://help.gnome.org/gnome-terminal/index.html) |   ➖  |   ✅¹ |  ➖  |
+| [iTerm2](https://iterm2.com/)                                      |   ➖  |   ➖  |  ❔  |
 
-Software release at: https://github.com/realysy/ssh-config-manager-artifact​​, you can also new a issue here.
+
+- Introduction Page: [https://smgr.real.abrdns.com/](https://smgr.real.abrdns.com/)
+- Download at [Github Releases](https://github.com/realysy/ssh-config-manager-artifact/releases)​.
