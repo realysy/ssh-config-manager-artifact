@@ -67,9 +67,10 @@
             font-weight: 700;
         }
         
+        /* 顶部操作按钮容器 */
         .top-actions { 
             display: flex; 
-            gap: 8px; 
+            gap: 4px; 
             align-items: center; 
         }
 
@@ -93,6 +94,81 @@
             box-shadow: 0 1px 3px rgba(102, 126, 234, 0.2); 
         }
         .link-button svg { margin-right: 6px; }
+
+        /* 图标按钮基础样式, 圆形图标按钮 + 悬浮提示 */
+        .icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #656d76;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .icon-button:hover {
+            background: #f3f4f6;
+            border-color: #d0d7de;
+            color: #667eea;
+        }
+
+        /* 利用 data-tooltip 属性生成悬浮提示框 */
+        .icon-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 8px;
+            
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 1000;
+        }
+
+        /* 悬浮时显示提示框 */
+        .icon-button:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 提示框小三角箭头 */
+        .icon-button::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 2px;
+            border: 6px solid transparent;
+            border-bottom-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 1000;
+        }
+
+        .icon-button:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* 语言选择器, 添加主题色焦点样式 */
         .lang-select {
@@ -396,6 +472,8 @@
                 grid-template-columns: 1fr; 
             }
         }
+
+
     </style>
     <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
     <script src="config.js"></script>
@@ -407,24 +485,55 @@
         <div class="top-bar">
             <h1>🔌 SSH Config Manager</h1>
             <div class="top-actions">
-                <!-- GitHub 仓库链接 -->
-                <a href="https://github.com/realysy/ssh-config-manager-artifact" class="link-button" target="_blank">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                    GitHub
-                </a>
                 <!-- 下载链接 -->
-                <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" class="link-button" target="_blank">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
-                    Download
+                <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" 
+                class="icon-button" 
+                data-tooltip-en="Download"
+                data-tooltip-zh="下载"
+                target="_blank"
+                aria-label="Download">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                    </svg>
                 </a>
-                <!-- 支持邮箱按钮, 邮箱地址由 config.js 中的 window.supportEmail 动态填充 -->
-                <a class="link-button" id="support-btn" data-email>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/></svg>
-                    Support
+                
+                <!-- 定价按钮, 去掉特殊背景色, 与其它图标风格一致 -->
+                <a href="#pricing" 
+                class="icon-button" 
+                data-tooltip-en="Pricing"
+                data-tooltip-zh="定价"
+                aria-label="Pricing">
+                    💎
                 </a>
-                <!-- 语言选择下拉菜单 -->
-                <select class="lang-select" id="lang-select">
-                    <option value="en">🇺🇸 English</option>
+
+                <!-- GitHub 仓库链接 -->
+                <a href="https://github.com/realysy/ssh-config-manager-artifact" 
+                class="icon-button" 
+                data-tooltip-en="GitHub: issues and version releases"
+                data-tooltip-zh="GitHub: issues and version releases"
+                target="_blank"
+                aria-label="GitHub Repository">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                </a>
+                
+                <!-- 支持邮箱按钮 -->
+                <a class="icon-button" 
+                id="support-btn" 
+                data-email 
+                data-tooltip-en="Support: user personal activation issues, license management or other related inquiries"
+                data-tooltip-zh="支持: 用户个人相关的激活, 许可证管理或其他问题"
+                aria-label="Support">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+                    </svg>
+                </a>
+                
+                <!-- 语言切换下拉菜单 -->
+                <select class="lang-select" id="lang-select" aria-label="Language selector">
+                    <option value="en">🇺🇸 EN</option>
                     <option value="zh">🇨🇳 中文</option>
                 </select>
             </div>
@@ -598,6 +707,14 @@
                 }
             });
 
+            // 为 Pricing 标题设置锚点 id, 方便页面内跳转
+            container.querySelectorAll('h2').forEach(h2 => {
+                const text = h2.textContent.trim().toLowerCase();
+                if (text.includes('pricing') || text.includes('定价')) {
+                    h2.id = 'pricing';
+                }
+            });
+
             // 从隐藏模板克隆截图区域 (避免原节点被 innerHTML 清除)
             const screenshotsTemplate = document.getElementById('screenshots-section');
             if (screenshotsTemplate) {
@@ -675,14 +792,15 @@
             const supportBtn = document.getElementById('support-btn');
             if (supportBtn && typeof window.supportEmail === 'string') {
                 supportBtn.href = `mailto:${window.supportEmail}`;
-                // 更新按钮文本
-                const svg = supportBtn.querySelector('svg');
-                if (svg) {
-                    supportBtn.innerHTML = '';
-                    supportBtn.appendChild(svg);
-                    supportBtn.appendChild(document.createTextNode(lang === 'zh' ? ' 支持' : ' Support'));
-                }
             }
+            
+            // 更新右上角图标按钮的悬浮提示语言
+            document.querySelectorAll('.icon-button[data-tooltip-en][data-tooltip-zh]').forEach(btn => {
+                const tipText = btn.getAttribute(`data-tooltip-${lang}`);
+                if (tipText) {
+                    btn.setAttribute('data-tooltip', tipText);
+                }
+            });
         }
 
         // ========== Lightbox 灯箱功能 ==========
@@ -742,6 +860,14 @@
             if (typeof window.supportEmail === 'string') {
                 supportBtn.href = `mailto:${window.supportEmail}`;
             }
+
+            // 初始化图标按钮的 tooltip 属性 (将 data-tooltip-en/zh 同步到 data-tooltip)
+            document.querySelectorAll('.icon-button[data-tooltip-en][data-tooltip-zh]').forEach(btn => {
+                const tipText = btn.getAttribute(`data-tooltip-${lang}`);
+                if (tipText) {
+                    btn.setAttribute('data-tooltip', tipText);
+                }
+            });
             
             // 更新静态文本
             updateStaticTexts(lang);
