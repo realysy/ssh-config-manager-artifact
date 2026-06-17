@@ -1,492 +1,509 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSH Config Manager</title>
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔌</text></svg>">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #24292f;
-            background-color: #ffffff;
-            max-width: 1012px;
-            margin: 0 auto;
-            padding: 0 16px;
+            line-height: 1.6; color: #24292f; background: #fff;
+            max-width: 1012px; margin: 0 auto; padding: 0 16px;
         }
+        .container { padding: 40px 0; }
 
-        .container {
-            padding: 40px 0;
-        }
-
-        .readme-header {
-            background-color: #f6f8fa;
-            border: 1px solid #d0d7de;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-
-        h1 {
-            font-size: 2em;
-            font-weight: 600;
-            padding-bottom: 0.3em;
+        /* 顶部导航行 */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 24px 0 16px;  /* 调整上下空白 */
             border-bottom: 1px solid #d0d7de;
-            margin-bottom: 16px;
-            color: #1F2328;
-        }
-
-        h2 {
-            font-size: 1.5em;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #d0d7de;
-        }
-
-        p {
-            margin-bottom: 16px;
-            color: #24292f;
-            font-size: 16px;
-        }
-
-        .feature-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-box p {
-            color: white;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .terminal-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .terminal-badge {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .info-box {
-            background-color: #ddf4ff;
-            border: 1px solid #54aeff;
-            border-radius: 6px;
-            padding: 16px;
             margin-bottom: 24px;
         }
-
-        .info-box p {
-            margin-bottom: 8px;
-            color: #0969da;
-        }
-
-        .code-block {
-            background-color: #f6f8fa;
-            border: 1px solid #d0d7de;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 14px;
-            color: #24292f;
-            overflow-x: auto;
-        }
-
-        .screenshots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .screenshot-card {
-            border: 1px solid #d0d7de;
-            border-radius: 8px;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .screenshot-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .screenshot-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .screenshot-card .caption {
-            padding: 12px;
-            font-size: 14px;
-            color: #656d76;
-            text-align: center;
-            background-color: #f6f8fa;
-            border-top: 1px solid #d0d7de;
-        }
-
-        .links-section {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
+        .top-bar h1 { margin: 0; border: none; padding: 0; font-size: 1.5em; color: #1F2328; }
+        .top-actions { display: flex; gap: 8px; align-items: center; }
 
         .link-button {
-            display: inline-flex;
-            align-items: center;
-            padding: 12px 20px;
-            background-color: #f6f8fa;
-            border: 1px solid #d0d7de;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #24292f;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            display: inline-flex; align-items: center; padding: 8px 16px;
+            background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;
+            text-decoration: none; color: #24292f; font-size: 14px; transition: all 0.2s;
         }
+        .link-button:hover { background: #f3f4f6; border-color: #8b949e; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .link-button svg { margin-right: 6px; }
 
-        .link-button:hover {
-            background-color: #f3f4f6;
-            border-color: #8b949e;
-            text-decoration: none;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .lang-select {
+            padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 6px;
+            font-size: 14px; background: white; cursor: pointer; color: #24292f;
+            transition: border-color 0.3s;
         }
+        .lang-select:hover { border-color: #667eea; }
+        .lang-select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 2px rgba(102,126,234,0.1); }
 
-        .link-button svg {
-            margin-right: 8px;
+        /* 内容样式 */
+        h2 { font-size: 1.5em; margin: 24px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #d0d7de; }
+        p { margin-bottom: 16px; color: #24292f; font-size: 16px; }
+
+        .feature-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+            padding: 24px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .support-section {
-            background-color: #f6f8fa;
-            border: 1px solid #d0d7de;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
+        .feature-box p { color: white; margin-bottom: 8px; }
+        .terminal-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .terminal-badge {
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            padding: 6px 12px; border-radius: 20px; font-size: 14px; color: white;
+            border: 1px solid rgba(255,255,255,0.3);
         }
-
-        .support-email {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #0969da;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 8px;
-            transition: background-color 0.2s ease;
+        .info-box { background: #ddf4ff; border: 1px solid #54aeff; border-radius: 6px; padding: 16px; margin-bottom: 24px; }
+        .info-box p { margin-bottom: 8px; color: #0969da; }
+        .code-block, pre {
+            background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;
+            padding: 16px; margin-bottom: 16px; overflow-x: auto;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 14px; color: #24292f;
         }
+        pre code { background: none; padding: 0; font-size: 14px; }
+        code { background: rgba(175,184,193,0.2); padding: 2px 4px; border-radius: 6px; font-size: 85%; }
 
-        .support-email:hover {
-            background-color: #0556b3;
-            text-decoration: none;
+        table { border-collapse: collapse; width: 100%; margin-bottom: 16px; display: block; overflow-x: auto; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+        th { background: #f6f8fa; font-weight: 600; }
+
+        .screenshots-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-bottom: 24px;
+        }
+        .screenshot-card {
+            border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .screenshot-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .screenshot-card img { width: 100%; height: auto; display: block; }
+        .screenshot-card .caption {
+            padding: 12px; font-size: 14px; color: #656d76; text-align: center;
+            background: #f6f8fa; border-top: 1px solid #d0d7de;
         }
 
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #d0d7de;
-            text-align: center;
-            color: #656d76;
-            font-size: 14px;
+            margin-top: 40px; padding-top: 20px; border-top: 1px solid #d0d7de;
+            text-align: center; color: #656d76; font-size: 14px;
         }
+        .footer-links { display: flex; justify-content: center; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+        .footer-links a { color: #0969da; text-decoration: none; }
+        .footer-links a:hover { text-decoration: underline; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
+        .loading-indicator { text-align: center; padding: 40px; color: #656d76; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 3px solid #d0d7de; border-top-color: #0969da; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .footer-links a {
-            color: #0969da;
-            text-decoration: none;
-        }
+        .error-message { background: #fff1f0; border: 1px solid #ffa39e; border-radius: 6px; padding: 16px; color: #cf1322; margin-bottom: 24px; }
 
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        a {
-            color: #0969da;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .feature-list {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 24px;
-        }
-
-        .feature-list li {
-            padding: 8px 0;
-            padding-left: 24px;
-            position: relative;
-        }
-
-        .feature-list li:before {
-            content: "✅";
-            position: absolute;
-            left: 0;
-        }
-
+        .lightbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-overlay img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; }
         @media (max-width: 768px) {
-            .container {
-                padding: 20px 0;
-            }
-            
-            h1 {
-                font-size: 1.5em;
-            }
-            
-            .terminal-list {
-                gap: 6px;
-            }
-            
-            .terminal-badge {
-                font-size: 12px;
-                padding: 4px 10px;
-            }
-
-            .screenshots-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Lightbox styles */
-        .lightbox-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            cursor: zoom-out;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .lightbox-overlay.active {
-            display: flex;
-        }
-
-        .lightbox-overlay img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            cursor: default;
-            animation: zoomIn 0.3s ease;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-            z-index: 1001;
-            line-height: 1;
-        }
-
-        .lightbox-close:hover {
-            color: #ccc;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            .container { padding: 20px 0; }
+            .top-bar { flex-wrap: wrap; gap: 10px; }
+            .top-actions { flex-wrap: wrap; }
+            .screenshots-grid { grid-template-columns: 1fr; }
         }
     </style>
-    <!-- 引入配置文件 -->
     <script src="config.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="readme-header">
-            <h1>🔧 SSH Config Manager</h1>
-        </div>
-
-        <div class="feature-box">
-            <p><strong>This is a tool to manage SSH connections in groups</strong>, using the same format as <code>~/.ssh/config</code>. It supports connectivity testing and launching connections via:</p>
-            
-            <div class="terminal-list">
-                <span class="terminal-badge">🖥️ WezTerm</span>
-                <span class="terminal-badge">🖥️ Alacritty</span>
-                <span class="terminal-badge">🖥️ Kitty</span>
-                <span class="terminal-badge">🪟 Windows Terminal</span>
-                <span class="terminal-badge">🐧 GNOME Terminal</span>
-                <span class="terminal-badge">🐧 KDE Konsole</span>
-            </div>
-        </div>
-
-        <div class="info-box">
-            <p>💡 <strong>Flexible Configuration</strong></p>
-            <p>The config file of custom groups is stored in a self-defined folder. You can also use it manually like:</p>
-            <div class="code-block">
-                ssh -F ~/my_ssh_config/test_group.config my_host
-            </div>
-            <p>...or use in other tools which support SSH config format.</p>
-        </div>
-
-        <!-- Screenshots Section -->
-        <h2>📸 Screenshots</h2>
-        <div class="screenshots-grid">
-            <div class="screenshot-card">
-                <img src="screenshots/main_page.png" alt="Main Page" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
-                <div class="caption">Main Application Interface</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="screenshots/activation_page-trial.png" alt="Activation Page - Trial" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
-                <div class="caption">Activation Page - Trial Version</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="screenshots/activation_page-activated.png" alt="Activation Page - Activated" loading="lazy" class="screenshot-img" style="cursor: zoom-in">
-                <div class="caption">Activation Page - Activated Successfully</div>
-            </div>
-        </div>
-
-        <!-- Key Features -->
-        <h2>✨ Key Features</h2>
-        <ul class="feature-list">
-            <li>Group-based SSH connection management using standard SSH config format</li>
-            <li>Connectivity testing for all configured hosts</li>
-            <li>One-click launch connections in your preferred terminal emulator</li>
-            <li>Fully offline capable - no internet required after activation</li>
-            <li>All SSH configuration data stored locally - your data never leaves your device</li>
-            <li>No ads, no trackers, no telemetry</li>
-            <li>Cross-platform support (Windows, Linux, macOS)</li>
-        </ul>
-
-        <!-- Support Section -->
-        <div class="support-section">
-            <h2>📧 Support</h2>
-            <p>For activation issues, license management, bug reports, or any other inquiries, please contact us:</p>
-            <a data-email data-email-text class="support-email">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: middle; margin-right: 8px;">
-                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
-                </svg>
-                <!-- Email will be inserted by config.js -->
+    <div class="top-bar">
+        <h1>🔧 SSH Config Manager</h1>
+        <div class="top-actions">
+            <a href="https://github.com/realysy/ssh-config-manager-artifact" class="link-button" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                GitHub
             </a>
-        </div>
-
-        <!-- Links Section -->
-        <div class="links-section">
             <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" class="link-button" target="_blank">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-                Software Release
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                Download
             </a>
-            <a href="https://github.com/realysy/ssh-config-manager-artifact/issues" class="link-button" target="_blank">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm9 3a1 1 0 11-2 0 1 1 0 012 0zm-.25-6.25a.75.75 0 00-1.5 0v3.5a.75.75 0 001.5 0v-3.5z"></path>
-                </svg>
-                Report an Issue
+            <a class="link-button" id="support-btn" data-email>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/></svg>
+                Support
             </a>
-        </div>
-
-        <!-- Quick Start -->
-        <h2>🚀 Quick Start</h2>
-        <p>1. Download the latest release from the <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" target="_blank">releases page</a></p>
-        <p>2. Create your SSH config groups in your preferred folder</p>
-        <p>3. Launch SSH Config Manager and import your configurations</p>
-        <p>4. Test connectivity and launch connections with your favorite terminal emulator</p>
-
-        <div class="footer">
-            <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="https://github.com/realysy/ssh-config-manager-artifact" target="_blank">GitHub Repository</a>
-            </div>
-            <p>SSH Config Manager - Manage your SSH connections efficiently</p>
+            <select class="lang-select" id="lang-select">
+                <option value="en">🇺🇸 English</option>
+                <option value="zh">🇨🇳 中文</option>
+            </select>
         </div>
     </div>
 
-    <!-- Lightbox overlay -->
+    <div class="container">
+        <div id="readme-content">
+            <div class="loading-indicator"><div class="spinner"></div><p>Loading README...</p></div>
+        </div>
+    </div>
+
+    <!-- 截图区域（将通过 JS 插入到 README 内容中合适位置, 需要放在class="container"外部） -->
+    <div id="screenshots-section" style="display:none;">
+        <h2 id="screenshots-heading">📸 Screenshots</h2>
+        <div class="screenshots-grid">
+            <div class="screenshot-card">
+                <img src="screenshots/main_page.png" alt="Main Page" loading="lazy" class="screenshot-img" style="cursor:zoom-in">
+                <div class="caption" data-en="Main Application Interface" data-zh="主应用程序界面">Main Application Interface</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="screenshots/activation_page-trial.png" alt="Activation Page - Trial" loading="lazy" class="screenshot-img" style="cursor:zoom-in">
+                <div class="caption" data-en="Activation Page - Trial Version" data-zh="激活页面 - 试用版">Activation Page - Trial Version</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="screenshots/activation_page-activated.png" alt="Activation Page - Activated" loading="lazy" class="screenshot-img" style="cursor:zoom-in">
+                <div class="caption" data-en="Activation Page - Activated Successfully" data-zh="激活页面 - 激活成功">Activation Page - Activated Successfully</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="privacy.html" data-en="Privacy Policy" data-zh="隐私政策">Privacy Policy</a>
+            <a href="terms.html" data-en="Terms of Use" data-zh="使用条款">Terms of Use</a>
+        </div>
+        <p data-en="SSH Config Manager - Manage your SSH connections efficiently" data-zh="SSH Config Manager - 高效管理您的 SSH 连接">SSH Config Manager - Manage your SSH connections efficiently</p>
+            <p style="margin-top: 8px; font-size: 13px;">© All rights reserved. <a href="https://github.com/realysy/ssh-config-manager-artifact" target="_blank">github.com/realysy/ssh-config-manager-artifact</a></p>
+    </footer>
+
     <div class="lightbox-overlay" id="lightbox">
         <span class="lightbox-close" id="lightbox-close">&times;</span>
         <img src="" alt="Screenshot Preview" id="lightbox-img">
     </div>
 
     <script>
-        // Lightbox functionality
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxClose = document.getElementById('lightbox-close');
-        const screenshotImgs = document.querySelectorAll('.screenshot-img');
-
-        // Open lightbox on image click
-        screenshotImgs.forEach(img => {
-            img.addEventListener('click', function() {
-                lightboxImg.src = this.src;
-                lightboxImg.alt = this.alt;
-                lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Close lightbox on close button click
-        lightboxClose.addEventListener('click', closeLightbox);
-
-        // Close lightbox on overlay click
-        lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox) {
-                closeLightbox();
+        // ========== 增强的 Markdown 解析器 ==========
+        class MarkdownParser {
+            parse(md) {
+                let html = this.escapeHtml(md);
+                // 代码块
+                html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+                    `<pre><code>${code.trim()}</code></pre>`);
+                // 内联代码
+                html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+                // 标题
+                html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+                html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+                // 粗斜体
+                html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                // 图片
+                html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+                // 链接
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+                // 水平线
+                html = html.replace(/^---+$/gm, '<hr>');
+                // 引用
+                html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+                // 表格（保留原逻辑）
+                html = this.parseTables(html);
+                // 列表（增强版，支持缩进）
+                html = this.parseLists(html);
+                // 段落
+                html = html.replace(/\n\n+/g, '</p><p>');
+                html = '<p>' + html + '</p>';
+                // 清理
+                html = html.replace(/<p>\s*<\/p>/g, '');
+                html = html.replace(/<p>(<h[1-6]>)/g, '$1');
+                html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<ul>)/g, '$1');
+                html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<table>)/g, '$1');
+                html = html.replace(/(<\/table>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<blockquote>)/g, '$1');
+                html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<pre>)/g, '$1');
+                html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<hr>)<\/p>/g, '$1');
+                return html.replace(/\n/g, '');
             }
-        });
 
-        // Close lightbox on ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                closeLightbox();
+            escapeHtml(text) {
+                return text.replace(/[&<>"']/g, ch => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+                })[ch]);
             }
-        });
 
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = '';
+            parseTables(html) {
+                let lines = html.split('\n'), out = [], inTable = false, tableHtml = '', headerDone = false;
+                for (let line of lines) {
+                    line = line.trim();
+                    if (line.startsWith('|') && line.endsWith('|')) {
+                        if (/^\|[\s\-:]+\|$/.test(line)) { headerDone = true; continue; }
+                        if (!inTable) { inTable = true; tableHtml = '<table>'; }
+                        let cells = line.split('|').filter(c => c.trim() !== '');
+                        let tag = (!headerDone && inTable) ? 'th' : 'td';
+                        tableHtml += '<tr>' + cells.map(c => `<${tag}>${c.trim()}</${tag}>`).join('') + '</tr>';
+                    } else {
+                        if (inTable) { tableHtml += '</table>'; out.push(tableHtml); tableHtml = ''; inTable = false; headerDone = false; }
+                        out.push(line);
+                    }
+                }
+                if (inTable) { tableHtml += '</table>'; out.push(tableHtml); }
+                return out.join('\n');
+            }
+
+            parseLists(html) {
+                let lines = html.split('\n');
+                let output = [], i = 0;
+                while (i < lines.length) {
+                    let line = lines[i];
+                    // 检测无序列表项（以 - 或 * 开头，后跟空格）
+                    if (/^(\s*)([-*]) (.*)/.test(line)) {
+                        let stack = []; // 缩进栈
+                        let result = this._buildList(lines, i, 0, stack);
+                        output.push(result.html);
+                        i = result.nextIndex;
+                    } else {
+                        output.push(line);
+                        i++;
+                    }
+                }
+                return output.join('\n');
+            }
+
+            _buildList(lines, startIndex, expectedIndent, stack) {
+                let html = '<ul>';
+                let i = startIndex;
+                while (i < lines.length) {
+                    let line = lines[i];
+                    let match = line.match(/^(\s*)([-*]) (.*)/);
+                    if (!match) {
+                        // 可能是空行或非列表内容，列表结束
+                        break;
+                    }
+                    let indent = match[1].length;
+                    let content = match[3];
+                    let nextI = i + 1;
+                    // 收集该项的后续行（缩进大于当前缩进的多行内容）
+                    let subLines = [];
+                    while (nextI < lines.length) {
+                        let nextLine = lines[nextI];
+                        // 空行结束当前项的内容
+                        if (nextLine.trim() === '') {
+                            // 查看是否后面还有同缩进或更深的列表项，若是则继续
+                            let nextNonEmpty = nextI + 1;
+                            while (nextNonEmpty < lines.length && lines[nextNonEmpty].trim() === '') nextNonEmpty++;
+                            if (nextNonEmpty < lines.length) {
+                                let nextMatch = lines[nextNonEmpty].match(/^(\s*)([-*]) /);
+                                if (nextMatch && nextMatch[1].length >= indent) {
+                                    // 跳过空行继续收集
+                                    nextI = nextNonEmpty;
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        // 如果下一行是列表项且缩进相同或更大，则停止收集本项的子内容
+                        let subMatch = nextLine.match(/^(\s*)([-*]) /);
+                        if (subMatch) {
+                            if (subMatch[1].length <= indent) break;
+                            else {
+                                // 更深缩进的列表项作为子列表
+                                break;
+                            }
+                        }
+                        // 否则属于本项的内容（缩进 >= indent）
+                        if (nextLine.startsWith(' '.repeat(indent)) || nextLine.trim() === '') {
+                            subLines.push(nextLine.trim());
+                            nextI++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // 生成 <li>
+                    let liContent = content;
+                    if (subLines.length > 0) {
+                        liContent += ' ' + subLines.join(' ');
+                    }
+                    html += `<li>${liContent}`;
+
+                    // 检查下一行是否更深的列表项作为子列表
+                    if (nextI < lines.length) {
+                        let nextLine = lines[nextI];
+                        let subMatch = nextLine.match(/^(\s*)([-*]) /);
+                        if (subMatch && subMatch[1].length > indent) {
+                            // 构建子列表
+                            let sub = this._buildList(lines, nextI, subMatch[1].length, stack);
+                            html += sub.html;
+                            nextI = sub.nextIndex;
+                        }
+                    }
+                    html += '</li>';
+                    i = nextI;
+                }
+                html += '</ul>';
+                return { html, nextIndex: i };
+            }
         }
+
+        const parser = new MarkdownParser();
+        const state = { currentLang: 'en', readmeCache: {} };
+
+        // 语言检测与 localStorage
+        function detectLang() {
+            return (navigator.language || navigator.userLanguage).startsWith('zh') ? 'zh' : 'en';
+        }
+        function getSavedLang() { return localStorage.getItem('ssh-manager-lang'); }
+        function getInitialLang() { return getSavedLang() || detectLang() || 'en'; }
+
+        function getReadmePath(lang) { return lang === 'zh' ? 'README_zh.md' : 'README.md'; }
+
+        async function loadReadme(lang) {
+            const container = document.getElementById('readme-content');
+            if (state.readmeCache[lang]) {
+                render(container, state.readmeCache[lang]);
+                return;
+            }
+            container.innerHTML = `<div class="loading-indicator"><div class="spinner"></div><p>${lang==='zh'?'正在加载...':'Loading README...'}</p></div>`;
+            try {
+                const resp = await fetch(getReadmePath(lang));
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const md = await resp.text();
+                state.readmeCache[lang] = md;
+                render(container, md);
+            } catch (e) {
+                if (lang === 'zh' && !state.readmeCache['en']) {
+                    container.innerHTML = '<div class="error-message">中文 README 加载失败，自动回退到英文…</div>';
+                    setTimeout(() => switchLanguage('en'), 1500);
+                } else {
+                    container.innerHTML = `<div class="error-message">⚠️ 无法加载 README<br><small>${e.message}</small></div>`;
+                }
+            }
+        }
+
+        function render(container, md) {
+            let html = parser.parse(md);
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            // 移除第一个 h1（避免重复标题）
+            const firstH1 = temp.querySelector('h1');
+            if (firstH1) firstH1.remove();
+            // 外部链接新窗口打开
+            temp.querySelectorAll('a[href^="http"]').forEach(a => {
+                a.setAttribute('target', '_blank');
+                a.setAttribute('rel', 'noopener noreferrer');
+            });
+            container.innerHTML = temp.innerHTML;
+
+            // 移除 README 中的合规/隐私/使用条条款章节
+            const h2s = container.querySelectorAll('h2');
+            h2s.forEach(h2 => {
+                if (/合规|Compliance/i.test(h2.textContent)) {
+                    let next = h2.nextElementSibling;
+                    while (next && next.tagName !== 'H2') {
+                        const toRemove = next;
+                        next = next.nextElementSibling;
+                        toRemove.remove();
+                    }
+                    h2.remove();
+                }
+            });
+
+            // 从隐藏模板克隆截图区域（避免原节点被 innerHTML 清除）
+            const screenshotsTemplate = document.getElementById('screenshots-section');
+            if (screenshotsTemplate) {
+                const screenshotsClone = screenshotsTemplate.cloneNode(true);
+                screenshotsClone.style.display = 'block';
+                screenshotsClone.removeAttribute('id'); // 避免重复 id
+
+                // 更新克隆节点中的多语言文本
+                screenshotsClone.querySelectorAll('[data-en][data-zh]').forEach(el => {
+                    if (el.hasAttribute(`data-${state.currentLang}`)) {
+                        el.textContent = el.getAttribute(`data-${state.currentLang}`);
+                    }
+                });
+                const heading = screenshotsClone.querySelector('#screenshots-heading');
+                if (heading) {
+                    heading.textContent = state.currentLang === 'zh' ? '📸 截图' : '📸 Screenshots';
+                }
+
+                // 插入到第一个 h2 之前，没有 h2 则追加到 container 末尾
+                const firstH2 = container.querySelector('h2');
+                if (firstH2) {
+                    firstH2.parentNode.insertBefore(screenshotsClone, firstH2);
+                } else {
+                    container.appendChild(screenshotsClone);
+                }
+            }
+
+            // 初始化 lightbox
+            initLightbox();
+        }
+
+        function switchLanguage(lang) {
+            if (lang === state.currentLang) return;
+            state.currentLang = lang;
+            localStorage.setItem('ssh-manager-lang', lang);
+            document.getElementById('lang-select').value = lang;
+            document.documentElement.lang = lang;
+            updateStaticTexts(lang);
+            loadReadme(lang);
+        }
+
+        function updateStaticTexts(lang) {
+            document.querySelectorAll('[data-en][data-zh]').forEach(el => {
+                if (el.hasAttribute(`data-${lang}`)) el.textContent = el.getAttribute(`data-${lang}`);
+            });
+            const heading = document.getElementById('screenshots-heading');
+            if (heading) heading.textContent = lang === 'zh' ? '📸 截图' : '📸 Screenshots';
+            // 设置邮箱（读取 config.js 中的 window.supportEmail）
+            const supportBtn = document.getElementById('support-btn');
+            if (supportBtn && typeof window.supportEmail === 'string') {
+                supportBtn.href = `mailto:${window.supportEmail}`;
+                supportBtn.innerHTML = supportBtn.innerHTML.replace(/Support|支持/,
+                    lang === 'zh' ? '支持' : 'Support');
+            }
+        }
+
+        function initLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            document.querySelectorAll('.screenshot-img:not(.lightbox-ready)').forEach(img => {
+                img.classList.add('lightbox-ready');
+                img.addEventListener('click', () => {
+                    lightboxImg.src = img.src;
+                    lightboxImg.alt = img.alt;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            if (!lightbox.dataset.init) {
+                lightbox.dataset.init = '1';
+                document.getElementById('lightbox-close').addEventListener('click', () => {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                lightbox.addEventListener('click', e => { if (e.target === lightbox) { lightbox.classList.remove('active'); document.body.style.overflow = ''; } });
+                document.addEventListener('keydown', e => { if (e.key === 'Escape' && lightbox.classList.contains('active')) { lightbox.classList.remove('active'); document.body.style.overflow = ''; } });
+            }
+        }
+
+        // 初始化
+        (function() {
+            const lang = getInitialLang();
+            state.currentLang = lang;
+            document.getElementById('lang-select').value = lang;
+            document.documentElement.lang = lang;
+            // 邮箱初始化（从 config.js 读取）
+            const supportBtn = document.getElementById('support-btn');
+            if (typeof window.supportEmail === 'string') {
+                supportBtn.href = `mailto:${window.supportEmail}`;
+            }
+            updateStaticTexts(lang);
+            loadReadme(lang);
+            initLightbox();
+            document.getElementById('lang-select').addEventListener('change', e => switchLanguage(e.target.value));
+        })();
     </script>
 </body>
 </html>
