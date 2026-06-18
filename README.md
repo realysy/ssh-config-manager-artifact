@@ -60,7 +60,7 @@ Compared to Electron applications, the backend service of this software has lowe
 - Win11 (24GB RAM): 39.1MB
 - Ubuntu 20.04 (32GB RAM): 84.2MB
 
-## 💎 Pricing
+## 💎 Pricing & Purchase
 
 - 30-day free trial, after the trial period ends, you can pay to continue using, or take your created SSH connections and group data with you in a universal format for easy migration to other software.
 - Currently in limited-time promotional phase: One-time payment of $28.9 for a 10-year valid activation code, with continuous updates during the validity period. After the promotional phase ends, the validity period may be shortened to 5 years. The promotional period is not yet determined, so if it meets your needs, it's recommended to purchase soon.
@@ -68,10 +68,15 @@ Compared to Electron applications, the backend service of this software has lowe
 - To prevent activation keys from being publicly shared and abused, activation codes are bound to devices during activation, with email support available for unbinding.
 - This software offers Purchasing Power Parity discounts to support users in emerging regions, with approximately 55% discount available through Taobao purchase.
 
+Purchase method: Software main interface - Activation button in the top right corner - Scan QR code to purchase.
+
+ - Global users: Supports purchase via PayPal, credit or debit card, no account registration required, activation code will be displayed directly after purchase. 
+ - Users in mainland China: Supports purchase via Taobao, contact Taobao customer service after purchase to get the activation code. 
+
+
 ## 🔧 Known Issues & Roadmap
 
-- [ ] Data security: Add backup functionality, backup on each startup, only backup on first startup for multiple launches on the same day, keep up to ten backups, backup data stored under WEBUI_CONFIG_DIR/.bak/
-- [ ] Implement update checking/auto-update functionality (using pyupdater or implementing simple version checking)
+- [ ] Fix activation check logic
 - [ ] Write documentation: Privacy Policy, Terms of Use, Usage Guide, Purchase & Activation
 - [ ] Upload release files to artifact public repository
 - [ ] Linux desktop operation
