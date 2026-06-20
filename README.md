@@ -76,9 +76,6 @@ Purchase method: Software main interface - Activation button in the top right co
 
 ## 🔧 Known Issues & Roadmap
 
-- [ ] Fix activation check logic
-- [ ] Write documentation: Privacy Policy, Terms of Use, Usage Guide, Purchase & Activation
-- [ ] Upload release files to artifact public repository
 - [ ] Linux desktop operation
 - [ ] Rust refactoring: May not be necessary, Rust's benefits include easier cross-platform support and faster compilation, but compilation is transparent to users; also Python packaged compressed files are only 20-30MB, not very large
 
