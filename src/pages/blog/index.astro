@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+// 🛡️ 防呆处理
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime() || 0));
+---
+
+<Layout title="Blog - SSH Config Manager" lang="en">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <h1 class="blog-main-title">📝 Development Blog</h1>
+      
+      <div class="blog-grid">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <!-- 🛡️ 修复 404：使用 baseUrl 拼接正确的文章路径 -->
+            <a href={`${baseUrl}blog/${post.id}/`} class="blog-card-new">
+              <div class="card-date">
+                {post.data.pubDate 
+                  ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) 
+                  : 'Unknown Date'}
+              </div>
+              <h2 class="card-title">{post.data.title}</h2>
+              {post.data.description && <p class="card-desc">{post.data.description}</p>}
+              <span class="card-read-more">Read more →</span>
+            </a>
+          ))
+        ) : (
+          <p>No posts yet.</p>
+        )}
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>
+
+<style>
+  .blog-main-title {
+    font-size: 2em;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 12px;
+    color: #24292f;
+  }
+  
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  
+  .blog-card-new {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .blog-card-new:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+  }
+  
+  .card-date {
+    font-size: 13px;
+    color: #764ba2;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .card-title {
+    font-size: 1.25em;
+    margin: 0 0 12px 0;
+    color: #24292f;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  
+  .card-desc {
+    font-size: 14px;
+    color: #656d76;
+    flex-grow: 1;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  
+  .card-read-more {
+    color: #667eea;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: auto;
+  }
+</style>

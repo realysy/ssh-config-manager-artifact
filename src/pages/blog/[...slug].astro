@@ -1,0 +1,48 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Giscus from '../../components/Giscus.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+// 使用 Astro v5 的 render 函数解析 Markdown
+const { Content } = await render(post); 
+
+// 简单判断语言, 假设路径或 ID 中包含 zh 的为中文
+const lang = post.id.includes('zh') ? 'zh' : 'en';
+---
+
+<Layout title={post.data.title} lang={lang}>
+  <!-- 白色卡片容器 -->
+  <main class="page-wrapper">
+    <!-- 引入顶部导航栏 (包含返回首页、博客列表、切换语言等功能) -->
+    <Header />
+    
+    <div class="container">
+      <article class="markdown-content blog-post-content">
+        <h1>{post.data.title}</h1>
+        <p class="meta" style="color: #656d76; margin-bottom: 24px; font-size: 14px;">
+          📅 {post.data.pubDate ? post.data.pubDate.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+        </p>
+        
+        <!-- 渲染 Markdown 正文 -->
+        <Content />
+      </article>
+      
+      <!-- 挂载 Giscus 评论区 -->
+      <Giscus lang={lang} />
+    </div>
+    
+    <!-- 引入底部 Footer -->
+    <Footer />
+  </main>
+</Layout>

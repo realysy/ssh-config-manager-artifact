@@ -1,0 +1,109 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+// 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime() || 0));
+---
+
+<Layout title="博客 - SSH Config Manager" lang="zh">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <h1 class="blog-main-title">📝 开发博客</h1>
+      
+      <div class="blog-grid">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <!-- 🛡️ 修复 404: 使用 baseUrl 拼接路径。注意：目前详情页只有一套模板，所以统一跳转到 /blog/ 下，详情页内部会自动判断语言 -->
+            <a href={`${baseUrl}blog/${post.id}/`} class="blog-card-new">
+              <div class="card-date">
+                {post.data.pubDate 
+                  ? post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }) 
+                  : '未知日期'}
+              </div>
+              <h2 class="card-title">{post.data.title}</h2>
+              {post.data.description && <p class="card-desc">{post.data.description}</p>}
+              <span class="card-read-more">阅读更多 →</span>
+            </a>
+          ))
+        ) : (
+          <p>暂无文章.</p>
+        )}
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>
+
+<style>
+  .blog-main-title {
+    font-size: 2em;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 12px;
+    color: #24292f;
+  }
+  
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  
+  .blog-card-new {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .blog-card-new:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+  }
+  
+  .card-date {
+    font-size: 13px;
+    color: #764ba2;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  
+  .card-title {
+    font-size: 1.25em;
+    margin: 0 0 12px 0;
+    color: #24292f;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  
+  .card-desc {
+    font-size: 14px;
+    color: #656d76;
+    flex-grow: 1;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  
+  .card-read-more {
+    color: #667eea;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: auto;
+  }
+</style>

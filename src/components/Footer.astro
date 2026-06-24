@@ -1,0 +1,20 @@
+---
+// 获取当前路径判断语言
+const currentPath = Astro.url.pathname;
+const isZh = currentPath.startsWith('/zh/');
+
+// 获取 base 路径, 用于拼接 public 目录下的静态 HTML 文件
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<footer class="footer">
+  <div class="footer-links">
+    <!-- 拼接 public/templates/ 下的静态页面路径 -->
+    <a href={`${baseUrl}templates/privacy.html`}>{isZh ? "隐私政策" : "Privacy Policy"}</a>
+    <a href={`${baseUrl}templates/terms.html`}>{isZh ? "使用条款" : "Terms of Use"}</a>
+  </div>
+  <p>{isZh ? "SSH Config Manager - 高效管理您的 SSH 连接" : "SSH Config Manager - Manage your SSH connections efficiently"}</p>
+  <p style="margin-top: 8px; font-size: 13px;">© All rights reserved. <a
+      href="https://github.com/realysy/ssh-config-manager-artifact"
+      target="_blank">github.com/realysy/ssh-config-manager-artifact</a></p>
+</footer>

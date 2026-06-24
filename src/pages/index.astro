@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+import mainPage from '../assets/screenshots/main_page.png';
+import trialPage from '../assets/screenshots/activation_page-trial.png';
+import activatedPage from '../assets/screenshots/activation_page-activated.png';
+---
+
+<Layout title="SSH Config Manager" lang="en">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <div class="markdown-content">
+        <p>SSH Config Manager: A tool for group-based visual management of SSH connection information, capable of integrating with modern terminal emulators and system built-in terminals, eliminating the need to memorize connection host names/addresses/shortcuts.</p>
+
+        <h2>✨ Key Features</h2>
+        <ul>
+          <li>
+            <p>Group-based visual SSH management, no need to memorize SSH names/addresses/shortcuts in the terminal.</p>
+            <ul>
+              <li>Add/edit SSH connection information and create groups through webui, click to connect and establish SSH connections in local terminal emulator.</li>
+              <li><code>~/.ssh/config</code> is the default group, other group configuration files follow the exact same format, enabling easy migration and reuse in other tools, such as manual use with <code>ssh</code> command: <code>ssh -F ~/my_ssh_config/test_group.config my_host</code>.</li>
+            </ul>
+          </li>
+          <li>
+            <p>Supports multiple terminal emulators without changing your terminal usage habits.</p>
+            <table>
+              <thead>
+                <tr>
+                  <th align="left">Terminal Emulator</th>
+                  <th align="center">Windows</th>
+                  <th align="center">Linux</th>
+                  <th align="center">macOS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td align="left"><a href="https://wezterm.org/">Wezterm</a></td><td align="center">✅</td><td align="center">✅</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://alacritty.org/">Alacritty</a></td><td align="center">✅¹</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://github.com/kovidgoyal/kitty">Kitty</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://github.com/microsoft/terminal">Windows Terminal</a></td><td align="center">✅</td><td align="center">➖</td><td align="center">➖</td></tr>
+                <tr><td align="left"><a href="https://konsole.kde.org/">Konsole</a></td><td align="center">✅¹</td><td align="center">✅²</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://help.gnome.org/gnome-terminal/index.html">GNOME Terminal</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">➖</td></tr>
+                <tr><td align="left"><a href="https://iterm2.com/">iTerm2</a></td><td align="center">➖</td><td align="center">➖</td><td align="center">❔</td></tr>
+              </tbody>
+            </table>
+            <ul>
+              <li>✅: Tested and fully supports designed features. Automatically establishes SSH in a new tab if window exists, or creates a new window.</li>
+              <li>✅¹: Tested, can successfully launch terminal, but only supports creating connections in new windows.</li>
+              <li>✅²: Tested, defaults to creating connections in new windows only. (Konsole: Enable "Run all Konsole windows in a single process" in Settings to use tabs).</li>
+              <li>❔: Not tested. / ➖: Not supported on this platform.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2>📊 Performance</h2>
+        <p>Compared to Electron applications, the backend service of this software has lower memory usage, comparable to C++ software:</p>
+        <ul>
+          <li>Win11 (24GB RAM): 39.1MB</li>
+          <li>Ubuntu 20.04 (32GB RAM): 84.2MB</li>
+        </ul>
+
+        <h2 id="screenshots-heading" style="margin-top: 32px; padding-left: 16px; border-left: 4px solid #667eea;">📸 Screenshots</h2>
+        <div class="screenshots-grid">
+          <div class="screenshot-card">
+            <img src={mainPage.src} alt="Main Page" loading="lazy" class="screenshot-img">
+            <div class="caption">Main Application Interface</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={trialPage.src} alt="Activation Page - Trial" loading="lazy" class="screenshot-img">
+            <div class="caption">Activation Page - Trial Version</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={activatedPage.src} alt="Activation Page - Activated" loading="lazy" class="screenshot-img">
+            <div class="caption">Activation Page - Activated Successfully</div>
+          </div>
+        </div>
+
+        <h2 id="pricing">💎 Pricing & Purchase</h2>
+        <ul>
+          <li>30-day free trial. After trial, pay to continue or export data in universal format.</li>
+          <li><strong>Limited-time promo:</strong> One-time $28.9 for a 10-year activation code with continuous updates.</li>
+          <li>Supports online and offline activation. Codes are bound to devices (email support for unbinding).</li>
+          <li>Purchasing Power Parity discounts available (~55% off via Taobao for mainland China users).</li>
+        </ul>
+        <p><strong>Purchase method:</strong> Software main interface -> Activation button (top right) -> Scan QR code.</p>
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>

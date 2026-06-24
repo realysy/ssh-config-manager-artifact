@@ -1,3 +1,8 @@
+---
+title: "Release soon. Basic function has completed"
+pubDate: 2026-05-11
+---
+
 The basic function of this tool has complete: 
 
 - Manage SSH connections in groups.

@@ -1,0 +1,75 @@
+---
+// 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+// 获取当前相对于 baseUrl 的纯净路径 (例如 "blog/" 或 "zh/blog/")
+let currentRelativePath = Astro.url.pathname.replace(baseUrl, '');
+if (currentRelativePath.startsWith('/')) currentRelativePath = currentRelativePath.substring(1);
+
+const isZh = currentRelativePath.startsWith('zh/');
+
+// 动态生成语言切换链接: 保留当前所在的路由层级
+let langSwitchHref;
+if (isZh) {
+  // 从中文切到英文, 去掉 'zh/'
+  langSwitchHref = baseUrl + currentRelativePath.replace(/^zh\//, '');
+} else {
+  // 从英文切到中文, 加上 'zh/'
+  langSwitchHref = baseUrl + 'zh/' + currentRelativePath;
+}
+
+// 确保首页链接正确 (如果替换后为空, 则指向 baseUrl)
+if (langSwitchHref === baseUrl || !langSwitchHref) langSwitchHref = baseUrl;
+
+const langSwitchLabel = isZh ? '🇺🇸 EN' : '🇨🇳 中文';
+const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
+---
+
+<div class="top-bar">
+  <h1><a href={baseUrl} class="home-link">🔌 SSH Config Manager</a></h1>
+  <div class="top-actions">
+    <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" class="icon-button"
+      data-tooltip={isZh ? "下载" : "Download"} target="_blank" aria-label="Download">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+    </a>
+
+    <a href={blogHref} class="icon-button" data-tooltip={isZh ? "博客" : "Blog"} aria-label="Blog">📝</a>
+
+    <a href={`${baseUrl}#pricing`} class="icon-button" data-tooltip={isZh ? "定价" : "Pricing"} aria-label="Pricing">💎</a>
+
+    <a href="https://github.com/realysy/ssh-config-manager-artifact" class="icon-button"
+      data-tooltip="GitHub: issues and version releases" target="_blank" aria-label="GitHub Repository">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
+
+    <a class="icon-button" id="support-btn" data-email
+      data-tooltip={isZh ? "支持: 用户的激活/许可证或其他相关问题" : "Support: user's activation/license or other related inquiries"} 
+      aria-label="Support">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/></svg>
+    </a>
+
+    <!-- 亮暗主题切换按钮 -->
+    <button id="theme-toggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+
+    <a href={langSwitchHref} class="link-button lang-switch-btn" aria-label="Switch Language">
+      {langSwitchLabel}
+    </a>
+  </div>
+</div>
+
+<style>
+  .lang-switch-btn {
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  /* 主页链接样式, 去除下划线并应用渐变色 */
+  .home-link {
+    text-decoration: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>

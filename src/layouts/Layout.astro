@@ -1,0 +1,39 @@
+---
+// 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
+import '../styles/global.css';
+
+// 获取 base 路径, 用于拼接 public 目录下的静态资源
+const baseUrl = import.meta.env.BASE_URL;
+
+// 定义页面属性接口, 接收标题和语言
+export interface Props {
+  title: string;
+  lang?: string;
+}
+const { title, lang = 'en' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔌</text></svg>">
+  
+  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
+  <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
+  <script is:inline src={`${baseUrl}config.js`}></script>
+  <script src="../scripts/main.js"></script>
+</head>
+
+<body>
+  <!-- slot 标签相当于一个"占位符", 用于接收各个页面传入的具体内容 -->
+  <slot />
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+import mainPage from '../../assets/screenshots/main_page.png';
+import trialPage from '../../assets/screenshots/activation_page-trial.png';
+import activatedPage from '../../assets/screenshots/activation_page-activated.png';
+---
+
+<Layout title="SSH Config Manager" lang="zh">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <div class="markdown-content">
+        <p>SSH Config Manager: 一个用于分组可视化管理 SSH 连接信息的工具, 能够和现代终端模拟器以及系统内置终端联动, 无需记忆连接名称/地址/快捷键.</p>
+
+        <h2>✨ 主要功能</h2>
+        <ul>
+          <li>
+            <p>分组可视化管理SSH, 无需在终端内记忆 SSH 名称/地址/快捷键等信息.</p>
+            <ul>
+              <li>可通过 webui 添加/编辑 SSH 连接信息, 创建分组, 点击连接即可在本地终端模拟器中建立 SSH 连接.</li>
+              <li><code>~/.ssh/config</code> 是默认分组, 其它分组的配置文件格式与之完全相同, 可在其它工具迁移复用, 如在 <code>ssh</code> 命令中手动使用: <code>ssh -F ~/my_ssh_config/test_group.config my_host</code>.</li>
+            </ul>
+          </li>
+          <li>
+            <p>支持多种终端模拟器, 无需改变你的终端使用习惯.</p>
+            <table>
+              <thead>
+                <tr>
+                  <th align="left">终端模拟器</th>
+                  <th align="center">Windows</th>
+                  <th align="center">Linux</th>
+                  <th align="center">macOS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td align="left"><a href="https://wezterm.org/">Wezterm</a></td><td align="center">✅</td><td align="center">✅</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://alacritty.org/">Alacritty</a></td><td align="center">✅¹</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://github.com/kovidgoyal/kitty">Kitty</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://github.com/microsoft/terminal">Windows Terminal</a></td><td align="center">✅</td><td align="center">➖</td><td align="center">➖</td></tr>
+                <tr><td align="left"><a href="https://konsole.kde.org/">Konsole</a></td><td align="center">✅¹</td><td align="center">✅²</td><td align="center">❔</td></tr>
+                <tr><td align="left"><a href="https://help.gnome.org/gnome-terminal/index.html">GNOME Terminal</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">➖</td></tr>
+                <tr><td align="left"><a href="https://iterm2.com/">iTerm2</a></td><td align="center">➖</td><td align="center">➖</td><td align="center">❔</td></tr>
+              </tbody>
+            </table>
+            <ul>
+              <li>✅: 测试通过且完全支持设计功能. 自动在新标签页或新窗口建立连接.</li>
+              <li>✅¹: 测试通过, 但仅支持在新窗口建立连接.</li>
+              <li>✅²: 测试通过, 默认只能在新窗口建立连接. (Konsole: 在设置中启用"在单个进程中运行所有 Konsole 窗口"即可使用标签页).</li>
+              <li>❔: 未测试. / ➖: 该平台不支持此终端.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2>📊 性能</h2>
+        <p>与 Electron 应用相比, 本软件的后台服务的内存占用较低, 和 C++ 软件相当:</p>
+        <ul>
+          <li>Win11 (24GB RAM): 39.1MB</li>
+          <li>Ubuntu 20.04 (32GB RAM): 84.2MB</li>
+        </ul>
+
+        <h2 id="screenshots-heading" style="margin-top: 32px; padding-left: 16px; border-left: 4px solid #667eea;">📸 截图</h2>
+        <div class="screenshots-grid">
+          <div class="screenshot-card">
+            <img src={mainPage.src} alt="Main Page" loading="lazy" class="screenshot-img">
+            <div class="caption">主应用程序界面</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={trialPage.src} alt="Activation Page - Trial" loading="lazy" class="screenshot-img">
+            <div class="caption">激活页面 - 试用版</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={activatedPage.src} alt="Activation Page - Activated" loading="lazy" class="screenshot-img">
+            <div class="caption">激活页面 - 激活成功</div>
+          </div>
+        </div>
+
+        <h2 id="pricing">💎 定价与购买</h2>
+        <ul>
+          <li>30天免费试用. 试用期结束后可以付费继续使用, 或带走通用格式的 SSH 数据.</li>
+          <li><strong>限时推广阶段:</strong> 一次性付费 $28.9 获得 10 年有效期激活码, 持续更新.</li>
+          <li>支持在线/离线激活. 激活码绑定设备 (支持 email 解绑).</li>
+          <li>提供购买力平价折扣, 通过淘宝购买可获得约 55% 折扣.</li>
+        </ul>
+        <p><strong>购买途径:</strong> 软件主界面 -> 右上角激活按钮 -> 扫码购买.</p>
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>

@@ -1,3 +1,8 @@
+---
+title: "The first release version is right here!"
+pubDate: 2026-06-20
+---
+
 The first release version of SSH Config Manager is right here.
 
 1. Manage ssh connections in groups; group file format keep compatible with \~/.ssh/config.
