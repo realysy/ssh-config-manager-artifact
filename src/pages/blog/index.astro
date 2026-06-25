@@ -2,16 +2,19 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import { getCollection } from 'astro:content';
-// ✨ 引入工具函数
+import { getGroupedPosts, getDisplayPost } from '@/utils/getPostsByLang';
 import { getAutoCover } from '@/utils/getAutoCover';
 
-// 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 
-const posts = await getCollection('blog');
-posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime() || 0));
+const groupedPosts = await getGroupedPosts();
+// 按发布日期倒序排列 (使用当前语言下实际展示的文章的日期)
+groupedPosts.sort((a, b) => {
+  const postA = getDisplayPost(a, 'en');
+  const postB = getDisplayPost(b, 'en');
+  return (postB.data.pubDate?.getTime() || 0) - (postA.data.pubDate?.getTime() || 0);
+});
 ---
 
 <Layout title="Blog - SSH Config Manager" lang="en">
@@ -21,13 +24,14 @@ posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime
       <h1 class="blog-main-title">📝 Development Blog</h1>
       
       <div class="blog-grid">
-        {posts.length > 0 ? (
-          posts.map((post) => {
-            // 为每篇文章获取封面
+        {groupedPosts.length > 0 ? (
+          groupedPosts.map((group) => {
+            // 🎯 获取当前语言应该展示的文章
+            const post = getDisplayPost(group, 'en');
             const coverUrl = getAutoCover(post.body);
             return (
-              <a href={`${baseUrl}blog/${post.id}/`} class="blog-card-new">
-                <!-- 如果存在封面，则渲染封面图区域 -->
+              // 链接统一指向 coreSlug, 详情页会处理语言回退
+              <a href={`${baseUrl}blog/${group.coreSlug}/`} class="blog-card-new">
                 {coverUrl && (
                   <div class="card-cover">
                     <img src={coverUrl} alt={post.data.title} loading="lazy" />

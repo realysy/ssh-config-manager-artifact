@@ -8,7 +8,6 @@ import { getAutoCover } from '@/utils/getAutoCover';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  // 提取所有去重后的核心 Slug, 为每种语言生成完整的路由
   const coreSlugs = new Set<string>();
   for (const post of posts) {
     const coreSlug = post.id.startsWith('zh/') ? post.id.replace(/^zh\//, '') : post.id;
@@ -20,15 +19,14 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const posts = await getCollection('blog');
 
-// 🎯 核心逻辑: 优先找英文, 找不到则回退到中文
-const post = posts.find(p => p.id === slug) || posts.find(p => p.id === `zh/${slug}`);
+// 🎯 终极优雅写法：合并查找逻辑 (优先中文，回退英文)
+const post = posts.find(p => p.id === `zh/${slug}`) || posts.find(p => p.id === slug);
 // 消除下面使用 post 时可能 undefined 报错 (实际上永远不会触发)
 if (!post) throw new Error(`[FATAL] Post not found for slug: ${slug}`);
 
 const { Content } = await render(post);
 const autoCover = getAutoCover(post.body);
 
-// 根据实际渲染的文章判断语言 (可能是 en 也可能是 zh)
 const lang = post.id.startsWith('zh/') ? 'zh' : 'en';
 const seoTitle = `${post.data.title} | SSH Config Manager ${lang === 'zh' ? '博客' : 'Blog'}`;
 const seoDesc = post.data.description || (lang === 'zh' ? "关于 SSH Config Manager 的最新开发动态和教程。" : "The latest development updates and tutorials about SSH Config Manager.");
@@ -41,7 +39,7 @@ const seoDesc = post.data.description || (lang === 'zh' ? "关于 SSH Config Man
       <article class="markdown-content blog-post-content">
         <h1>{post.data.title}</h1>
         <p class="meta" style="color: #656d76; margin-bottom: 24px; font-size: 14px;">
-          📅 {post.data.pubDate ? post.data.pubDate.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+          📅 {post.data.pubDate ? post.data.pubDate.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}
         </p>
         <Content />
       </article>
