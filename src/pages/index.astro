@@ -1,14 +1,20 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
 
-import mainPage from '../assets/screenshots/main_page.png';
-import trialPage from '../assets/screenshots/activation_page-trial.png';
-import activatedPage from '../assets/screenshots/activation_page-activated.png';
+import mainPage from '@/assets/screenshots/main_page.png';
+import trialPage from '@/assets/screenshots/activation_page-trial.png';
+import activatedPage from '@/assets/screenshots/activation_page-activated.png';
+
+const seoDescription = "SSH Config Manager: A cross-platform tool for group-based visual management of SSH connections. Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
 ---
 
-<Layout title="SSH Config Manager" lang="en">
+<Layout 
+  title="SSH Config Manager - Visual SSH Management Tool" 
+  lang="en"
+  description={seoDescription}
+>
   <div class="page-wrapper">
     <Header />
     <div class="container">

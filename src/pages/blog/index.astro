@@ -1,8 +1,10 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
 import { getCollection } from 'astro:content';
+// ✨ 引入工具函数
+import { getAutoCover } from '@/utils/getAutoCover';
 
 // 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
@@ -20,19 +22,31 @@ posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime
       
       <div class="blog-grid">
         {posts.length > 0 ? (
-          posts.map((post) => (
-            <!-- 🛡️ 修复 404：使用 baseUrl 拼接正确的文章路径 -->
-            <a href={`${baseUrl}blog/${post.id}/`} class="blog-card-new">
-              <div class="card-date">
-                {post.data.pubDate 
-                  ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) 
-                  : 'Unknown Date'}
-              </div>
-              <h2 class="card-title">{post.data.title}</h2>
-              {post.data.description && <p class="card-desc">{post.data.description}</p>}
-              <span class="card-read-more">Read more →</span>
-            </a>
-          ))
+          posts.map((post) => {
+            // 为每篇文章获取封面
+            const coverUrl = getAutoCover(post.body);
+            return (
+              <a href={`${baseUrl}blog/${post.id}/`} class="blog-card-new">
+                <!-- 如果存在封面，则渲染封面图区域 -->
+                {coverUrl && (
+                  <div class="card-cover">
+                    <img src={coverUrl} alt={post.data.title} loading="lazy" />
+                  </div>
+                )}
+                <!-- 卡片文本内容区域 -->
+                <div class="card-body">
+                  <div class="card-date">
+                    {post.data.pubDate 
+                      ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) 
+                      : 'Unknown Date'}
+                  </div>
+                  <h2 class="card-title">{post.data.title}</h2>
+                  {post.data.description && <p class="card-desc">{post.data.description}</p>}
+                  <span class="card-read-more">Read more →</span>
+                </div>
+              </a>
+            );
+          })
         ) : (
           <p>No posts yet.</p>
         )}
@@ -61,19 +75,47 @@ posts.sort((a, b) => (b.data.pubDate?.getTime() || 0) - (a.data.pubDate?.getTime
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    padding: 24px;
     text-decoration: none;
     color: inherit;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden; /* 确保封面图的圆角被卡片包裹 */
+    padding: 0; /* 移除整体 padding，交由内部 card-body 控制 */
   }
   
   .blog-card-new:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
     border-color: #667eea;
+  }
+
+  /* 封面图区域样式 */
+  .card-cover {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: #f6f8fa;
+  }
+  
+  .card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 保证图片按比例填充，不变形 */
+    transition: transform 0.3s ease;
+  }
+
+  .blog-card-new:hover .card-cover img {
+    transform: scale(1.05); /* 悬浮时图片微放大效果 */
+  }
+  
+  /* 文本内容区域样式 */
+  .card-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
   }
   
   .card-date {

@@ -5,6 +5,8 @@ pubDate: 2026-05-11
 
 The basic function of this tool has complete: 
 
+![main page](@/assets/screenshots/main_page.png)
+
 - Manage SSH connections in groups.
 - Group file format keep exactly the same with `~/.ssh/config`, which means you can use `ssh` command to connect to the server.
 - If you edit a config in `~/.ssh/config` using this tool, all fields and custom comments will be preserved, even if they are not supported by this software.

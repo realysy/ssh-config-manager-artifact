@@ -1,19 +1,25 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
 
-import mainPage from '../../assets/screenshots/main_page.png';
-import trialPage from '../../assets/screenshots/activation_page-trial.png';
-import activatedPage from '../../assets/screenshots/activation_page-activated.png';
+import mainPage from '@/assets/screenshots/main_page.png';
+import trialPage from '@/assets/screenshots/activation_page-trial.png';
+import activatedPage from '@/assets/screenshots/activation_page-activated.png';
+
+const seoDescription = "SSH 配置管理器: 一个跨平台的工具，用于分组可视化管理 SSH 连接。可调用系统内安装的 Wezterm、Kitty、Alacritty 和 Windows Terminal、GNOME Terminal、KDE Konsole 等终端模拟器建立 SSH 连接。";
 ---
 
-<Layout title="SSH Config Manager" lang="zh">
+<Layout 
+  title="SSH Config Manager - 跨平台的可视化分组管理SSH连接信息工具" 
+  lang="zh"
+  description={seoDescription}
+>
   <div class="page-wrapper">
     <Header />
     <div class="container">
       <div class="markdown-content">
-        <p>SSH Config Manager: 一个用于分组可视化管理 SSH 连接信息的工具, 能够和现代终端模拟器以及系统内置终端联动, 无需记忆连接名称/地址/快捷键.</p>
+        <p>SSH Config Manager: 一个跨平台的分组可视化管理 SSH 连接信息的工具, 能够和现代终端模拟器以及系统内置终端联动, 无需记忆连接名称/地址/快捷键.</p>
 
         <h2>✨ 主要功能</h2>
         <ul>

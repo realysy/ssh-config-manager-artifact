@@ -328,6 +328,16 @@ p {
   margin-bottom: 4px;
 }
 
+/* Markdown 正文图片响应式优化 */
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 24px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: block;
+}
+
 /* Markdown 表格样式 */
 .markdown-content table {
   border-collapse: collapse;

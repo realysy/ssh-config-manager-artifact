@@ -1,16 +1,39 @@
 ---
 // 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
-import '../styles/global.css';
+import '@/styles/global.css';
+// 导入默认分享封面图
+import defaultOgImage from '@/assets/screenshots/main_page.png';
 
 // 获取 base 路径, 用于拼接 public 目录下的静态资源
-const baseUrl = import.meta.env.BASE_URL;
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
 
 // 定义页面属性接口, 接收标题和语言
 export interface Props {
   title: string;
   lang?: string;
+  description?: string;
+  image?: string;  // 接收的是构建后的图片 URL 字符串
 }
-const { title, lang = 'en' } = Astro.props;
+const { 
+  title, 
+  lang = 'en', 
+  description = 'SSH Config Manager: A tool for group-based visual management of SSH connection information, integrating with modern terminal emulators.',
+  image = defaultOgImage.src  // 默认分享封面
+} = Astro.props;
+
+// 获取当前完整 URL，用于生成 canonical 和 OG 链接
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+// 动态生成完整的 OG 图片 URL
+const ogImageUrl = new URL(image, Astro.site).toString();
+
+// 动态生成 Hreflang (多语言交替链接)
+// 假设英文和中文的路由结构是对称的 (例如 /blog/ 和 /zh/blog/)
+const currentPath = Astro.url.pathname.replace(baseUrl, '/');
+const isZh = currentPath.startsWith('/zh/');
+const alternatePath = isZh ? currentPath.replace('/zh/', '/') : `/zh${currentPath}`;
+const alternateUrl = new URL(alternatePath, Astro.site).toString();
 ---
 
 <!DOCTYPE html>
@@ -19,21 +42,44 @@ const { title, lang = 'en' } = Astro.props;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 基础 SEO -->
   <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- 多语言 Hreflang 标签 (告诉搜索引擎双语对应关系) -->
+  <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+  <link rel="alternate" hreflang={isZh ? 'en' : 'zh'} href={alternateUrl} />
+  <link rel="alternate" hreflang="x-default" href={new URL(baseUrl, Astro.site).toString()} />
+
+  <!-- Open Graph / 社交媒体分享卡片 -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImageUrl} />
+  
+  <!-- Twitter 分享卡片 -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalUrl} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content={ogImageUrl} />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔌</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔌</text></svg>">
+  <link rel="icon" type="image/x-icon" href={`${baseUrl}favicon.ico`} />
   
   <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
   <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
   <script is:inline src={`${baseUrl}config.js`}></script>
-  <script src="../scripts/main.js"></script>
 </head>
 
 <body>
   <!-- slot 标签相当于一个"占位符", 用于接收各个页面传入的具体内容 -->
   <slot />
+  <script src="@/scripts/main.js"></script>
 </body>
 
 </html>

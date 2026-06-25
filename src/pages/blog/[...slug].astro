@@ -1,8 +1,9 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import Giscus from '../../components/Giscus.astro';
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import Giscus from '@/components/Giscus.astro';
+import { getAutoCover } from '@/utils/getAutoCover';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -13,15 +14,26 @@ export async function getStaticPaths() {
   }));
 }
 
-const { post } = Astro.props;
 // 使用 Astro v5 的 render 函数解析 Markdown
+const { post } = Astro.props;
 const { Content } = await render(post); 
+
+// 获取自动封面, post.id: md 文件的相对路径
+const autoCover = getAutoCover(post.body);
 
 // 简单判断语言, 假设路径或 ID 中包含 zh 的为中文
 const lang = post.id.includes('zh') ? 'zh' : 'en';
+const seoTitle = `${post.data.title} | SSH Config Manager Blog`;
+const seoDesc = post.data.description || "The latest development updates and tutorials about SSH Config Manager.";
 ---
 
-<Layout title={post.data.title} lang={lang}>
+<!-- If autoCover=null, Layout.astro 会自动接管，使用之前设置的 main_page.png 作为默认封面 -->
+<Layout 
+  title={seoTitle} 
+  lang={lang}
+  description={seoDesc}
+  image={autoCover}
+>
   <!-- 白色卡片容器 -->
   <main class="page-wrapper">
     <!-- 引入顶部导航栏 (包含返回首页、博客列表、切换语言等功能) -->
