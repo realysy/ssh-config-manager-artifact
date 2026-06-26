@@ -32,4 +32,4 @@ SSH Config Manager 的首个正式版来了。
    - Linux 最低支持版本要求 glibc 2.31，例如 Ubuntu 20.04、Debian 11。
    - macOS 最低支持版本为 macOS 11 (Big Sur)。
 
-主页：[https://www.release.dpdns.org/ssh-config-manager](https://www.release.dpdns.org/ssh-config-manager)
+主页：[https://www.release.dpdns.org/ssh-config-manager-artifact](https://www.release.dpdns.org/ssh-config-manager-artifact)

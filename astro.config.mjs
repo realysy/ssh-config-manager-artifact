@@ -6,7 +6,7 @@ export default defineConfig({
   // 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
   site: 'https://www.release.dpdns.org/', 
   // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
-  base: '/ssh-config-manager', 
+  base: '/ssh-config-manager-artifact', 
   integrations: [
     sitemap({
       // 过滤掉不需要收录的页面 (如果有的话)
