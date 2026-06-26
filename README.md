@@ -4,4 +4,4 @@ SSH Config Manager: A tool for group-based visual management of SSH connection i
 
 - Homepage: [https://smgr.real.abrdns.com/](https://smgr.real.abrdns.com/)
 
-- Download: [Github releases](https://github.com/ssh-config-manager/ssh-config-manager/releases)
+- Download: [Github releases](https://github.com/realysy/ssh-config-manager-artifact/releases)
