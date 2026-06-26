@@ -68,8 +68,7 @@ const alternateUrl = new URL(alternatePath, Astro.site).toString();
   <meta property="twitter:image" content={ogImageUrl} />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔌</text></svg>">
-  <link rel="icon" type="image/x-icon" href={`${baseUrl}favicon.ico`} />
+  <link rel="icon" type="image/x-icon" href={`${baseUrl}icon.ico`} />
   
   <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
   <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
