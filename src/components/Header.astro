@@ -27,7 +27,12 @@ const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
 ---
 
 <div class="top-bar">
-  <h1><a href={baseUrl} class="home-link">🔌 SSH Config Manager</a></h1>
+  <h1>
+    <a href={baseUrl} class="home-link">
+      <img src={`${baseUrl}icon.ico`} alt="" style="width:1em;height:1em;vertical-align:-0.1em;" />
+      SSH Config Manager
+    </a>
+  </h1>
   <div class="top-actions">
     <a href="https://github.com/realysy/ssh-config-manager-artifact/releases" class="icon-button"
       data-tooltip={isZh ? "下载" : "Download"} target="_blank" aria-label="Download">
