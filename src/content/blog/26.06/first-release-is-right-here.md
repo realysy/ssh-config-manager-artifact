@@ -32,4 +32,4 @@ The first release version of SSH Config Manager is right here.
    - Linux minimum supported version requires glibc 2.31, such as Ubuntu 20.04, Debian 11.
    - macOS minimum supported version is macOS 11 (Big Sur).
 
-Homepage: [https://smgr.real.abrdns.com/](https://smgr.real.abrdns.com/)
+Homepage: [https://release.dpdns.org/ssh-config-manager](https://release.dpdns.org/ssh-config-manager)
