@@ -3,6 +3,17 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ] # 如果您的主分支叫 master, 请改为 master
+    # 过滤: 只有当以下网站相关文件发生更改时，才触发构建和部署
+    paths:
+      - 'public/**'               # 静态资源 (截图、favicon、验证文件等)
+      - 'src/**'                  # Astro 源码 (组件、页面、样式、工具函数)
+      - 'astro.config.mjs'        # Astro 配置文件
+      - 'package.json'            # 依赖声明
+      - 'pnpm-lock.yaml'          # 依赖锁定文件
+      - 'tsconfig.json'           # TypeScript 配置
+      - '.github/workflows/**'    # 工作流配置本身 (防止修改 yml 后不触发)
+      
+  # 保留手动触发功能，且手动触发不受 paths 限制
   workflow_dispatch:
 
 permissions:
@@ -16,6 +27,7 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
+        
       - name: Install, build, and upload your site
         uses: withastro/action@v2
         with:
