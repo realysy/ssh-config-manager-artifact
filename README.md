@@ -5,3 +5,8 @@ SSH Config Manager: A tool for group-based visual management of SSH connection i
 - Homepage: [https://www.release.dpdns.org/ssh-config-manager-artifact](https://www.release.dpdns.org/ssh-config-manager-artifact)
 
 - Download: [Github releases](https://github.com/realysy/ssh-config-manager-artifact/releases)
+
+## TODO
+
+- [ ] 修复博客列表，页面好像又没有显示封面图了 - 自从改了自定义域名之后
+- [ ] 官网定价部分添加购买链接&二维码
