@@ -8,5 +8,4 @@ SSH Config Manager: A tool for group-based visual management of SSH connection i
 
 ## TODO
 
-- [ ] 修复博客列表, 页面好像又没有显示封面图了 - 自从改了自定义域名之后
 - [ ] 官网定价部分添加购买链接&二维码
