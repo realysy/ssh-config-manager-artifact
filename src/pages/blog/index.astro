@@ -2,6 +2,8 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import BlogListStyles from '@/components/BlogListStyles.astro'; 
+import BlogCard from '@/components/BlogCard.astro'; // ✨ 引入卡片组件
 import { getGroupedPosts, getDisplayPost } from '@/utils/getPostsByLang';
 import { getAutoCover } from '@/utils/getAutoCover';
 
@@ -9,15 +11,24 @@ let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 
 const groupedPosts = await getGroupedPosts();
-// 按发布日期倒序排列 (使用当前语言下实际展示的文章的日期)
 groupedPosts.sort((a, b) => {
   const postA = getDisplayPost(a, 'en');
   const postB = getDisplayPost(b, 'en');
   return (postB.data.pubDate?.getTime() || 0) - (postA.data.pubDate?.getTime() || 0);
 });
+
+function getColorIndex(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash) % 6; 
+}
 ---
 
 <Layout title="Blog - SSH Config Manager" lang="en">
+  <BlogListStyles />
+
   <div class="page-wrapper">
     <Header />
     <div class="container">
@@ -26,29 +37,19 @@ groupedPosts.sort((a, b) => {
       <div class="blog-grid">
         {groupedPosts.length > 0 ? (
           groupedPosts.map((group) => {
-            // 🎯 获取当前语言应该展示的文章
             const post = getDisplayPost(group, 'en');
             const coverUrl = getAutoCover(post.body);
+            const colorIdx = getColorIndex(group.coreSlug);
+            
             return (
-              // 链接统一指向 coreSlug, 详情页会处理语言回退
-              <a href={`${baseUrl}blog/${group.coreSlug}/`} class="blog-card-new">
-                {coverUrl && (
-                  <div class="card-cover">
-                    <img src={coverUrl} alt={post.data.title} loading="lazy" />
-                  </div>
-                )}
-                <!-- 卡片文本内容区域 -->
-                <div class="card-body">
-                  <div class="card-date">
-                    {post.data.pubDate 
-                      ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) 
-                      : 'Unknown Date'}
-                  </div>
-                  <h2 class="card-title">{post.data.title}</h2>
-                  {post.data.description && <p class="card-desc">{post.data.description}</p>}
-                  <span class="card-read-more">Read more →</span>
-                </div>
-              </a>
+              // ✨ 直接传入 Props，HTML 结构全部交给组件处理
+              <BlogCard 
+                post={post} 
+                coverUrl={coverUrl} 
+                colorIdx={colorIdx} 
+                href={`${baseUrl}blog/${group.coreSlug}/`} 
+                lang="en" 
+              />
             );
           })
         ) : (
@@ -59,98 +60,3 @@ groupedPosts.sort((a, b) => {
     <Footer />
   </div>
 </Layout>
-
-<style>
-  .blog-main-title {
-    font-size: 2em;
-    margin-bottom: 32px;
-    border-bottom: 2px solid #667eea;
-    padding-bottom: 12px;
-    color: #24292f;
-  }
-  
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-  }
-  
-  .blog-card-new {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    overflow: hidden; /* 确保封面图的圆角被卡片包裹 */
-    padding: 0; /* 移除整体 padding，交由内部 card-body 控制 */
-  }
-  
-  .blog-card-new:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
-    border-color: #667eea;
-  }
-
-  /* 封面图区域样式 */
-  .card-cover {
-    width: 100%;
-    height: 180px;
-    overflow: hidden;
-    background: #f6f8fa;
-  }
-  
-  .card-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 保证图片按比例填充，不变形 */
-    transition: transform 0.3s ease;
-  }
-
-  .blog-card-new:hover .card-cover img {
-    transform: scale(1.05); /* 悬浮时图片微放大效果 */
-  }
-  
-  /* 文本内容区域样式 */
-  .card-body {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-  
-  .card-date {
-    font-size: 13px;
-    color: #764ba2;
-    font-weight: 600;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .card-title {
-    font-size: 1.25em;
-    margin: 0 0 12px 0;
-    color: #24292f;
-    line-height: 1.4;
-    font-weight: 600;
-  }
-  
-  .card-desc {
-    font-size: 14px;
-    color: #656d76;
-    flex-grow: 1;
-    margin-bottom: 16px;
-    line-height: 1.6;
-  }
-  
-  .card-read-more {
-    color: #667eea;
-    font-weight: 500;
-    font-size: 14px;
-    margin-top: auto;
-  }
-</style>

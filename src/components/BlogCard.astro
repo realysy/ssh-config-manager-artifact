@@ -1,0 +1,60 @@
+---
+import { extractAutoTags } from '@/utils/extractTags';
+
+interface Props {
+  post: any; // Astro Collection Entry
+  coverUrl?: string;
+  colorIdx: number;
+  href: string;
+  lang: 'en' | 'zh';
+}
+
+const { post, coverUrl, colorIdx, href, lang } = Astro.props;
+
+// 1. 自动提取标签
+const autoTags = extractAutoTags(post.body || '', post.data.tags || []);
+
+// 2. 根据语言动态配置日期格式和文案
+const isZh = lang === 'zh';
+const dateFormat = isZh ? 'zh-CN' : 'en-US';
+const dateOptions: Intl.DateTimeFormatOptions = isZh 
+  ? { year: 'numeric', month: 'long', day: 'numeric' } 
+  : { year: 'numeric', month: 'short', day: 'numeric' };
+  
+const readMoreText = isZh ? '阅读更多 →' : 'Read more →';
+const fallbackTagText = isZh ? '# 文章' : '# Article';
+const unknownDateText = isZh ? '未知日期' : 'Unknown Date';
+---
+
+<a href={href} class="blog-card-new">
+  <!-- 封面区域：有图显示图，无图显示渐变标签 -->
+  {coverUrl ? (
+    <div class="card-cover">
+      <img src={coverUrl} alt={post.data.title} loading="lazy" />
+    </div>
+  ) : (
+    <div class={`card-cover-fallback gradient-${colorIdx}`}>
+      <div class="fallback-tags">
+        {autoTags.length > 0 ? (
+          autoTags.map((tag: string) => (
+            <span class="fallback-tag">#{tag}</span>
+          ))
+        ) : (
+          <span class="fallback-tag">{fallbackTagText}</span>
+        )}
+      </div>
+    </div>
+  )}
+  
+  <!-- 卡片文本内容区域 -->
+  <div class="card-body">
+    <div class="card-date">
+      {post.data.pubDate 
+        ? post.data.pubDate.toLocaleDateString(dateFormat, dateOptions) 
+        : unknownDateText}
+    </div>
+    <h2 class="card-title">{post.data.title}</h2>
+    {post.data.description && <p class="card-desc">{post.data.description}</p>}
+    <span class="card-read-more">{readMoreText}</span>
+  </div>
+</a>
