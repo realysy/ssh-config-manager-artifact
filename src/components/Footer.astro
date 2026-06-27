@@ -3,8 +3,9 @@
 const currentPath = Astro.url.pathname;
 const isZh = currentPath.startsWith('/zh/');
 
-// 获取 base 路径, 用于拼接 public 目录下的静态 HTML 文件
-const baseUrl = import.meta.env.BASE_URL;
+// 获取 base 路径, 用于拼接 public 目录下的静态资源
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
 ---
 
 <footer class="footer">

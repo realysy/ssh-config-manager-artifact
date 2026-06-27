@@ -5,7 +5,7 @@ import Footer from "@/components/Footer.astro";
 
 // 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith('/')) baseUrl += '/';
+if (!baseUrl.endsWith("/")) baseUrl += "/";
 ---
 
 <Layout title="Terms of Use" lang="en">
@@ -198,7 +198,12 @@ if (!baseUrl.endsWith('/')) baseUrl += '/';
       </p>
       <p><a data-email data-email-text></a></p>
 
-      <a href={baseUrl} class="back-link" style="display: inline-block; margin-bottom: 24px; color: #667eea; text-decoration: none; font-weight: 500;">← Back to Home</a>
+      <a
+        href={baseUrl}
+        class="back-link"
+        style="display: inline-block; margin-bottom: 24px; color: #667eea; text-decoration: none; font-weight: 500;"
+        >← Back to Home</a
+      >
 
       <div class="footer">
         <p>SSH Config Manager</p>

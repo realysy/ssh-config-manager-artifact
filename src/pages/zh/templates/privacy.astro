@@ -1,0 +1,129 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+// 🛡️ 防呆处理
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith("/")) baseUrl += "/";
+---
+
+<Layout title="隐私政策" lang="zh-CN">
+  <div class="page-wrapper">
+    <Header />
+    <div class="container markdown-content">
+      <h1>隐私政策</h1>
+      <p class="last-updated"><strong>最后更新日期：</strong>2026年6月16日</p>
+
+      <p>
+        本隐私政策说明了 SSH Config
+        Manager（以下简称"我们"、"我们的"或"本软件"）如何处理您的信息。我们致力于保护您的隐私并确保您数据的安全。
+      </p>
+
+      <h2>1. 数据收集与使用</h2>
+
+      <h3>1.1 不收集数据</h3>
+      <p>
+        SSH Config Manager <strong>不会</strong
+        >收集、传输或分享任何个人信息、使用数据或遥测数据。具体来说：
+      </p>
+      <ul>
+        <li>
+          <strong>无广告</strong> - 本软件不含任何广告或广告追踪器
+        </li>
+        <li>
+          <strong>无分析</strong> - 我们不收集分析数据、崩溃报告或使用统计
+        </li>
+        <li>
+          <strong>无追踪</strong> - 不存在任何追踪机制、Cookie 或用户行为监控
+        </li>
+        <li>
+          <strong>无数据传输</strong> - 本软件在正常运行时不会向外部服务器发送任何数据
+        </li>
+      </ul>
+
+      <h3>1.2 完全离线运行</h3>
+      <p>
+        本软件设计为完全离线运行。试用版和激活版均可在无网络连接的情况下运行。激活本身也可以通过从其他联网环境手动传输激活文件来离线完成。
+      </p>
+
+      <h2>2. SSH 配置数据</h2>
+
+      <h3>2.1 仅本地存储</h3>
+      <p>
+        所有 SSH 配置数据<strong>仅存储在您的本地设备上</strong
+        >，存储位置由您选择。这些数据绝不会离开您的设备，也绝不会上传到任何服务器或第三方服务。
+      </p>
+
+      <h3>2.2 您的责任</h3>
+      <p>
+        您对自己的 SSH
+        配置数据拥有完全的控制权和责任。我们建议您定期备份配置文件。
+      </p>
+
+      <h2>3. 激活与许可</h2>
+
+      <h3>3.1 设备指纹</h3>
+      <p>
+        为了验证和强制执行许可有效性，本软件会生成一个与您的激活密钥绑定的设备指纹。该指纹在您的设备本地生成，仅在您选择使用在线激活时才会在激活过程中传输。
+      </p>
+
+      <h3>3.2 激活数据</h3>
+      <p>当您激活本软件时（无论是在线还是离线），以下信息可能会被处理：</p>
+      <ul>
+        <li>设备指纹（基于硬件的标识符）</li>
+        <li>许可证密钥</li>
+        <li>激活状态</li>
+      </ul>
+      <p>这些信息仅用于许可证验证目的。</p>
+
+      <h3>3.3 数据删除权利</h3>
+      <p>您有权请求：</p>
+      <ul>
+        <li>
+          <strong>许可证解绑：</strong
+          >通过电子邮件联系我们，将您的许可证从设备解绑，以便在另一台设备上激活
+        </li>
+        <li>
+          <strong>完全数据删除：</strong
+          >请求从我们的记录中彻底删除所有与您激活相关的个人数据
+        </li>
+      </ul>
+      <p>
+        如需行使这些权利，请通过 <a data-email data-email-text></a> 联系我们。
+      </p>
+
+      <h2>4. 第三方服务</h2>
+      <p>
+        SSH Config Manager 不集成或依赖任何收集用户数据的第三方服务、API
+        或库。本软件在您的设备上独立运行。
+      </p>
+
+      <h2>5. 儿童隐私</h2>
+      <p>我们的软件不面向 13 岁以下的儿童，我们不会故意收集儿童的个人信息。</p>
+
+      <h2>6. 本隐私政策的变更</h2>
+      <p>
+        我们可能会不时更新本隐私政策。我们将通过更新本政策顶部的"最后更新日期"来通知用户任何重大变更。在变更后继续使用本软件即表示您接受更新后的政策。
+      </p>
+
+      <h2>7. 联系我们</h2>
+      <p>
+        如果您对本隐私政策有任何疑问或希望行使您的数据权利，请通过以下方式联系我们：
+      </p>
+      <p><a data-email data-email-text></a></p>
+
+      <a
+        href={baseUrl}
+        class="back-link"
+        style="display: inline-block; margin-bottom: 24px; color: #667eea; text-decoration: none; font-weight: 500;"
+        >← 返回首页</a
+      >
+
+      <div class="footer">
+        <p>SSH Config Manager</p>
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>
