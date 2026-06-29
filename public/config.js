@@ -1,7 +1,7 @@
 // config.js - Central configuration file
 // Update this email address to change it across all pages
 const CONFIG = {
-  supportEmail: 'ysyjs3@163.com',
+  supportEmail: 'hello@smgr.mctek.site',
   githubRepo: 'https://github.com/realysy/ssh-config-manager-artifact',
   appName: 'SSH Config Manager'
 };
