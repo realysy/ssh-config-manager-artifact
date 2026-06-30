@@ -32,25 +32,27 @@ const seoDescription = "SSH Config Manager: A cross-platform tool for group-base
           </li>
           <li>
             <p>Supports multiple terminal emulators without changing your terminal usage habits.</p>
-            <table>
-              <thead>
-                <tr>
-                  <th align="left">Terminal Emulator</th>
-                  <th align="center">Windows</th>
-                  <th align="center">Linux</th>
-                  <th align="center">macOS</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td align="left"><a href="https://wezterm.org/">Wezterm</a></td><td align="center">✅</td><td align="center">✅</td><td align="center">❔</td></tr>
-                <tr><td align="left"><a href="https://alacritty.org/">Alacritty</a></td><td align="center">✅¹</td><td align="center">✅¹</td><td align="center">❔</td></tr>
-                <tr><td align="left"><a href="https://github.com/kovidgoyal/kitty">Kitty</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">❔</td></tr>
-                <tr><td align="left"><a href="https://github.com/microsoft/terminal">Windows Terminal</a></td><td align="center">✅</td><td align="center">➖</td><td align="center">➖</td></tr>
-                <tr><td align="left"><a href="https://konsole.kde.org/">Konsole</a></td><td align="center">✅¹</td><td align="center">✅²</td><td align="center">❔</td></tr>
-                <tr><td align="left"><a href="https://help.gnome.org/gnome-terminal/index.html">GNOME Terminal</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">➖</td></tr>
-                <tr><td align="left"><a href="https://iterm2.com/">iTerm2</a></td><td align="center">➖</td><td align="center">➖</td><td align="center">❔</td></tr>
-              </tbody>
-            </table>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th align="left">Terminal Emulator</th>
+                    <th align="center">Windows</th>
+                    <th align="center">Linux</th>
+                    <th align="center">macOS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td align="left"><a href="https://wezterm.org/">Wezterm</a></td><td align="center">✅</td><td align="center">✅</td><td align="center">❔</td></tr>
+                  <tr><td align="left"><a href="https://alacritty.org/">Alacritty</a></td><td align="center">✅¹</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                  <tr><td align="left"><a href="https://github.com/kovidgoyal/kitty">Kitty</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">❔</td></tr>
+                  <tr><td align="left"><a href="https://github.com/microsoft/terminal">Windows Terminal</a></td><td align="center">✅</td><td align="center">➖</td><td align="center">➖</td></tr>
+                  <tr><td align="left"><a href="https://konsole.kde.org/">Konsole</a></td><td align="center">✅¹</td><td align="center">✅²</td><td align="center">❔</td></tr>
+                  <tr><td align="left"><a href="https://help.gnome.org/gnome-terminal/index.html">GNOME Terminal</a></td><td align="center">➖</td><td align="center">✅¹</td><td align="center">➖</td></tr>
+                  <tr><td align="left"><a href="https://iterm2.com/">iTerm2</a></td><td align="center">➖</td><td align="center">➖</td><td align="center">❔</td></tr>
+                </tbody>
+              </table>
+            </div>
             <ul>
               <li>✅: Tested and fully supports designed features. Automatically establishes SSH in a new tab if window exists, or creates a new window.</li>
               <li>✅¹: Tested, can successfully launch terminal, but only supports creating connections in new windows.</li>
@@ -98,3 +100,33 @@ const seoDescription = "SSH Config Manager: A cross-platform tool for group-base
     <Footer />
   </div>
 </Layout>
+
+<style>
+  /* 表格整体居中及窄屏滚动容器 */
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto; /* 窄屏时允许横向滚动 */
+    margin-bottom: 16px;
+    
+    /* 使用 Flex 布局让内部的表格整体居中 */
+    display: flex;
+    justify-content: center; 
+  }
+
+  /* 覆盖全局可能存在的 table 强制拉伸样式 */
+  .table-wrapper table {
+    width: auto; /* 根据内容自适应宽度 */
+    max-width: 100%;
+    margin: 0; /* 清除默认 margin，交由父级 flex 居中 */
+    display: table; /* 确保表现为标准表格 */
+  }
+
+  /* 主页链接样式, 去除下划线并应用渐变色 */
+  .home-link {
+    text-decoration: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
