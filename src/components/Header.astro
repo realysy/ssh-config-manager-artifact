@@ -22,7 +22,10 @@ if (isZh) {
 // 确保首页链接正确 (如果替换后为空, 则指向 baseUrl)
 if (langSwitchHref === baseUrl || !langSwitchHref) langSwitchHref = baseUrl;
 
-const langSwitchLabel = isZh ? '🇺🇸 EN' : '🇨🇳 中文';
+// 拆分国旗和文字，以便在窄屏下通过 CSS 隐藏文字
+const langSwitchFlag = isZh ? '🇺🇸' : '🇨🇳';
+const langSwitchText = isZh ? 'EN' : '中文';
+
 const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
 ---
 
@@ -58,7 +61,8 @@ const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
     <button id="theme-toggle" class="icon-button" aria-label="Toggle theme">🌙</button>
 
     <a href={langSwitchHref} class="link-button lang-switch-btn" aria-label="Switch Language">
-      {langSwitchLabel}
+      <span class="lang-flag">{langSwitchFlag}</span>
+      <span class="lang-text">{langSwitchText}</span>
     </a>
   </div>
 </div>
@@ -67,6 +71,11 @@ const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
   .lang-switch-btn {
     font-weight: 500;
     margin-left: 8px;
+  }
+
+  /* 新增：国旗与文字之间增加间距 */
+  .lang-switch-btn .lang-text {
+    margin-left: 6px;
   }
 
   /* 主页链接样式, 去除下划线并应用渐变色 */

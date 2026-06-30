@@ -525,7 +525,7 @@ a:hover {
 
   .top-bar {
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
     padding: 20px 0 16px;
   }
 
@@ -539,6 +539,44 @@ a:hover {
 
   .screenshots-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* 极窄屏幕优化：上下结构，防止溢出，隐藏语言文字 */
+@media (max-width: 520px) {
+  /* 1. 调整为上下结构 */
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* 2. 操作区占满全宽，允许换行，防止悬浮/溢出屏幕外 */
+  .top-actions {
+    width: 100%;
+    gap: 2px; /* 调小按钮间距 */
+  }
+
+  /* 3. 缩小图标按钮尺寸，进一步节省空间 */
+  .icon-button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  /* 4. 缩小链接按钮 (如 Blog, Pricing) 尺寸 */
+  .link-button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  /* 5. 语言按钮隐藏文字，仅显示国旗 */
+  .lang-switch-btn .lang-text {
+    display: none;
+  }
+  
+  .lang-switch-btn {
+    margin-left: 0;
+    padding: 6px 8px;
   }
 }
 
