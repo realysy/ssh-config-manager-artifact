@@ -513,24 +513,30 @@ a:hover {
   cursor: pointer;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 移动端及小屏设备优化 (覆盖所有手机及竖屏平板) */
 @media (max-width: 768px) {
   .page-wrapper {
     padding: 0 16px;
+    overflow-x: hidden; /* 核心防溢出：强制隐藏横向滚动条，防止子元素撑破卡片 */
   }
 
   .container {
     padding: 20px 0;
   }
 
+  /* 1. 顶部导航栏：强制上下结构，彻底解决右侧元素溢出问题 */
   .top-bar {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
     padding: 20px 0 16px;
   }
 
+  /* 2. 操作区：占满全宽，允许内部按钮换行 */
   .top-actions {
+    width: 100%;
     flex-wrap: wrap;
+    gap: 4px; 
   }
 
   .top-bar h1 {
@@ -540,36 +546,8 @@ a:hover {
   .screenshots-grid {
     grid-template-columns: 1fr;
   }
-}
 
-/* 极窄屏幕优化：上下结构，防止溢出，隐藏语言文字 */
-@media (max-width: 520px) {
-  /* 1. 调整为上下结构 */
-  .top-bar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  /* 2. 操作区占满全宽，允许换行，防止悬浮/溢出屏幕外 */
-  .top-actions {
-    width: 100%;
-    gap: 2px; /* 调小按钮间距 */
-  }
-
-  /* 3. 缩小图标按钮尺寸，进一步节省空间 */
-  .icon-button {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
-  }
-
-  /* 4. 缩小链接按钮 (如 Blog, Pricing) 尺寸 */
-  .link-button {
-    padding: 6px 10px;
-    font-size: 13px;
-  }
-
-  /* 5. 语言按钮隐藏文字，仅显示国旗 */
+  /* 3. 移动端统一隐藏语言按钮文字，仅保留国旗，极致节省空间 */
   .lang-switch-btn .lang-text {
     display: none;
   }
@@ -577,6 +555,18 @@ a:hover {
   .lang-switch-btn {
     margin-left: 0;
     padding: 6px 8px;
+  }
+
+  /* 4. 缩小图标和链接按钮尺寸，适应小屏 */
+  .icon-button {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .link-button {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 }
 

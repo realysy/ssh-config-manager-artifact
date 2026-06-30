@@ -41,7 +41,9 @@ const alternateUrl = new URL(alternatePath, Astro.site).toString();
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- viewport-fit=cover 对 iPhone 刘海屏/底部安全区很重要 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- 基础 SEO -->
   <title>{title}</title>
