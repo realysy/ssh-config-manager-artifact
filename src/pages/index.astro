@@ -7,7 +7,7 @@ import mainPage from '@/assets/screenshots/main_page.png';
 import trialPage from '@/assets/screenshots/activation_page-trial.png';
 import activatedPage from '@/assets/screenshots/activation_page-activated.png';
 
-const seoDescription = "SSH Config Manager: A cross-platform tool for group-based visual management of SSH connections. Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
+const seoDescription = "SSH Config Manager (SMGR): A cross-platform tool for group-based visual management of SSH connections. Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
 ---
 
 <Layout 
@@ -108,16 +108,15 @@ const seoDescription = "SSH Config Manager: A cross-platform tool for group-base
     overflow-x: auto; /* 窄屏时允许横向滚动 */
     margin-bottom: 16px;
     
-    /* 使用 Flex 布局让内部的表格整体居中 */
-    display: flex;
-    justify-content: center; 
+    /* 使用 margin auto 代替 flex 居中，防止左侧溢出被裁切 */
+    display: block; 
   }
 
-  /* 覆盖全局可能存在的 table 强制拉伸样式 */
+  /* 表格本体：通过 margin auto 实现居中 */
   .table-wrapper table {
     width: auto; /* 根据内容自适应宽度 */
     max-width: 100%;
-    margin: 0; /* 清除默认 margin，交由父级 flex 居中 */
+    margin: 0 auto; /* 未溢出时水平居中，溢出时自然靠左 */
     display: table; /* 确保表现为标准表格 */
   }
 

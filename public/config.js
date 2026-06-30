@@ -3,7 +3,8 @@
 const CONFIG = {
   supportEmail: 'hello@smgr.mctek.site',
   githubRepo: 'https://github.com/realysy/ssh-config-manager-artifact',
-  appName: 'SSH Config Manager'
+  appName: 'SSH Config Manager',
+  appShortName: 'SMGR'
 };
 
 // Function to set email links across the page

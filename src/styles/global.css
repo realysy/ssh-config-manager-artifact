@@ -515,9 +515,13 @@ a:hover {
 
 /* 响应式设计 - 移动端及小屏设备优化 (覆盖所有手机及竖屏平板) */
 @media (max-width: 768px) {
+  /* 核心防溢出：强制限制内容宽度，防止子元素撑破卡片 */
   .page-wrapper {
     padding: 0 16px;
-    overflow-x: hidden; /* 核心防溢出：强制隐藏横向滚动条，防止子元素撑破卡片 */
+    overflow-x: hidden; /* 强制隐藏横向滚动条 */
+    width: 100%;
+    max-width: 100vw; /* 物理限制：绝不允许超过视口宽度 */
+    box-sizing: border-box;
   }
 
   .container {
@@ -530,17 +534,27 @@ a:hover {
     align-items: flex-start;
     gap: 12px;
     padding: 20px 0 16px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0; /* 🔥 关键：防止 Flex 子项内容撑破容器 */
+    overflow: hidden; /* 兜底裁切溢出内容 */
   }
 
   /* 2. 操作区：占满全宽，允许内部按钮换行 */
   .top-actions {
     width: 100%;
+    max-width: 100%;
     flex-wrap: wrap;
     gap: 4px; 
+    box-sizing: border-box;
+    min-width: 0; /* 🔥 关键：防止内部按钮撑破容器 */
   }
 
   .top-bar h1 {
     font-size: 1.4em;
+    width: 100%;
+    min-width: 0;
+    word-break: break-word; /* 防止长标题撑破容器 */
   }
 
   .screenshots-grid {
@@ -549,7 +563,7 @@ a:hover {
 
   /* 3. 移动端统一隐藏语言按钮文字，仅保留国旗，极致节省空间 */
   .lang-switch-btn .lang-text {
-    display: none;
+    display: none !important; /* 🔥 使用 !important 确保在微信浏览器中生效，防止缓存或优先级问题 */
   }
   
   .lang-switch-btn {
@@ -562,11 +576,13 @@ a:hover {
     width: 34px;
     height: 34px;
     font-size: 16px;
+    flex-shrink: 0; /* 防止按钮被压缩变形 */
   }
 
   .link-button {
     padding: 6px 12px;
     font-size: 13px;
+    flex-shrink: 0;
   }
 }
 
