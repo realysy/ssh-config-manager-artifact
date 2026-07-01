@@ -2,29 +2,33 @@
 // src/pages/blog/[...slug].astro
 // 英文博客详情页面: 显示博客内容、评论等
 
-import Layout from '@/layouts/Layout.astro';
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import Giscus from '@/components/Giscus.astro';
-import { getCollection, render } from 'astro:content';
-import { getAutoCover } from '@/utils/getAutoCover';
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Giscus from "@/components/Giscus.astro";
+import { getCollection, render } from "astro:content";
+import { getAutoCover } from "@/utils/getAutoCover";
+import type { CollectionEntry } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts: CollectionEntry<"blog">[] = await getCollection("blog");
   // 提取所有去重后的核心 Slug, 为每种语言生成完整的路由
   const coreSlugs = new Set<string>();
   for (const post of posts) {
-    const coreSlug = post.id.startsWith('zh/') ? post.id.replace(/^zh\//, '') : post.id;
+    const coreSlug = post.id.startsWith("zh/")
+      ? post.id.replace(/^zh\//, "")
+      : post.id;
     coreSlugs.add(coreSlug);
   }
-  return Array.from(coreSlugs).map(slug => ({ params: { slug } }));
+  return Array.from(coreSlugs).map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const posts = await getCollection('blog');
+const posts: CollectionEntry<"blog">[] = await getCollection("blog");
 
 // 🎯 核心逻辑: 优先找英文, 找不到则回退到中文
-const post = posts.find(p => p.id === slug) || posts.find(p => p.id === `zh/${slug}`);
+const post =
+  posts.find((p) => p.id === slug) || posts.find((p) => p.id === `zh/${slug}`);
 // 消除下面使用 post 时可能 undefined 报错 (实际上永远不会触发)
 if (!post) throw new Error(`[FATAL] Post not found for slug: ${slug}`);
 
@@ -32,9 +36,13 @@ const { Content } = await render(post);
 const autoCover = getAutoCover(post.body);
 
 // 根据实际渲染的文章判断语言 (可能是 en 也可能是 zh)
-const lang = post.id.startsWith('zh/') ? 'zh' : 'en';
-const seoTitle = `${post.data.title} | SSH Config Manager ${lang === 'zh' ? '博客' : 'Blog'}`;
-const seoDesc = post.data.description || (lang === 'zh' ? "关于 SSH Config Manager 的最新开发动态和教程。" : "The latest development updates and tutorials about SSH Config Manager.");
+const lang = post.id.startsWith("zh/") ? "zh" : "en";
+const seoTitle = `${post.data.title} | SSH Config Manager ${lang === "zh" ? "博客" : "Blog"}`;
+const seoDesc =
+  post.data.description ||
+  (lang === "zh"
+    ? "关于 SSH Config Manager 的最新开发动态和教程。"
+    : "The latest development updates and tutorials about SSH Config Manager.");
 ---
 
 <Layout title={seoTitle} lang={lang} description={seoDesc} image={autoCover}>
@@ -43,8 +51,18 @@ const seoDesc = post.data.description || (lang === 'zh' ? "关于 SSH Config Man
     <div class="container">
       <article class="markdown-content blog-post-content">
         <h1>{post.data.title}</h1>
-        <p class="meta" style="color: #656d76; margin-bottom: 24px; font-size: 14px;">
-          📅 {post.data.pubDate ? post.data.pubDate.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+        <p
+          class="meta"
+          style="color: #656d76; margin-bottom: 24px; font-size: 14px;"
+        >
+          📅 {
+            post.data.pubDate
+              ? post.data.pubDate.toLocaleDateString(
+                  lang === "zh" ? "zh-CN" : "en-US",
+                  { year: "numeric", month: "long", day: "numeric" },
+                )
+              : ""
+          }
         </p>
         <Content />
       </article>

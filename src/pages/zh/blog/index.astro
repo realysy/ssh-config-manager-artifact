@@ -2,22 +2,25 @@
 // src/pages/zh/blog/index.astro
 // 中文博客列表页面: 显示博客卡片
 
-import Layout from '@/layouts/Layout.astro';
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import BlogListStyles from '@/components/BlogListStyles.astro'; 
-import BlogCard from '@/components/BlogCard.astro'; // ✨ 引入卡片组件
-import { getGroupedPosts, getDisplayPost } from '@/utils/getPostsByLang';
-import { getAutoCover } from '@/utils/getAutoCover';
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import BlogListStyles from "@/components/BlogListStyles.astro";
+import BlogCard from "@/components/BlogCard.astro"; // ✨ 引入卡片组件
+import { getGroupedPosts, getDisplayPost } from "@/utils/getPostsByLang";
+import { getAutoCover } from "@/utils/getAutoCover";
 
 let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith('/')) baseUrl += '/';
+if (!baseUrl.endsWith("/")) baseUrl += "/";
 
-const groupedPosts = await getGroupedPosts();
+const groupedPosts: Awaited<ReturnType<typeof getGroupedPosts>> =
+  await getGroupedPosts();
 groupedPosts.sort((a, b) => {
-  const postA = getDisplayPost(a, 'zh');
-  const postB = getDisplayPost(b, 'zh');
-  return (postB.data.pubDate?.getTime() || 0) - (postA.data.pubDate?.getTime() || 0);
+  const postA = getDisplayPost(a, "zh");
+  const postB = getDisplayPost(b, "zh");
+  return (
+    (postB.data.pubDate?.getTime() || 0) - (postA.data.pubDate?.getTime() || 0)
+  );
 });
 
 function getColorIndex(str: string) {
@@ -25,7 +28,7 @@ function getColorIndex(str: string) {
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return Math.abs(hash) % 6; 
+  return Math.abs(hash) % 6;
 }
 ---
 
@@ -36,28 +39,30 @@ function getColorIndex(str: string) {
     <Header />
     <div class="container">
       <h1 class="blog-main-title">📝 开发博客</h1>
-      
+
       <div class="blog-grid">
-        {groupedPosts.length > 0 ? (
-          groupedPosts.map((group) => {
-            const post = getDisplayPost(group, 'zh'); 
-            const coverUrl = getAutoCover(post.body);
-            const colorIdx = getColorIndex(group.coreSlug);
-            
-            return (
-              // ✨ 传入中文 lang 和中文 href 前缀
-              <BlogCard 
-                post={post} 
-                coverUrl={coverUrl} 
-                colorIdx={colorIdx} 
-                href={`${baseUrl}zh/blog/${group.coreSlug}/`} 
-                lang="zh" 
-              />
-            );
-          })
-        ) : (
-          <p>暂无文章.</p>
-        )}
+        {
+          groupedPosts.length > 0 ? (
+            groupedPosts.map((group) => {
+              const post = getDisplayPost(group, "zh");
+              const coverUrl = getAutoCover(post.body);
+              const colorIdx = getColorIndex(group.coreSlug);
+
+              return (
+                // ✨ 传入中文 lang 和中文 href 前缀
+                <BlogCard
+                  post={post}
+                  coverUrl={coverUrl}
+                  colorIdx={colorIdx}
+                  href={`${baseUrl}zh/blog/${group.coreSlug}/`}
+                  lang="zh"
+                />
+              );
+            })
+          ) : (
+            <p>暂无文章.</p>
+          )
+        }
       </div>
     </div>
     <Footer />
