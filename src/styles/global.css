@@ -136,7 +136,14 @@ body {
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 12px;
-  white-space: nowrap;
+  
+  /* ✅ 修复竖排问题：允许横排并自适应换行 */
+  white-space: normal;          /* 允许文本换行 */
+  word-break: keep-all;         /* 中文按词语断行，英文整体不拆分（配合下面处理长单词） */
+  overflow-wrap: break-word;    /* 遇到超长英文单词时强制断行 */
+  max-width: 200px;             /* 限制最大宽度，防止过长不换行 */
+  width: max-content;           /* 宽度由内容决定，但不会超过 max-width */
+
   pointer-events: none;
 
   opacity: 0;
@@ -520,9 +527,9 @@ a:hover {
   /* 核心防溢出：强制限制内容宽度，防止子元素撑破卡片 */
   .page-wrapper {
     padding: 0 16px;
-    overflow-x: hidden; /* 强制隐藏横向滚动条 */
+    overflow-x: hidden; /* 保留横向隐藏，但需确保 tooltip 不会被裁剪 */
     width: 100%;
-    max-width: 100vw; /* 物理限制：绝不允许超过视口宽度 */
+    max-width: 100vw;
     box-sizing: border-box;
   }
 
@@ -530,7 +537,7 @@ a:hover {
     padding: 20px 0;
   }
 
-  /* 1. 顶部导航栏：强制上下结构，彻底解决右侧元素溢出问题 */
+  /* 1. 顶部导航栏 */
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
@@ -538,18 +545,22 @@ a:hover {
     padding: 20px 0 16px;
     width: 100%;
     box-sizing: border-box;
-    min-width: 0; /* 🔥 关键：防止 Flex 子项内容撑破容器 */
-    overflow: hidden; /* 兜底裁切溢出内容 */
+    min-width: 0;
+    /* ❌ 删除或注释掉 overflow: hidden; */ 
+    /* overflow: hidden; */ 
+    /* 改为 */
+    overflow: visible; /* ✅ 允许 tooltip 溢出显示 */
   }
 
-  /* 2. 操作区：占满全宽，允许内部按钮换行 */
+  /* 2. 操作区 */
   .top-actions {
     width: 100%;
     max-width: 100%;
     flex-wrap: wrap;
-    gap: 4px; 
+    gap: 4px;
     box-sizing: border-box;
-    min-width: 0; /* 🔥 关键：防止内部按钮撑破容器 */
+    min-width: 0;
+    overflow: visible; /* 同样确保内部 tooltip 可见 */
   }
 
   .top-bar h1 {
@@ -579,6 +590,12 @@ a:hover {
     height: 34px;
     font-size: 16px;
     flex-shrink: 0; /* 防止按钮被压缩变形 */
+  }
+
+  .icon-button::after {
+    max-width: 80vw;          /* 使用视口宽度，自动适应各种手机 */
+    font-size: 11px;          /* 可稍调小 */
+    padding: 5px 8px;
   }
 
   .link-button {
