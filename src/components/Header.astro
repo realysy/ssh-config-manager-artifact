@@ -1,33 +1,22 @@
 ---
 // src/components/Header.astro
 
+import { getLangFromPath, localizePath } from '@/utils/i18n';
+
 // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 
-// 获取当前相对于 baseUrl 的纯净路径 (例如 "blog/" 或 "zh/blog/")
-let currentRelativePath = Astro.url.pathname.replace(baseUrl, '');
-if (currentRelativePath.startsWith('/')) currentRelativePath = currentRelativePath.substring(1);
+const currentPath = Astro.url.pathname;
+const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
 
-// 兼容有无尾部斜杠：'zh' 或 'zh/' 都被视为中文页面
-const isZh = currentRelativePath === 'zh' || currentRelativePath.startsWith('zh/');
-
-// 根据当前语言生成首页链接
+// 🌍 首页链接（根据当前语言）
 const homeHref = isZh ? `${baseUrl}zh/` : baseUrl;
 
 // 动态生成语言切换链接: 保留当前所在的路由层级
-let langSwitchHref;
-if (isZh) {
-  // 从中文切到英文, 去掉 'zh/' 前缀（也处理无斜杠的 'zh'）
-  const enPath = currentRelativePath.startsWith('zh/')
-    ? currentRelativePath.substring(3)  // 去掉 "zh/"
-    : '';  // 当前就是 "zh"，英文对应首页
-  langSwitchHref = baseUrl + enPath;
-} else {
-  // 从英文切到中文, 加上 'zh/' 前缀
-  langSwitchHref = baseUrl + 'zh/' + currentRelativePath;
-}
-if (!langSwitchHref || langSwitchHref === baseUrl) langSwitchHref = baseUrl;
+const langSwitchHref = isZh
+  ? localizePath(currentPath, 'en', baseUrl)
+  : localizePath(currentPath, 'zh', baseUrl);
 
 const langSwitchFlag = isZh ? '🇺🇸' : '🇨🇳';
 const langSwitchText = isZh ? 'EN' : '中文';

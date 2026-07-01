@@ -1,19 +1,19 @@
 ---
 // src/components/Footer.astro
 
+import { getLangFromPath } from '@/utils/i18n';
+
 // 获取当前路径判断语言
 const currentPath = Astro.url.pathname;
-const isZh = currentPath.includes('/zh/');
+const isZh = getLangFromPath(currentPath, import.meta.env.BASE_URL) === 'zh';
 const langPrefix = isZh ? 'zh/' : '';
 
-// 获取 base 路径, 用于拼接 public 目录下的静态资源
 let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+if (!baseUrl.endsWith('/')) baseUrl += '/';
 ---
 
 <footer class="footer">
   <div class="footer-links">
-    <!-- 动态跳转到当前语言的隐私政策与使用条款 -->
     <a href={`${baseUrl}${langPrefix}templates/privacy/`}>
       {isZh ? "隐私政策" : "Privacy Policy"}
     </a>

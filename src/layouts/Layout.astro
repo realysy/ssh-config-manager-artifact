@@ -1,12 +1,9 @@
 ---
-// 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
-import '@/styles/global.css';
-// 导入默认分享封面图
-import defaultOgImage from '@/assets/screenshots/main_page.png';
+// src/layouts/Layout.astro
 
-// 获取 base 路径, 用于拼接 public 目录下的静态资源
-let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+import '@/styles/global.css';  // 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
+import { getLangFromPath } from '@/utils/i18n';
+import defaultOgImage from '@/assets/screenshots/main_page.png'; // 导入默认分享封面图
 
 // 定义页面属性接口, 接收标题和语言
 export interface Props {
@@ -22,18 +19,26 @@ const {
   image = defaultOgImage.src  // 默认分享封面
 } = Astro.props;
 
+
+// 获取 base 路径, 用于拼接 public 目录下的静态资源
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+
+const currentPath = Astro.url.pathname;
+const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
+
+// 动态生成 Hreflang 交替链接, 假设英文和中文的路由结构是对称的 (例如 /blog/ 和 /zh/blog/)
+const alternatePath = isZh
+  ? currentPath.replace('/zh/', '/').replace('/zh', '/')
+  : `/zh${currentPath}`;
+const alternateUrl = new URL(alternatePath, Astro.site).toString();
+
 // 获取当前完整 URL，用于生成 canonical 和 OG 链接
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const canonicalUrl = new URL(currentPath, Astro.site).toString();
 
 // 动态生成完整的 OG 图片 URL
 const ogImageUrl = new URL(image, Astro.site).toString();
 
-// 动态生成 Hreflang (多语言交替链接)
-// 假设英文和中文的路由结构是对称的 (例如 /blog/ 和 /zh/blog/)
-const currentPath = Astro.url.pathname.replace(baseUrl, '/');
-const isZh = currentPath.startsWith('/zh/');
-const alternatePath = isZh ? currentPath.replace('/zh/', '/') : `/zh${currentPath}`;
-const alternateUrl = new URL(alternatePath, Astro.site).toString();
 ---
 
 <!DOCTYPE html>
