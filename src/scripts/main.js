@@ -1,3 +1,5 @@
+// src/scripts/main.js
+
 // 页面加载完成后执行
 document.addEventListener('DOMContentLoaded', () => {
   // 1. 从 config.js 读取邮箱地址并更新 Support 按钮

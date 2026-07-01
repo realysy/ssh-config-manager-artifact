@@ -1,4 +1,4 @@
-/**
+/** src/utils/extractTags.ts
  * 极客版自动标签提取器
  * 自动从 Markdown 正文中提取代码块语言、技术缩写和预设技术栈
  */

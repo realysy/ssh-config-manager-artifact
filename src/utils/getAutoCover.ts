@@ -1,4 +1,6 @@
-// ✨ 终极精简版：彻底抛弃物理文件读取，直接提取 Astro 处理后的最终 URL
+/** src/utils/getAutoCover.ts
+ * 抛弃物理文件读取，直接提取 Astro 处理后的最终 URL
+ */
 
 // 预加载 src/assets 下的所有图片 (仅作为兜底查表使用)
 interface ImageModule {

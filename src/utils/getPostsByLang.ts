@@ -1,3 +1,7 @@
+/** src/utils/getPostsByLang.ts
+ * 根据语言获取博客
+ */
+
 import { getCollection } from 'astro:content';
 
 export interface GroupedPost {

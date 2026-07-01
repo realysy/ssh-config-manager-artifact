@@ -1,4 +1,8 @@
-import { defineCollection, z } from 'astro:content';
+/** src/content.config.ts
+ */
+
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 // 定义 blog 集合, 使用 glob 自动扫描 src/content/blog 下的所有 md 文件
