@@ -1,7 +1,10 @@
 ---
+// src/components/Footer.astro
+
 // 获取当前路径判断语言
 const currentPath = Astro.url.pathname;
 const isZh = currentPath.includes('/zh/');
+const langPrefix = isZh ? 'zh/' : '';
 
 // 获取 base 路径, 用于拼接 public 目录下的静态资源
 let baseUrl = import.meta.env.BASE_URL;
@@ -10,9 +13,13 @@ if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 bas
 
 <footer class="footer">
   <div class="footer-links">
-    <!-- 拼接 public/templates/ 下的静态页面路径 -->
-    <a href={`${baseUrl}templates/privacy/`}>{isZh ? "隐私政策" : "Privacy Policy"}</a>
-    <a href={`${baseUrl}templates/terms/`}>{isZh ? "使用条款" : "Terms of Use"}</a>
+    <!-- 动态跳转到当前语言的隐私政策与使用条款 -->
+    <a href={`${baseUrl}${langPrefix}templates/privacy/`}>
+      {isZh ? "隐私政策" : "Privacy Policy"}
+    </a>
+    <a href={`${baseUrl}${langPrefix}templates/terms/`}>
+      {isZh ? "使用条款" : "Terms of Use"}
+    </a>
   </div>
   <p>{isZh ? "SSH Config Manager  (SMGR) - 高效管理您的 SSH 连接" : "SSH Config Manager  (SMGR) - Manage your SSH connections efficiently"}</p>
   <p style="margin-top: 8px; font-size: 13px;">© All rights reserved. <a

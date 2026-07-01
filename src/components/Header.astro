@@ -1,4 +1,6 @@
 ---
+// src/components/Header.astro
+
 // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
@@ -7,31 +9,33 @@ if (!baseUrl.endsWith('/')) baseUrl += '/';
 let currentRelativePath = Astro.url.pathname.replace(baseUrl, '');
 if (currentRelativePath.startsWith('/')) currentRelativePath = currentRelativePath.substring(1);
 
-const isZh = currentRelativePath.startsWith('zh/');
+// 兼容有无尾部斜杠：'zh' 或 'zh/' 都被视为中文页面
+const isZh = currentRelativePath === 'zh' || currentRelativePath.startsWith('zh/');
+
+// 根据当前语言生成首页链接
+const homeHref = isZh ? `${baseUrl}zh/` : baseUrl;
 
 // 动态生成语言切换链接: 保留当前所在的路由层级
 let langSwitchHref;
 if (isZh) {
-  // 从中文切到英文, 去掉 'zh/'
-  langSwitchHref = baseUrl + currentRelativePath.replace(/^zh\//, '');
+  // 从中文切到英文, 去掉 'zh/' 前缀（也处理无斜杠的 'zh'）
+  const enPath = currentRelativePath.startsWith('zh/')
+    ? currentRelativePath.substring(3)  // 去掉 "zh/"
+    : '';  // 当前就是 "zh"，英文对应首页
+  langSwitchHref = baseUrl + enPath;
 } else {
-  // 从英文切到中文, 加上 'zh/'
+  // 从英文切到中文, 加上 'zh/' 前缀
   langSwitchHref = baseUrl + 'zh/' + currentRelativePath;
 }
+if (!langSwitchHref || langSwitchHref === baseUrl) langSwitchHref = baseUrl;
 
-// 确保首页链接正确 (如果替换后为空, 则指向 baseUrl)
-if (langSwitchHref === baseUrl || !langSwitchHref) langSwitchHref = baseUrl;
-
-// 拆分国旗和文字，以便在窄屏下通过 CSS 隐藏文字
 const langSwitchFlag = isZh ? '🇺🇸' : '🇨🇳';
 const langSwitchText = isZh ? 'EN' : '中文';
-
-const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
 ---
 
 <div class="top-bar">
   <h1>
-    <a href={baseUrl} class="home-link">
+    <a href={homeHref} class="home-link">
       <img src={`${baseUrl}favicon.ico`} alt="" style="width:1em;height:1em;vertical-align:-0.1em;margin-right:0.4em;" />
       SSH Config Manager
     </a>
@@ -42,9 +46,9 @@ const blogHref = isZh ? `${baseUrl}zh/blog/` : `${baseUrl}blog/`;
       <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
     </a>
 
-    <a href={blogHref} class="icon-button" data-tooltip={isZh ? "博客" : "Blog"} aria-label="Blog">📝</a>
+    <a href={`${homeHref}/blog/`} class="icon-button" data-tooltip={isZh ? "博客" : "Blog"} aria-label="Blog">📝</a>
 
-    <a href={`${baseUrl}#pricing`} class="icon-button" data-tooltip={isZh ? "定价" : "Pricing"} aria-label="Pricing">💎</a>
+    <a href={`${homeHref}#pricing`} class="icon-button" data-tooltip={isZh ? "定价" : "Pricing"} aria-label="Pricing">💎</a>
 
     <a href="https://github.com/realysy/ssh-config-manager-artifact" class="icon-button"
       data-tooltip="GitHub: issues and version releases" target="_blank" aria-label="GitHub Repository">
