@@ -93,9 +93,6 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
   <script is:inline src={`${baseUrl}config.js`}></script>
   
-  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
-  <script is:inline src={`${baseUrl}config.js`}></script>
-  
   <!-- 🌍 注入服务端预计算的双语路径, 供前端重定向使用 -->
   <script is:inline set:html={i18nScript}></script>
   <!-- 🌍 初次访问时自动检测浏览器语言并重定向 (早期执行, 避免 FOUC) -->
