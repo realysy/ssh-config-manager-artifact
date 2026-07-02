@@ -2,7 +2,7 @@
 // src/layouts/Layout.astro
 
 import '@/styles/global.css';  // 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
-import { getLangFromPath } from '@/utils/i18n';
+import { getLangFromPath, localizePath } from '@/utils/i18n';
 import defaultOgImage from '@/assets/screenshots/main_page.png'; // 导入默认分享封面图
 
 // 定义页面属性接口, 接收标题和语言
@@ -22,15 +22,18 @@ const {
 
 // 获取 base 路径, 用于拼接 public 目录下的静态资源
 let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith('/')) baseUrl += '/';  // 🛡️ 防呆处理: 确保 baseUrl 永远以斜杠结尾
+if (!baseUrl.endsWith('/')) baseUrl += '/';
 
 const currentPath = Astro.url.pathname;
-const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
+const currentLang = getLangFromPath(currentPath, baseUrl);
+const isZh = currentLang === 'zh';
 
-// 动态生成 Hreflang 交替链接, 假设英文和中文的路由结构是对称的 (例如 /blog/ 和 /zh/blog/)
-const alternatePath = isZh
-  ? currentPath.replace('/zh/', '/').replace('/zh', '/')
-  : `/zh${currentPath}`;
+// 🌟 核心优化: 在服务端预先计算好双语的绝对路径, 彻底告别前端重复造轮子
+const zhPath = localizePath(currentPath, 'zh', baseUrl);
+const enPath = localizePath(currentPath, 'en', baseUrl);
+
+// 动态生成 Hreflang 交替链接 (复用 localizePath)
+const alternatePath = localizePath(currentPath, isZh ? 'en' : 'zh', baseUrl);
 const alternateUrl = new URL(alternatePath, Astro.site).toString();
 
 // 获取当前完整 URL，用于生成 canonical 和 OG 链接
@@ -39,6 +42,12 @@ const canonicalUrl = new URL(currentPath, Astro.site).toString();
 // 动态生成完整的 OG 图片 URL
 const ogImageUrl = new URL(image, Astro.site).toString();
 
+// 生成注入前端的 JS 代码片段 - 使用 JSON.stringify 确保路径安全, 后续配合 set:html 避免 HTML 实体转义问题
+const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({ 
+  zh: zhPath, 
+  en: enPath, 
+  current: currentLang 
+})};`;
 ---
 
 <!DOCTYPE html>
@@ -81,6 +90,40 @@ const ogImageUrl = new URL(image, Astro.site).toString();
   <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
   <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
   <script is:inline src={`${baseUrl}config.js`}></script>
+  
+  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
+  <script is:inline src={`${baseUrl}config.js`}></script>
+  
+  <!-- 🌍 注入服务端预计算的双语路径, 供前端重定向使用 -->
+  <script is:inline set:html={i18nScript}></script>
+  <!-- 🌍 初次访问时自动检测浏览器语言并重定向 (早期执行, 避免 FOUC) -->
+  <script is:inline>
+    (function() {
+      const paths = window.SMGR_I18N_PATHS;
+      if (!paths) return;
+
+      const currentLang = paths.current;
+      let targetLang = null;
+
+      // 1. 优先使用用户缓存的语言偏好
+      const cached = localStorage.getItem('smgr_lang');
+      if (cached === 'zh' || cached === 'en') {
+        if (cached !== currentLang) targetLang = cached;
+      } else {
+        // 2. 无缓存时检测浏览器语言 (非中英语言默认英语)
+        const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        const preferZh = navLang.startsWith('zh') || navLang.startsWith('cn');
+        const browserLang = preferZh ? 'zh' : 'en';
+        
+        if (browserLang !== currentLang) targetLang = browserLang;
+      }
+
+      // 3. 执行重定向 (保留原有的 query 和 hash)
+      if (targetLang && paths[targetLang]) {
+        window.location.replace(paths[targetLang] + location.search + location.hash);
+      }
+    })();
+  </script>
 </head>
 
 <body>

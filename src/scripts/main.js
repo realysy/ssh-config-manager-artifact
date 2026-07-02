@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. 初始化亮暗主题切换
   initThemeToggle();
+  
+  // 4. 语言切换按钮: 点击时缓存用户选择, 后续访问优先使用缓存
+  const langSwitchBtn = document.querySelector('.lang-switch-btn');
+  if (langSwitchBtn) {
+    langSwitchBtn.addEventListener('click', () => {
+      // 从 href 中提取目标语言: 包含 /zh/ 或以 /zh 结尾则为中文, 否则为英文
+      const href = langSwitchBtn.href;
+      const targetLang = (href.includes('/zh/') || href.endsWith('/zh') || href.endsWith('/zh/')) ? 'zh' : 'en';
+      localStorage.setItem('smgr_lang', targetLang);
+      // 不阻止默认行为, 让链接正常跳转
+    });
+  }
 });
 
 // ========== Lightbox 灯箱功能 ==========
