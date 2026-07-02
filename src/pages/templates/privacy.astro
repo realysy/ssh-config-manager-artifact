@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { SITE_CONFIG } from '@/utils/config';
 
 // 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
@@ -16,7 +17,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
       <p class="last-updated"><strong>Last Updated:</strong> June 16, 2026</p>
 
       <p>
-        This Privacy Policy describes how SSH Config Manager ("we", "our", or
+        This Privacy Policy describes how {SITE_CONFIG.appName} ({SITE_CONFIG.appShortName}, "we", "our", or
         "the software") handles your information. We are committed to protecting
         your privacy and ensuring the security of your data.
       </p>
@@ -25,7 +26,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
       <h3>1.1 No Data Collection</h3>
       <p>
-        SSH Config Manager does <strong>not</strong> collect, transmit, or share any
+        {SITE_CONFIG.appName} does <strong>not</strong> collect, transmit, or share any
         personal information, usage data, or telemetry. Specifically:
       </p>
       <ul>
@@ -115,7 +116,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
       <h2>4. Third-Party Services</h2>
       <p>
-        SSH Config Manager does not integrate with or rely on any third-party
+        {SITE_CONFIG.appName} does not integrate with or rely on any third-party
         services, APIs, or libraries that collect user data. The software
         operates independently on your device.
       </p>

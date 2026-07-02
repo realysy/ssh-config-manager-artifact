@@ -1,6 +1,6 @@
 ---
 // src/components/Footer.astro
-
+import { SITE_CONFIG } from '@/utils/config';
 import { getLangFromPath } from '@/utils/i18n';
 
 // 获取当前路径判断语言
@@ -21,8 +21,12 @@ if (!baseUrl.endsWith('/')) baseUrl += '/';
       {isZh ? "使用条款" : "Terms of Use"}
     </a>
   </div>
-  <p>{isZh ? "SSH Config Manager  (SMGR) - 高效管理您的 SSH 连接" : "SSH Config Manager  (SMGR) - Manage your SSH connections efficiently"}</p>
+  <p>
+    {isZh 
+      ? `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) - 高效管理您的 SSH 连接` 
+      : `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) - Manage your SSH connections efficiently`}
+  </p>
   <p style="margin-top: 8px; font-size: 13px;">© All rights reserved. <a
-      href="https://github.com/realysy/ssh-config-manager-artifact"
-      target="_blank">github.com/realysy/ssh-config-manager-artifact</a></p>
+      href={SITE_CONFIG.githubRepo}
+      target="_blank">{SITE_CONFIG.githubRepo}</a></p>
 </footer>

@@ -1,14 +1,11 @@
-// config.js - Central configuration file
-// Update this email address to change it across all pages
+/**
+ * public/config.js
+ * 文件用于在客户端网页动态注入不想被爬虫的信息, 如 Email. 
+ * 因为爬虫无法执行JS, 也就无法获取动态注入的信息.
+ */
 const CONFIG = {
   supportEmail: 'hello@smgr.mctek.site',
-  githubRepo: 'https://github.com/realysy/ssh-config-manager-artifact',
-  appName: 'SSH Config Manager',
-  appShortName: 'SMGR'
 };
-
-// 将配置暴露到 window 全局对象, 方便其他脚本 (如 main.js) 读取
-window.SMGR_CONFIG = CONFIG;
 
 // Function to set email links across the page
 document.addEventListener('DOMContentLoaded', function () {

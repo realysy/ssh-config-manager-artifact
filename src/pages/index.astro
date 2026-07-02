@@ -5,16 +5,19 @@
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/main_page.png';
 import trialPage from '@/assets/screenshots/activation_page-trial.png';
 import activatedPage from '@/assets/screenshots/activation_page-activated.png';
 
-const seoDescription = "SSH Config Manager (SMGR): A cross-platform tool for group-based visual management of SSH connections. Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
+const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
+    "A cross-platform tool for group-based visual management of SSH connections. " + 
+    "Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
 ---
 
 <Layout 
-  title="SSH Config Manager - Visual SSH Management Tool" 
+  title=`${SITE_CONFIG.appName} - Visual SSH Management Tool` 
   lang="en"
   description={seoDescription}
 >
@@ -22,7 +25,7 @@ const seoDescription = "SSH Config Manager (SMGR): A cross-platform tool for gro
     <Header />
     <div class="container">
       <div class="markdown-content">
-        <p>SSH Config Manager (SMGR): A tool for group-based visual management of SSH connection information, capable of integrating with modern terminal emulators and system built-in terminals, eliminating the need to memorize connection host names/addresses/shortcuts.</p>
+        <p>{SITE_CONFIG.appName} ({SITE_CONFIG.appShortName}): A tool for group-based visual management of SSH connection information, capable of integrating with modern terminal emulators and system built-in terminals, eliminating the need to memorize connection host names/addresses/shortcuts.</p>
 
         <h2>✨ Key Features</h2>
         <ul>

@@ -3,6 +3,7 @@
 
 import '@/styles/global.css';  // 引入全局样式, Astro 会自动将其注入到最终的 HTML 中
 import { getLangFromPath, localizePath } from '@/utils/i18n';
+import { SITE_CONFIG } from '@/utils/config';
 import defaultOgImage from '@/assets/screenshots/main_page.png'; // 导入默认分享封面图
 
 // 定义页面属性接口, 接收标题和语言
@@ -15,7 +16,9 @@ export interface Props {
 const { 
   title, 
   lang = 'en', 
-  description = 'SSH Config Manager (SMGR): A tool for group-based visual management of SSH connection information, integrating with modern terminal emulators.',
+  description = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
+    'A tool for group-based visual management of SSH connection information, ' + 
+    'integrating with modern terminal emulators.',
   image = defaultOgImage.src  // 默认分享封面
 } = Astro.props;
 

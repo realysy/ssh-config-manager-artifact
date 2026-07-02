@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { SITE_CONFIG } from '@/utils/config';
 
 // 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
@@ -24,7 +25,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
       <h3>1.1 不收集数据</h3>
       <p>
-        SSH Config Manager <strong>不会</strong
+        {SITE_CONFIG.appName} <strong>不会</strong
         >收集、传输或分享任何个人信息、使用数据或遥测数据。具体来说：
       </p>
       <ul>
@@ -95,7 +96,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
       <h2>4. 第三方服务</h2>
       <p>
-        SSH Config Manager 不集成或依赖任何收集用户数据的第三方服务、API
+        {SITE_CONFIG.appName} 不集成或依赖任何收集用户数据的第三方服务、API
         或库。本软件在您的设备上独立运行。
       </p>
 

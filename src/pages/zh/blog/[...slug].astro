@@ -8,6 +8,7 @@ import Footer from "@/components/Footer.astro";
 import Giscus from "@/components/Giscus.astro";
 import { getCollection, render } from "astro:content";
 import { getAutoCover } from "@/utils/getAutoCover";
+import { SITE_CONFIG } from '@/utils/config';
 import type { CollectionEntry } from "astro:content";
 
 export async function getStaticPaths() {
@@ -35,12 +36,12 @@ const { Content } = await render(post);
 const autoCover = getAutoCover(post.body);
 
 const lang = post.id.startsWith("zh/") ? "zh" : "en";
-const seoTitle = `${post.data.title} | SSH Config Manager ${lang === "zh" ? "博客" : "Blog"}`;
+const seoTitle = `${post.data.title} | ${SITE_CONFIG.appName} ${lang === "zh" ? "博客" : "Blog"}`;
 const seoDesc =
   post.data.description ||
   (lang === "zh"
-    ? "关于 SSH Config Manager 的最新开发动态和教程。"
-    : "The latest development updates and tutorials about SSH Config Manager.");
+    ? `关于 ${SITE_CONFIG.appName} 的最新开发动态和教程。`
+    : `The latest development updates and tutorials about ${SITE_CONFIG.appName}.`);
 ---
 
 <Layout title={seoTitle} lang={lang} description={seoDesc} image={autoCover}>
