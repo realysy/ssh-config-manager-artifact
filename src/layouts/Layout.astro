@@ -89,8 +89,12 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   
   <link rel="sitemap" href={`${baseUrl}sitemap-index.xml`} />
 
-  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
+
+  <!-- 架构说明: 渲染前阻塞脚本区 -->
+  <!-- 以下 is:inline 脚本在 HTML 解析时立即执行, 用于防止页面闪烁 (FOUC) 和处理全局配置 -->
   <!-- is:inline 告诉 Astro 不要打包此脚本, 保持原样输出到 HTML 中 -->
+
+  <!-- 引入配置文件, 包含 window.supportEmail 等变量 -->
   <script is:inline src={`${baseUrl}config.js`}></script>
   
   <!-- 🌍 注入服务端预计算的双语路径, 供前端重定向使用 -->
@@ -123,6 +127,8 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
       }
     })();
   </script>
+
+
 </head>
 
 <body>

@@ -7,6 +7,9 @@ const CONFIG = {
   appShortName: 'SMGR'
 };
 
+// 将配置暴露到 window 全局对象, 方便其他脚本 (如 main.js) 读取
+window.SMGR_CONFIG = CONFIG;
+
 // Function to set email links across the page
 document.addEventListener('DOMContentLoaded', function () {
   // Update all elements with data-email attribute

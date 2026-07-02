@@ -1,20 +1,20 @@
-// src/scripts/main.js
+/**
+ * src/scripts/main.js
+ * 架构说明: 
+ * 本文件由 Astro 打包, 在 <body> 底部异步加载.
+ * 主要负责"用户交互"相关的逻辑 (如主题切换, 灯箱, 语言缓存).
+ * 而"页面渲染前"的相关逻辑 (如语言重定向, 防 FOUC) 在 Layout.astro 的 <head> 中以内联脚本执行.
+ */
 
 // 页面加载完成后执行
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. 从 config.js 读取邮箱地址并更新 Support 按钮
-  const supportBtn = document.getElementById('support-btn');
-  if (supportBtn && typeof window.supportEmail === 'string') {
-    supportBtn.href = `mailto:${window.supportEmail}`;
-  }
-
-  // 2. 初始化截图 Lightbox (灯箱) 功能
+  // 初始化截图 Lightbox (灯箱) 功能
   initLightbox();
 
-  // 3. 初始化亮暗主题切换
+  // 初始化亮暗主题切换
   initThemeToggle();
   
-  // 4. 语言切换按钮: 点击时缓存用户选择, 后续访问优先使用缓存
+  // 语言切换按钮: 点击时缓存用户选择, 后续访问优先使用缓存
   const langSwitchBtn = document.querySelector('.lang-switch-btn');
   if (langSwitchBtn) {
     langSwitchBtn.addEventListener('click', () => {
