@@ -1,0 +1,27 @@
+# SSH Config Manager
+
+> SSH Config Manager is a cross-platform, group-based visual management tool for SSH connection information. It integrates seamlessly with modern terminal emulators and system built-in terminals, eliminating the need to memorize host names, addresses, or shortcuts.
+
+## Key Features
+- **Visual Group Management**: Manage SSH connections in visual groups. No need to memorize complex terminal commands.
+- **100% Compatible Format**: Group files use the exact same format as `~/.ssh/config`. You can easily migrate or use them manually via `ssh -F ~/my_ssh_config/test_group.config my_host`. Custom comments and unsupported fields are perfectly preserved.
+- **Modern Terminal Integration**: Supports launching SSH sessions directly in modern terminal emulators without changing your workflow habits:
+  - Wezterm (Windows, Linux)
+  - Alacritty (Windows, Linux)
+  - Kitty (Linux)
+- **System Terminal Support**: Also supports Windows Terminal, GNOME Terminal, KDE Konsole, and iTerm2.
+- **High Performance**: Built with Python Flask and compiled via Nuitka into a portable binary. Memory usage is extremely low, comparable to native C++ applications, avoiding the heavy footprint of Electron apps.
+- **Data Safety**: Fully offline-capable. No internet required, no risk of leaking SSH credentials, IPs, or other sensitive information.
+
+## Cross-Platform Support
+- **x86_64**: Windows 10+, Linux (glibc 2.31+ like Ubuntu 20.04/Debian 11), macOS 11+
+- **arm64**: macOS (Apple Silicon)
+
+## Pricing & Availability
+- Supported payment methods: Paypal, Credit Card & Debit Card for international users, and Taobao/Alipay mainland China users.
+- You can purchase via the software's Main interface -> Activation button -> Scan QR code.
+
+## Official Links
+- [Github Repo Release to download](https://github.com/realysy/ssh-config-manager-artifact/releases/)
+- [Homepage & Documentation](https://www.mctek.site/ssh-config-manager-artifact/)
+- [Development Blog](https://www.mctek.site/ssh-config-manager-artifact/blog/)
