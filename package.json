@@ -18,6 +18,7 @@
     "sharp": "^0.35.2"
   },
   "devDependencies": {
+    "astro-compress": "^2.4.1",
     "image-size": "^2.0.2"
   }
 }

@@ -3,6 +3,8 @@ import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+// 🛡️ 引入压缩与清理注释插件
+import compress from 'astro-compress'; 
 
 // 提取 base 配置，方便后续在 serialize 中复用
 const SITE_BASE = '/ssh-config-manager-artifact';
@@ -178,5 +180,6 @@ export default defineConfig({
         return item;
       },
     }),
+    compress(),
   ],
 });
