@@ -32,12 +32,10 @@ const isZh = currentLang === 'zh';
 const zhPath = localizePath(currentPath, 'zh', baseUrl);
 const enPath = localizePath(currentPath, 'en', baseUrl);
 
-// 动态生成 Hreflang 交替链接 (复用 localizePath)
-const alternatePath = localizePath(currentPath, isZh ? 'en' : 'zh', baseUrl);
-const alternateUrl = new URL(alternatePath, Astro.site).toString();
-
 // 获取当前完整 URL，用于生成 canonical 和 OG 链接
-const canonicalUrl = new URL(currentPath, Astro.site).toString();
+const canonicalUrl = isZh ? zhPath : enPath;
+// 生成 Hreflang 交替链接
+const alternateUrl = isZh ? enPath : zhPath;
 
 // 动态生成完整的 OG 图片 URL
 const ogImageUrl = new URL(image, Astro.site).toString();
@@ -67,7 +65,7 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   <!-- 多语言 Hreflang 标签 (告诉搜索引擎双语对应关系) -->
   <link rel="alternate" hreflang={lang} href={canonicalUrl} />
   <link rel="alternate" hreflang={isZh ? 'en' : 'zh'} href={alternateUrl} />
-  <link rel="alternate" hreflang="x-default" href={new URL(baseUrl, Astro.site).toString()} />
+  <link rel="alternate" hreflang="x-default" href={enPath} />
 
   <!-- Open Graph / 社交媒体分享卡片 -->
   <meta property="og:type" content="website" />
