@@ -14,6 +14,8 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   padding: 20px 5px;
+  /* 防溢出兜底: 防止任何绝对定位元素(如 tooltip)撑破屏幕产生横向滚动条 */
+  overflow-x: hidden; 
 }
 
 /* 整体内容区域, 使用白色背景卡片 */
@@ -529,7 +531,7 @@ a:hover {
     padding: 0 16px;
     overflow-x: hidden; /* 保留横向隐藏，但需确保 tooltip 不会被裁剪 */
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
     box-sizing: border-box;
   }
 
@@ -537,7 +539,7 @@ a:hover {
     padding: 20px 0;
   }
 
-  /* 1. 顶部导航栏 */
+  /* 顶部导航栏 */
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
@@ -552,7 +554,7 @@ a:hover {
     overflow: visible; /* ✅ 允许 tooltip 溢出显示 */
   }
 
-  /* 2. 操作区 */
+  /* 操作区 */
   .top-actions {
     width: 100%;
     max-width: 100%;
@@ -574,9 +576,10 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  /* 3. 移动端统一隐藏语言按钮文字，仅保留国旗，极致节省空间 */
+  /* 移动端统一隐藏语言按钮文字，仅保留国旗，极致节省空间 */
   .lang-switch-btn .lang-text {
-    display: none !important; /* 🔥 使用 !important 确保在微信浏览器中生效，防止缓存或优先级问题 */
+    /* 使用 !important 确保在微信浏览器中生效，防止缓存或优先级问题 */
+    display: none !important;
   }
   
   .lang-switch-btn {
@@ -584,7 +587,7 @@ a:hover {
     padding: 6px 8px;
   }
 
-  /* 4. 缩小图标和链接按钮尺寸，适应小屏 */
+  /* 缩小图标和链接按钮尺寸，适应小屏 */
   .icon-button {
     width: 34px;
     height: 34px;
@@ -593,8 +596,10 @@ a:hover {
   }
 
   .icon-button::after {
-    max-width: 80vw;          /* 使用视口宽度，自动适应各种手机 */
-    font-size: 11px;          /* 可稍调小 */
+    /* 修复: 使用 min() 限制 tooltip 最大宽度, 防止靠近边缘时撑破屏幕 */
+    max-width: min(200px, calc(100vw - 24px)); 
+    /* 可稍调小 */
+    font-size: 11px;
     padding: 5px 8px;
   }
 
