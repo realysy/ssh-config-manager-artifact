@@ -99,3 +99,45 @@ function initThemeToggle() {
     toggleBtn.setAttribute('data-tooltip', tooltipText);
   }
 }
+
+
+/**
+ * 🍎 iOS Safari 专属兜底: 当 CSS 媒体查询失效时强制应用移动端样式
+ * 原因: iOS Safari 对 100vw 的计算偏差 + 缓存策略可能导致 @media 不触发
+ */
+function applyMobileFallback() {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  
+  if (isIOS && isSafari) {
+    // ✅ 检测实际视口宽度（排除滚动条影响）
+    const actualWidth = document.documentElement.clientWidth || window.innerWidth;
+    
+    // ✅ 如果实际宽度 <= 768 但 CSS 未应用移动端样式，强制注入
+    if (actualWidth <= 768) {
+      const langText = document.querySelector('.lang-switch-btn .lang-text');
+      if (langText && getComputedStyle(langText).display !== 'none') {
+        // 🔥 强制隐藏语言文字
+        langText.style.setProperty('display', 'none', 'important');
+        
+        // 🔥 强制调整按钮样式
+        const langBtn = document.querySelector('.lang-switch-btn');
+        if (langBtn) {
+          langBtn.style.setProperty('margin-left', '0', 'important');
+          langBtn.style.setProperty('padding', '6px 8px', 'important');
+        }
+        
+        console.log('[SMGR] iOS Safari fallback applied');
+      }
+    }
+  }
+}
+
+// ✅ 在页面加载完成 + 窗口大小变化时都执行兜底检查
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', applyMobileFallback);
+} else {
+  applyMobileFallback();
+}
+window.addEventListener('resize', applyMobileFallback);
+window.addEventListener('orientationchange', applyMobileFallback); // ✅ iOS 旋转屏幕时重新检测

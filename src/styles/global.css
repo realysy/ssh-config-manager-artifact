@@ -525,13 +525,22 @@ a:hover {
 }
 
 /* 响应式设计 - 移动端及小屏设备优化 (覆盖所有手机及竖屏平板) */
-@media (max-width: 768px) {
+@media (max-width: 768px), 
+       (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  
+  /* 强制重置页面宽度计算，避免 100vw 陷阱 */
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important; /* ✅ 终极防溢出 */
+  }
+
   /* 核心防溢出：强制限制内容宽度，防止子元素撑破卡片 */
   .page-wrapper {
     padding: 0 16px;
-    overflow-x: hidden; /* 保留横向隐藏，但需确保 tooltip 不会被裁剪 */
-    width: 100%;
-    max-width: 100%;
+    /* 使用 calc(100% - 10px) 精确扣除 body padding，避免 100vw 陷阱 */
+    width: calc(100% - 10px); 
+    max-width: calc(100vw - 10px);
     box-sizing: border-box;
   }
 
@@ -583,8 +592,8 @@ a:hover {
   }
   
   .lang-switch-btn {
-    margin-left: 0;
-    padding: 6px 8px;
+    margin-left: 0 !important;
+    padding: 6px 8px !important;
   }
 
   /* 缩小图标和链接按钮尺寸，适应小屏 */
@@ -597,10 +606,12 @@ a:hover {
 
   .icon-button::after {
     /* 修复: 使用 min() 限制 tooltip 最大宽度, 防止靠近边缘时撑破屏幕 */
-    max-width: min(200px, calc(100vw - 24px)); 
+    max-width: calc(100vw - 32px);
+    left: auto; /* ✅ 避免 translateX(-50%) 在 iOS 的计算误差 */
+    right: 0;
     /* 可稍调小 */
-    font-size: 11px;
-    padding: 5px 8px;
+    /* font-size: 11px;
+    padding: 5px 8px; */
   }
 
   .link-button {
