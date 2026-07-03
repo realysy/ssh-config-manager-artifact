@@ -8,8 +8,8 @@ import Footer from '@/components/Footer.astro';
 import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/main_page.png';
-import trialPage from '@/assets/screenshots/activation_page-trial.png';
-import activatedPage from '@/assets/screenshots/activation_page-activated.png';
+import fmPage from '@/assets/screenshots/file_manager.png';
+import activatePage from '@/assets/screenshots/activation_page.png';
 
 const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
     "A cross-platform tool for group-based visual management of SSH connections. " + 
@@ -83,12 +83,12 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
             <div class="caption">Main Application Interface</div>
           </div>
           <div class="screenshot-card">
-            <img src={trialPage.src} alt="Activation Page - Trial" loading="lazy" class="screenshot-img">
-            <div class="caption">Activation Page - Trial Version</div>
+            <img src={fmPage.src} alt="File Manager Page - Download/Upload and more" loading="lazy" class="screenshot-img">
+            <div class="caption">File Manager Page</div>
           </div>
           <div class="screenshot-card">
-            <img src={activatedPage.src} alt="Activation Page - Activated" loading="lazy" class="screenshot-img">
-            <div class="caption">Activation Page - Activated Successfully</div>
+            <img src={activatePage.src} alt="Activation Page" loading="lazy" class="screenshot-img">
+            <div class="caption">Activation Page</div>
           </div>
         </div>
 
