@@ -8,6 +8,7 @@ import Footer from '@/components/Footer.astro';
 import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/zh/main_page.png';
+import sshEditPage from '@/assets/screenshots/zh/SSH_edit.png';
 import fmPage from '@/assets/screenshots/zh/file_manager.png';
 import activatePage from '@/assets/screenshots/zh/activation_page.png';
 
@@ -77,8 +78,12 @@ const seoDescription = "SSH 配置管理器: 一个跨平台的工具，用于�
         <h2 id="screenshots-heading" style="margin-top: 32px; padding-left: 16px; border-left: 4px solid #667eea;">📸 截图</h2>
         <div class="screenshots-grid">
           <div class="screenshot-card">
-            <img src={mainPage.src} alt="应用程序主界面" loading="lazy" class="screenshot-img">
-            <div class="caption">应用程序主界面</div>
+            <img src={mainPage.src} alt="应用程序主页面" loading="lazy" class="screenshot-img">
+            <div class="caption">应用程序主页面</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={sshEditPage.src} alt="SSH连接编辑页面" loading="lazy" class="screenshot-img">
+            <div class="caption">SSH连接编辑页面</div>
           </div>
           <div class="screenshot-card">
             <img src={fmPage.src} alt="文件管理页面 - 支持上传下载以及更多操作" loading="lazy" class="screenshot-img">

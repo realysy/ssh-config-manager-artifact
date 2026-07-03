@@ -8,6 +8,7 @@ import Footer from '@/components/Footer.astro';
 import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/main_page.png';
+import sshEditPage from '@/assets/screenshots/SSH_edit.png';
 import fmPage from '@/assets/screenshots/file_manager.png';
 import activatePage from '@/assets/screenshots/activation_page.png';
 
@@ -79,8 +80,12 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
         <h2 id="screenshots-heading" style="margin-top: 32px; padding-left: 16px; border-left: 4px solid #667eea;">📸 Screenshots</h2>
         <div class="screenshots-grid">
           <div class="screenshot-card">
-            <img src={mainPage.src} alt="Main Page" loading="lazy" class="screenshot-img">
-            <div class="caption">Main Application Interface</div>
+            <img src={mainPage.src} alt="Application Main Page" loading="lazy" class="screenshot-img">
+            <div class="caption">Application Main Page</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={sshEditPage.src} alt="SSH Edit Page" loading="lazy" class="screenshot-img">
+            <div class="caption">SSH Edit Page</div>
           </div>
           <div class="screenshot-card">
             <img src={fmPage.src} alt="File Manager Page - Download/Upload and more" loading="lazy" class="screenshot-img">
