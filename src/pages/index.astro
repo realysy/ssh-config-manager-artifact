@@ -14,7 +14,7 @@ import activatePage from '@/assets/screenshots/activation_page.png';
 
 const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
     "A cross-platform tool for group-based visual management of SSH connections. " + 
-    "Integrates with Wezterm, Kitty, Alacritty, and Windows Terminal, GNOME Terminal, KDE Konsole.";
+    "Features a built-in SFTP file manager and integrates with Wezterm, Kitty, Alacritty, Windows Terminal, and more.";
 ---
 
 <Layout 
@@ -31,14 +31,15 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
         <h2>✨ Key Features</h2>
         <ul>
           <li>
-            <p>Group-based visual SSH management, no need to memorize SSH names/addresses/shortcuts in the terminal.</p>
+            <p><strong>Group-based visual SSH management</strong>, no need to memorize SSH names/addresses/shortcuts in the terminal.</p>
             <ul>
               <li>Add/edit SSH connection information and create groups through webui, click to connect and establish SSH connections in local terminal emulator.</li>
               <li><code>~/.ssh/config</code> is the default group, other group configuration files follow the exact same format, enabling easy migration and reuse in other tools, such as manual use with <code>ssh</code> command: <code>ssh -F ~/my_ssh_config/test_group.config my_host</code>.</li>
             </ul>
           </li>
+          
           <li>
-            <p>Supports multiple terminal emulators without changing your terminal usage habits.</p>
+            <p><strong>Supports multiple terminal emulators</strong> without changing your terminal usage habits.</p>
             <div class="table-wrapper">
               <table>
                 <thead>
@@ -66,6 +67,15 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
               <li>✅²: Tested, defaults to creating connections in new windows only. (Konsole: Enable "Run all Konsole windows in a single process" in Settings to use tabs).</li>
               <li>❔: Not tested.</li>
               <li>➖: Not supported on this platform.</li>
+            </ul>
+          </li>
+
+          <!-- 远程文件管理器特性介绍 -->
+          <li>
+            <p><strong>Built-in remote file manager</strong> for seamless file operations over SSH.</p>
+            <ul>
+              <li>Supports uploading, downloading, renaming, and deleting files and folders directly through the WebUI.</li>
+              <li>Eliminates the need for external SFTP/SCP clients for quick file transfers and daily management.</li>
             </ul>
           </li>
         </ul>
