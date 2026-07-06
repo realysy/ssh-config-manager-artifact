@@ -4,6 +4,7 @@
 
 import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
+import FAQ from '@/components/FAQ.astro';
 import Footer from '@/components/Footer.astro';
 import PricingCards from '@/components/PricingCards.astro';
 import { SITE_CONFIG } from '@/utils/config';
@@ -156,6 +157,10 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
 
       </div>
     </div>
+
+    <!-- 🌟 在 Footer 之前插入 FAQ 章节 -->
+    <FAQ />
+    
     <Footer />
   </div>
 </Layout>
