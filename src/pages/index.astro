@@ -118,6 +118,31 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
           </div>
         </div>
 
+        <h2 id="download">⬇️ Download & Installation</h2>
+        <ul>
+          <li>
+            <p>Download: <a href={SITE_CONFIG.downloadPage} target="_blank" rel="noopener">GitHub Releases</a></p>
+            <p>{SITE_CONFIG.appName} is a cross-platform application supporting the following platforms:</p>
+            <ul>
+              <li>x86_64: Windows, Linux, macOS.</li>
+              <li>arm64: macOS.</li>
+            </ul>
+            <p>Where:</p>
+            <ul>
+              <li>Windows minimum supported version is Windows 10 (Windows 7 can be tried).</li>
+              <li>Linux minimum supported version requires glibc 2.31, such as Ubuntu 20.04, Debian 11.</li>
+              <li>macOS minimum supported version is macOS 11 (Big Sur).</li>
+            </ul>
+          </li>
+          <li>
+            <p>Extract and run: <code>ssh-config-manager</code></p>
+          </li>
+          <li>
+            <p>After running, it will automatically open the browser WebUI: <a href="http://localhost:18323" target="_blank">http://localhost:18323</a>. If port 18323 is unavailable, it will automatically select another port.</p>
+            <p>The port used can be found at <code>~/.config/ssh-manager/server.port</code>. If you accidentally close the WebUI interface, you can find the current port in this file.</p>
+          </li>
+        </ul>
+
         <h2 id="pricing">💎 Pricing & Purchase</h2>
         <ul>
           <li>30-day free trial. After trial, pay to continue or export data in universal format.</li>

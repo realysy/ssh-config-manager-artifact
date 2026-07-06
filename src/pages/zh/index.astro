@@ -118,6 +118,31 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
           </div>
         </div>
 
+        <h2 id="download">⬇️ 下载, 安装与运行</h2>
+        <ul>
+          <li>
+            <p>下载: <a href={SITE_CONFIG.downloadPage} target="_blank" rel="noopener">GitHub Releases</a></p>
+            <p>{SITE_CONFIG.appName} 是一款跨平台应用, 支持以下平台:</p>
+            <ul>
+              <li>x86_64: Windows, Linux, macOS.</li>
+              <li>arm64: macOS.</li>
+            </ul>
+            <p>系统要求:</p>
+            <ul>
+              <li>Windows 最低支持版本为 Windows 10 (可尝试 Windows 7).</li>
+              <li>Linux 最低支持版本需要 glibc 2.31, 如 Ubuntu 20.04, Debian 11.</li>
+              <li>macOS 最低支持版本为 macOS 11 (Big Sur).</li>
+            </ul>
+          </li>
+          <li>
+            <p>解压并运行: <code>ssh-config-manager</code></p>
+          </li>
+          <li>
+            <p>运行后将自动打开浏览器 WebUI: <a href="http://localhost:18323" target="_blank">http://localhost:18323</a>, 若 18323 端口不可用, 则会自动选择其它端口.</p>
+            <p>使用的端口可在 <code>~/.config/ssh-manager/server.port</code> 中找到. 若不慎关闭了 WebUI 界面, 可在此文件中查看当前端口.</p>
+          </li>
+        </ul>
+
         <h2 id="pricing">💎 定价与购买</h2>
         <ul>
           <li>30天免费试用. 试用期结束后可以付费继续使用, 或带走通用格式的 SSH 数据.</li>
