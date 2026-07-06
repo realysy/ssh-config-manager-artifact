@@ -150,8 +150,75 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
           <li>提供购买力平价折扣, 中国大陆用户通过淘宝购买可获得约 55% 折扣, ¥88.</li>
           <li>支持在线/离线激活. 激活码绑定设备 (支持 email 解绑).</li>
         </ul>
-        <p><strong>购买途径:</strong> 软件主界面 -> 右上角激活按钮 -> 扫码购买.</p>
-        <p><strong>支持的支付方式:</strong> PayPal、信用卡/借记卡、支付宝.</p>
+
+        <p><strong>购买途径:</strong></p>
+        <ul>
+          <li><strong>途径 1:</strong> 软件主界面 -> 右上角激活按钮 -> 扫码购买.</li>
+          <li><strong>途径 2:</strong> 直接访问如下购买渠道:</li>
+        </ul>
+
+        <div class="channels-grid">
+          <!-- itch.io 卡片 -->
+          <div class="channel-card">
+            <div class="channel-header">
+              <span class="channel-icon">🌍</span>
+              <span class="channel-name">海外用户 (itch.io)</span>
+            </div>
+            <div class="channel-content">
+              <div class="channel-left">
+                <div class="platform-logo">🎮</div>
+                <div class="channel-price">$28.9</div>
+              </div>
+              <div class="channel-info">
+                <h3 class="channel-title">SSH Config Manager</h3>
+                <p class="channel-author">by realysy</p>
+                <div class="payment-methods">
+                  <span class="method-label">支持:</span>
+                  <span class="method-tag">PayPal</span>
+                  <span class="method-tag">信用卡</span>
+                  <span class="method-tag">借记卡</span>
+                </div>
+                <div class="payment-highlight-note">✨ 无需注册账号, 凭邮箱即可购买.</div>
+                <div class="payment-highlight-note">✨ 支付成功后, itch.io 会自动发放 download key 作为激活码.</div>
+                <a href="https://realysy.itch.io/ssh-config-manager" target="_blank" rel="noopener noreferrer" class="buy-btn itch-buy-btn">
+                  🛒 前往 itch.io 购买
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 淘宝卡片 -->
+          <div class="channel-card">
+            <div class="channel-header">
+              <span class="channel-icon">🇨🇳</span>
+              <span class="channel-name">中国大陆用户 (淘宝)</span>
+            </div>
+            <div class="channel-content">
+              <div class="channel-left">
+                <div class="platform-logo">🛒</div>
+                <div class="channel-price">¥88</div>
+              </div>
+              <div class="channel-info">
+                <h3 class="channel-title">SSH Config Manager</h3>
+                <p class="channel-author">购买力平价 (PPP) 折扣</p>
+                <div class="payment-methods">
+                  <span class="method-label">支持:</span>
+                  <span class="method-tag">支付宝</span>
+                  <span class="method-tag">微信支付</span>
+                  <span class="method-tag">花呗</span>
+                  <span class="method-tag">银行卡</span>
+                </div>
+                <div class="payment-highlight-note">📱 需使用淘宝/支付宝账号登录购买.</div>
+                <div class="payment-highlight-note">📱 支付成功后, 请联系卖家客服获取激活码.</div>
+                <a href="https://item.taobao.com/item.htm?ft=t&id=1055953631461" target="_blank" rel="noopener noreferrer" class="buy-btn taobao-buy-btn">
+                  🛒 前往淘宝购买
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p><strong>支持的支付方式:</strong> PayPal, 信用卡/借记卡, 支付宝.</p>
       </div>
     </div>
     <Footer />
@@ -185,4 +252,154 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* ========== 购买渠道卡片样式 (复用自激活页面) ========== */
+  .channels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .channel-card {
+    background: #fafafa;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s;
+  }
+
+  .channel-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .channel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .channel-icon { font-size: 24px; }
+  .channel-name { font-size: 16px; font-weight: 600; color: #333; }
+
+  .channel-content {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    .channel-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    .channel-info { align-items: center; }
+  }
+
+  .channel-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .channel-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e53e3e;
+    margin: 0;
+  }
+
+  .platform-logo {
+    width: 120px;
+    height: 120px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    background: white;
+    flex-shrink: 0;
+  }
+
+  .channel-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .channel-title { font-size: 16px; font-weight: 600; color: #333; margin: 0; }
+  .channel-author { font-size: 13px; color: #718096; margin: 0; }
+
+  .payment-methods {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+
+  .method-label { font-size: 12px; color: #718096; margin-right: 2px; }
+  
+  .method-tag {
+    display: inline-block;
+    font-size: 11px;
+    background: #e2e8f0;
+    color: #4a5568;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .payment-highlight-note {
+    display: block;
+    width: fit-content;
+    font-size: 12px;
+    color: #718096;
+    border-radius: 4px;
+  }
+
+  .buy-btn {
+    display: inline-block;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+    margin-top: 10px;
+    width: fit-content;
+    border: none;
+    cursor: pointer;
+  }
+
+  .itch-buy-btn { background: #fa5c5c; color: white; }
+  .itch-buy-btn:hover { background: #e04b4b; color: white; transform: translateY(-1px); text-decoration: none; }
+
+  .taobao-buy-btn { background: linear-gradient(90deg, #ff4400, #ff6a00); color: white; }
+  .taobao-buy-btn:hover { background: linear-gradient(90deg, #e63e00, #e65c00); color: white; transform: translateY(-1px); text-decoration: none; }
+
+  /* 暗黑模式适配 */
+  [data-theme="dark"] .channel-card { background: #2d2d2d; border-color: #444; }
+  [data-theme="dark"] .channel-header { border-bottom-color: #444; }
+  [data-theme="dark"] .channel-name,
+  [data-theme="dark"] .channel-title { color: #e2e8f0; }
+  [data-theme="dark"] .channel-author,
+  [data-theme="dark"] .method-label,
+  [data-theme="dark"] .payment-highlight-note { color: #a0aec0; }
+  [data-theme="dark"] .method-tag { background: #444; color: #e2e8f0; }
+  [data-theme="dark"] .platform-logo { background: #1e1e1e; border-color: #444; }
 </style>
