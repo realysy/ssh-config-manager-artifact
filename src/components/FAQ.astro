@@ -129,12 +129,13 @@ const headingText = isZh ? '❓ 常见问题 (FAQ)' : '❓ Frequently Asked Ques
     color: #1F2328;
   }
 
-  .faq-list {
-    border-top: 1px solid #d0d7de;
-  }
-
   .faq-item {
     border-bottom: 1px solid #d0d7de;
+  }
+
+  /* 移除最后一个问题的下横线, 因为 Footer 已经有横线了 */
+  .faq-item:last-child {
+    border-bottom: none;
   }
 
   /* 🌟 使用原生 details/summary 实现零 JS 手风琴效果, 性能最佳且对屏幕阅读器友好 */
@@ -203,7 +204,6 @@ const headingText = isZh ? '❓ 常见问题 (FAQ)' : '❓ Frequently Asked Ques
     color: #e2e8f0;
     border-bottom-color: #444;
   }
-  [data-theme="dark"] .faq-list,
   [data-theme="dark"] .faq-item {
     border-color: #444;
   }
