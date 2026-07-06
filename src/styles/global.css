@@ -290,6 +290,12 @@ p {
   color: #0969da;
 }
 
+/* 🌟 全局统一设置代码元素的跨平台等宽字体栈 */
+/* 解决 Windows 中文环境下浏览器默认将 monospace 映射为宋体, 导致代码难看的问题 */
+code, pre, kbd, samp {
+  font-family: "Cascadia Code", "Fira Code", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 /* 代码块和行内代码样式 */
 .code-block,
 .markdown-content pre {
@@ -299,7 +305,7 @@ p {
   padding: 16px;
   margin-bottom: 16px;
   overflow-x: auto;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  /* 字体已在全局 code, pre 中统一设置, 这里不需要设置了 */
   font-size: 14px;
   color: #24292f;
 }
