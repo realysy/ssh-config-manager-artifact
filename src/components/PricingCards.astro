@@ -26,8 +26,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
       <div class="channel-left">
         <!-- 🌟 2. 使用 .src 属性渲染图片, Astro 会自动注入正确的完整 URL -->
         <img src={qrItch.src} alt={isZh ? 'itch.io 购买二维码' : 'itch.io QR Code'} class="qr-code" loading="lazy">
-        <div class="channel-price">$28.9</div>
+        <div class="channel-price" id="price-itch">$28.9</div>
       </div>
+
       <div class="channel-info">
         <h3 class="channel-title">SSH Config Manager</h3>
         <p class="channel-author">by realysy</p>
@@ -44,6 +45,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
         </a>
       </div>
     </div>
+
+    <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
+    <p class="channel-note" id="note-itch" style="display: none;"></p>
   </div>
 
   <!-- 淘宝渠道卡片 -->
@@ -55,8 +59,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     <div class="channel-content">
       <div class="channel-left">
         <img src={qrTaobao.src} alt={isZh ? '淘宝购买二维码' : 'Taobao QR Code'} class="qr-code" loading="lazy">
-        <div class="channel-price">¥88</div>
+        <div class="channel-price" id="price-tb">¥88</div>
       </div>
+
       <div class="channel-info">
         <h3 class="channel-title">SSH Config Manager</h3>
         <p class="channel-author">{isZh ? '购买力平价 (PPP) 折扣' : 'Purchasing Power Parity (PPP) Discount'}</p>
@@ -74,6 +79,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
         </a>
       </div>
     </div>
+
+    <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
+    <p class="channel-note" id="note-tb" style="display: none;"></p>
   </div>
 </div>
 
@@ -214,6 +222,18 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   .taobao-buy-btn { background: linear-gradient(90deg, #ff4400, #ff6a00); color: white; }
   .taobao-buy-btn:hover { background: linear-gradient(90deg, #e63e00, #e65c00); color: white; transform: translateY(-1px); text-decoration: none; }
 
+   /* 卡片下方的错误提示语样式 */
+  .channel-note {
+    font-size: 12px;
+    color: #e53e3e; /* 警告红色 */
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0; /* 虚线分割 */
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
   /* 暗黑模式适配 */
   [data-theme="dark"] .channel-card { background: #2d2d2d; border-color: #444; }
   [data-theme="dark"] .channel-header { border-bottom-color: #444; }
@@ -224,4 +244,106 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   [data-theme="dark"] .payment-highlight-note { color: #a0aec0; }
   [data-theme="dark"] .method-tag { background: #444; color: #e2e8f0; }
   [data-theme="dark"] .qr-code { border-color: #444; }
+  [data-theme="dark"] .channel-note { 
+    border-top-color: #444; 
+    color: #fc8181; /* 暗色模式下的柔和红色 */
+  }
 </style>
+
+
+<script>
+  // 🌟 1. 定义 JSON 数据的 TypeScript 接口
+  interface PriceInfo {
+    price: number | string;
+    currency: string;
+  }
+
+  interface PriceData {
+    itch?: PriceInfo;
+    tb?: PriceInfo;
+  }
+
+  // 🌍 根据当前 HTML lang 属性判断语言, 决定错误提示文本
+  const isZh = document.documentElement.lang === 'zh';
+  const errorMsg = isZh 
+    ? '⚠️ 获取最新售价失败, 请扫描二维码或点击购买按钮前往购买页面查看最新价格.' 
+    : '⚠️ Failed to fetch latest prices. Please scan the QR code or click the buy button to check the latest price on the store page.';
+
+  const noteItch = document.getElementById('note-itch');
+  const noteTb = document.getElementById('note-tb');
+
+  // 🌟 2. 为 data 参数添加类型注解, 修复隐式 any 报错
+  function updatePriceFromData(data: PriceData): boolean {
+    let success = false;
+    
+    // 🌟 3. 提前获取 DOM 元素, 并使用 if 判空修复 'Object is possibly null' 报错
+    const priceItchEl = document.getElementById('price-itch');
+    const priceTbEl = document.getElementById('price-tb');
+
+    // 更新 itch.io 价格
+    if (data.itch && typeof data.itch.price !== 'undefined') {
+      const symbol = data.itch.currency === 'USD' ? '$' : (data.itch.currency + ' ');
+      if (priceItchEl) priceItchEl.textContent = symbol + data.itch.price;
+      success = true;
+    } else if (noteItch) {
+      noteItch.textContent = errorMsg;
+      noteItch.style.display = 'block';
+    }
+    
+    // 更新淘宝价格
+    if (data.tb && typeof data.tb.price !== 'undefined') {
+      const symbol = data.tb.currency === 'CNY' ? '¥' : (data.tb.currency + ' ');
+      if (priceTbEl) priceTbEl.textContent = symbol + data.tb.price;
+      success = true;
+    } else if (noteTb) {
+      noteTb.textContent = errorMsg;
+      noteTb.style.display = 'block';
+    }
+    
+    return success;
+  }
+
+  // 🌟 4. 为 url 添加 string 注解, 为返回值添加 Promise<PriceData> 注解
+  async function tryFetchFromUrl(url: string): Promise<PriceData> {
+    const resp = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('Network response was not ok');
+    // 使用 as PriceData 进行类型断言
+    return await resp.json() as PriceData; 
+  }
+
+  async function fetchPrices(): Promise<void> {
+    // 🌟 动态构建主 URL, 完美兼容 Astro 的 site 和 base 配置 (如 GitHub Pages 子路径)
+    const site = import.meta.env.SITE || window.location.origin;
+    const base = import.meta.env.BASE_URL || '/';
+    
+    // 🛠️ 核心修复: 确保 base 以斜杠结尾, 防止与文件名直接粘连 (如 .../artifactprices.json)
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    
+    // 拼接并清理可能出现的双斜杠 (排除 http:// 或 https:// 中的斜杠)
+    const primaryUrl = `${site}${normalizedBase}prices.json`.replace(/([^:]\/)\/+/g, "$1"); 
+    
+    // 🛡️ 兜底: GitHub Raw 链接 (确保即使官网 CDN 出问题也能获取到价格)
+    const fallbackUrl = 'https://raw.githubusercontent.com/realysy/ssh-config-manager-artifact/main/public/prices.json';
+
+    try {
+      // 1. 先尝试主 URL
+      const data = await tryFetchFromUrl(primaryUrl);
+      updatePriceFromData(data);
+    } catch (e1) {
+      console.warn('Primary price URL failed, trying fallback:', e1);
+      try {
+        // 2. 主 URL 失败, 尝试 GitHub 备用 URL
+        const data = await tryFetchFromUrl(fallbackUrl);
+        updatePriceFromData(data);
+      } catch (e2) {
+        console.warn('Fallback price URL also failed, showing error tips:', e2);
+        // 3. 两个 URL 都失败, 显示错误提示
+        if (noteItch) { noteItch.textContent = errorMsg; noteItch.style.display = 'block'; }
+        if (noteTb) { noteTb.textContent = errorMsg; noteTb.style.display = 'block'; }
+      }
+    }
+  }
+
+  // 页面加载完成后执行
+  fetchPrices();
+</script>
