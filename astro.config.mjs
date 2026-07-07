@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-// 🛡️ 引入压缩与清理注释插件
+import { fileURLToPath } from 'url'; 
 import compress from 'astro-compress'; 
 
 // 提取 base 配置，方便后续在 serialize 中复用
@@ -91,12 +91,55 @@ function getStaticPageGitDate(targetPath) {
   }
 }
 
+
+// 🛡️ 自定义 Astro 集成: 在构建完成后清理所有 HTML 文件中的注释
+function removeHtmlComments() {
+  return {
+    name: 'remove-html-comments',
+    hooks: {
+      'astro:build:done': async ({ dir }) => {
+        // dir 是一个 URL 对象, 需要转换为本地文件系统路径
+        const outDir = fileURLToPath(dir);
+        let cleanedCount = 0;
+
+        // 递归遍历 dist 目录
+        const processDir = (currentDir) => {
+          const files = fs.readdirSync(currentDir);
+          for (const file of files) {
+            const fullPath = path.join(currentDir, file);
+            const stat = fs.statSync(fullPath);
+            
+            if (stat.isDirectory()) {
+              processDir(fullPath);
+            } else if (file.endsWith('.html')) {
+              const content = fs.readFileSync(fullPath, 'utf-8');
+              // 正则匹配并移除 HTML 注释 (包含换行)
+              const newContent = content.replace(/<!--[\s\S]*?-->/g, '');
+              
+              // 只有内容发生改变时才写回磁盘, 减少不必要的 I/O
+              if (content !== newContent) {
+                fs.writeFileSync(fullPath, newContent, 'utf-8');
+                cleanedCount++;
+              }
+            }
+          }
+        };
+
+        processDir(outDir);
+        console.log(`[remove-html-comments] 🧹 清理完成, 共处理 ${cleanedCount} 个 HTML 文件.`);
+      }
+    }
+  };
+}
+
+
 // https://astro.build/config
 export default defineConfig({
   // 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
   site: 'https://www.mctek.site/', 
   // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
   base: SITE_BASE, 
+
   integrations: [
     sitemap({
       // 过滤掉不需要收录的页面 (如果有的话)
@@ -180,12 +223,22 @@ export default defineConfig({
         return item;
       },
     }),
+
     compress({
       // 禁用插件的 CSS 压缩/重构功能
       // Astro 底层的 Vite 已经自带了完美的 CSS 压缩, 且完全兼容 Astro 的 Scoped CSS 机制.
-      // 让 compress() 只负责 HTML 和 JS 的压缩, 避免它破坏 @media 和 data-astro-cid 属性.
+      // 禁用 CSS 的压缩, 避免它破坏 @media 和 data-astro-cid 属性.
       CSS: false, // 兼容 @playform/compress
       css: false, // 兼容老版本 astro-compress
+
+      // 禁用插件的 HTML 压缩功能
+      // 修复插件在配置了 base 路径时, 内部路径拼接产生 "//dist/..." 导致 "Cannot compress file" 的 Bug.
+      // Astro 原生默认已开启 compressHTML: true, 构建时会自动压缩 HTML, 无需插件重复处理.
+      HTML: false,
+      html: false,
     }),
+
+    // 🌟 新增: 注入自定义的 HTML 注释清理集成
+    removeHtmlComments(),
   ],
 });
