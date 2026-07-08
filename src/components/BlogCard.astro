@@ -1,4 +1,8 @@
 ---
+/**
+ * src/components/BlogCard.astro
+ * 博客列表中的单个博客卡片组件
+ */
 import { extractAutoTags } from '@/utils/extractTags';
 
 interface Props {
@@ -48,13 +52,15 @@ const unknownDateText = isZh ? '未知日期' : 'Unknown Date';
   
   <!-- 卡片文本内容区域 -->
   <div class="card-body">
-    <div class="card-date">
-      {post.data.pubDate 
-        ? post.data.pubDate.toLocaleDateString(dateFormat, dateOptions) 
-        : unknownDateText}
-    </div>
     <h2 class="card-title">{post.data.title}</h2>
     {post.data.description && <p class="card-desc">{post.data.description}</p>}
-    <span class="card-read-more">{readMoreText}</span>
+    <div class="card-footer">
+      <div class="card-date">
+        {post.data.pubDate 
+          ? post.data.pubDate.toLocaleDateString(dateFormat, dateOptions) 
+          : unknownDateText}
+      </div>
+      <span class="card-read-more">{readMoreText}</span>
+    </div>
   </div>
 </a>

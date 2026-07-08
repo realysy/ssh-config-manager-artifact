@@ -117,16 +117,6 @@
     flex: 1; /* 填充剩余空间，确保同行的卡片高度一致 */
   }
   
-  .card-date {
-    font-size: 13px;
-    color: #764ba2;
-    font-weight: 600;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-  }
-  
   .card-title {
     font-size: 1.25em;
     margin: 0 0 12px 0;
@@ -134,11 +124,11 @@
     line-height: 1.4;
     font-weight: 600;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 3.5em;
+    min-height: calc(1.25em * 1.4 * 1);
     flex-shrink: 0; /* 标题高度固定，不做伸缩 */
   }
   
@@ -155,12 +145,26 @@
     flex-shrink: 0;
   }
   
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: auto; /* 将日期和 read more 推至卡片底部 */
+    flex-shrink: 0;
+  }
+  
+  .card-date {
+    font-size: 13px;
+    color: #764ba2;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
   .card-read-more {
     color: #667eea;
     font-weight: 500;
     font-size: 14px;
-    margin-top: auto; /* 将“阅读更多”推到底部，确保对齐 */
-    flex-shrink: 0;
   }
 
   /* 暗色模式适配 */
