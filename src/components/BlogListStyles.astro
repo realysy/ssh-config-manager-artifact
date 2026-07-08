@@ -12,7 +12,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
-    align-items: end;
+    align-items: stretch; /* 强制同一行的卡片高度完全一致 */
   }
   
   .blog-card-new {
@@ -26,7 +26,8 @@
     flex-direction: column;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     overflow: hidden; 
-    padding: 0; 
+    padding: 0;
+    height: 100%; /* 确保卡片高度占满网格单元格 */
   }
   
   .blog-card-new:hover {
@@ -38,9 +39,10 @@
 
   .card-cover {
     width: 100%;
-    height: 180px;
     overflow: hidden;
     background: #f6f8fa;
+    flex-shrink: 1; /* 允许封面在必要时收缩，为正文腾出空间 */
+    min-height: 0;  /* 防止 flex 子项溢出 */
   }
   
   .card-cover img {
@@ -56,7 +58,6 @@
 
   .card-cover-fallback {
     width: 100%;
-    height: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,6 +68,8 @@
     text-align: center;
     position: relative;
     overflow: hidden;
+    flex-shrink: 2; /* 封面回退区域更激进地收缩，优先保证标题空间 */
+    min-height: 60px; /* 设置一个合理的最小高度，防止完全压扁 */
   }
 
   .fallback-tags {
@@ -111,6 +114,7 @@
     padding: 24px;
     display: flex;
     flex-direction: column;
+    flex: 1; /* 填充剩余空间，确保同行的卡片高度一致 */
   }
   
   .card-date {
@@ -120,6 +124,7 @@
     margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
   }
   
   .card-title {
@@ -133,7 +138,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 3.5em; 
+    min-height: 3.5em;
+    flex-shrink: 0; /* 标题高度固定，不做伸缩 */
   }
   
   .card-desc {
@@ -142,16 +148,36 @@
     margin-bottom: 16px;
     line-height: 1.6;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2; /* 限制最多显示 2 行描述 */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 67.2px; 
+    flex-shrink: 0;
   }
   
   .card-read-more {
     color: #667eea;
     font-weight: 500;
     font-size: 14px;
+    margin-top: auto; /* 将“阅读更多”推到底部，确保对齐 */
+    flex-shrink: 0;
+  }
+
+  /* 暗色模式适配 */
+  [data-theme="dark"] .blog-card-new {
+    background: #1e1e1e;
+    border-color: #444;
+  }
+  [data-theme="dark"] .card-title {
+    color: #e2e8f0;
+  }
+  [data-theme="dark"] .card-desc {
+    color: #a0aec0;
+  }
+  [data-theme="dark"] .card-date {
+    color: #8b9cf7;
+  }
+  [data-theme="dark"] .card-read-more {
+    color: #8b9cf7;
   }
 </style>
