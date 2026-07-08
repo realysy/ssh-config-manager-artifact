@@ -1,9 +1,17 @@
 /** src/utils/extractTags.ts
  * 极客版自动标签提取器
- * 自动从 Markdown 正文中提取代码块语言、技术缩写和预设技术栈
+ * 如果博客 Front Matter 中已有 tags 字段，则直接使用，不再自动提取；
+ * 否则自动从 Markdown 正文中提取代码块语言、技术缩写和预设技术栈。
  */
 export function extractAutoTags(body: string, existingTags: string[] = []): string[] {
-  const tags = new Set<string>(existingTags.map(t => t.toLowerCase()));
+  // 如果 Front Matter 中已有标签，直接返回（去重并限制数量）
+  if (existingTags.length > 0) {
+    const normalized = existingTags.map(t => t.toLowerCase());
+    const unique = [...new Set(normalized)];
+    return unique.slice(0, 6);
+  }
+
+  const tags = new Set<string>();
 
   // 1. 提取代码块语言 (例如 ```yaml -> yaml, ```bash -> bash)
   const codeBlockRegex = /```([a-zA-Z0-9]+)\n/g;
@@ -40,6 +48,6 @@ export function extractAutoTags(body: string, existingTags: string[] = []): stri
     }
   }
 
-  // 去重后，最多返回 4 个标签，防止撑爆卡片
+  // 去重后，最多返回 6 个标签，防止撑爆卡片
   return Array.from(tags).slice(0, 6);
 }
