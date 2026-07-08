@@ -5,7 +5,7 @@ pubDate: 2026-05-11
 
 这个工具的基本功能已经完成：
 
-![主页](@/assets/screenshots/main_page.png)
+![主页](@/assets/screenshots/zh/main_page.png)
 
 - 支持分组管理 SSH 连接。
 - 分组文件格式与 `~/.ssh/config` 完全一致，这意味着你可以直接用 `ssh` 命令连接服务器。
