@@ -35,9 +35,9 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
         <h2>✨ Key Features</h2>
         <ul>
           <li>
-            <p><strong>Group-based visual SSH management</strong>, no need to memorize SSH names/addresses/shortcuts in the terminal.</p>
+            <p><strong><a href={mainPage.src} class="lightbox-trigger" title="Click to view screenshot">Group-based visual SSH management</a></strong>, no need to memorize SSH names/addresses/shortcuts in the terminal.</p>
             <ul>
-              <li>Add/edit SSH connection information and create groups through webui, click to connect and establish SSH connections in local terminal emulator.</li>
+              <li><a href={sshEditPage.src} class="lightbox-trigger" title="Click to view screenshot">Add/edit SSH connection information</a> and create groups through webui, click to connect and establish SSH connections in local terminal emulator.</li>
               <li><code>~/.ssh/config</code> is the default group, other group configuration files follow the exact same format, enabling easy migration and reuse in other tools, such as manual use with <code>ssh</code> command: <code>ssh -F ~/my_ssh_config/test_group.config my_host</code>.</li>
             </ul>
           </li>
@@ -76,7 +76,7 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
 
           <!-- 远程文件管理器特性介绍 -->
           <li>
-            <p><a href={fmPageExplorer.src} class="lightbox-trigger" title="View File Manager Screenshot"><strong>Built-in remote file manager</strong></a> for seamless file operations over SSH.</p>
+            <p><strong>Built-in <a href={fmPageExplorer.src} class="lightbox-trigger" title="View File Manager Screenshot">remote file manager</a></strong> for seamless file operations over SSH.</p>
             <ul>
               <li>Eliminates the need for external SFTP/SCP clients by allowing you to upload, download, rename, and delete files and folders directly through the WebUI.</li>
               <li>Features a built-in <a href={fmPageEditor.src} class="lightbox-trigger" title="View Editor Screenshot">code editor</a> to directly edit remote files, supporting syntax highlighting, multi-line editing, and more.</li>

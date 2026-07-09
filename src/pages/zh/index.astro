@@ -35,9 +35,9 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
         <h2>✨ 主要功能特性</h2>
         <ul>
           <li>
-            <p><strong>分组可视化管理SSH</strong>, 无需在终端内记忆 SSH 名称/地址/快捷键等信息.</p>
+            <p><strong><a href={mainPage.src} class="lightbox-trigger" title="点击查看截图">分组可视化管理SSH</a></strong>, 无需在终端内记忆 SSH 名称/地址/快捷键等信息.</p>
             <ul>
-              <li>可通过 webui 添加/编辑 SSH 连接信息, 创建分组, 点击连接即可在本地终端模拟器中建立 SSH 连接.</li>
+              <li>可通过 <a href={sshEditPage.src} class="lightbox-trigger" title="点击查看截图">webui 添加/编辑 SSH 连接信息</a>, 创建分组, 点击连接即可在本地终端模拟器中建立 SSH 连接.</li>
               <li><code>~/.ssh/config</code> 是默认分组, 其它分组的配置文件格式与之完全相同, 可在其它工具迁移复用, 如在 <code>ssh</code> 命令中手动使用: <code>ssh -F ~/my_ssh_config/test_group.config my_host</code>.</li>
             </ul>
           </li>
@@ -76,7 +76,7 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
 
           <!-- 远程文件管理器特性介绍 -->
           <li>
-            <p><a href={fmPageExplorer.src} class="lightbox-trigger" title="View File Manager Screenshot"><strong>内置远程文件管理器</strong></a>, 无缝进行 SSH 文件操作.</p>
+            <p><strong>内置<a href={fmPageExplorer.src} class="lightbox-trigger" title="查看文件管理器截图">远程文件管理器</a></strong>, 无缝进行 SSH 文件操作.</p>
             <ul>
               <li>无需依赖外部 SFTP/SCP 客户端, 直接通过 WebUI 即可完成文件和文件夹的上传、下载、重命名与删除等日常管理操作.</li>
               <li>内置 <a href={fmPageEditor.src} class="lightbox-trigger" title="查看编辑器截图">代码编辑器</a>, 支持直接编辑远程文件, 提供代码高亮、多行编辑等专业功能.</li>
