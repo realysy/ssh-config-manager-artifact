@@ -86,7 +86,16 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
 </div>
 
 <style>
-  /* ========== 购买渠道卡片样式 (复用自激活页面) ========== */
+  /* ========== 购买渠道卡片样式 ========== */
+  
+  /* 🌟 核心修复：重置被外层 .markdown-content 污染的全局 margin */
+  /* 因为组件被放在 .markdown-content 内，全局的 img, h3, p 会带入巨大的 margin，必须强制清零 */
+  .channel-card img,
+  .channel-card h3,
+  .channel-card p {
+    margin: 0;
+  }
+
   .channels-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -129,14 +138,6 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     width: 100%;
   }
 
-  @media (max-width: 480px) {
-    .channel-content {
-      flex-direction: column;
-      text-align: center;
-    }
-    .channel-info { align-items: center; }
-  }
-
   .channel-left {
     display: flex;
     flex-direction: column;
@@ -152,7 +153,6 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     margin: 0;
   }
 
-  /* 恢复使用原有的二维码图片样式 */
   .qr-code {
     width: 120px;
     height: 120px;
@@ -222,31 +222,82 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   .taobao-buy-btn { background: linear-gradient(90deg, #ff4400, #ff6a00); color: white; }
   .taobao-buy-btn:hover { background: linear-gradient(90deg, #e63e00, #e65c00); color: white; transform: translateY(-1px); text-decoration: none; }
 
-   /* 卡片下方的错误提示语样式 */
   .channel-note {
     font-size: 12px;
-    color: #e53e3e; /* 警告红色 */
+    color: #e53e3e;
     text-align: center;
     margin-top: 16px;
     padding-top: 12px;
-    border-top: 1px dashed #e2e8f0; /* 虚线分割 */
+    border-top: 1px dashed #e2e8f0;
     line-height: 1.5;
     margin-bottom: 0;
   }
 
-  /* 暗黑模式适配 */
-  [data-theme="dark"] .channel-card { background: #2d2d2d; border-color: #444; }
-  [data-theme="dark"] .channel-header { border-bottom-color: #444; }
-  [data-theme="dark"] .channel-name,
-  [data-theme="dark"] .channel-title { color: #e2e8f0; }
-  [data-theme="dark"] .channel-author,
-  [data-theme="dark"] .method-label,
-  [data-theme="dark"] .payment-highlight-note { color: #a0aec0; }
-  [data-theme="dark"] .method-tag { background: #444; color: #e2e8f0; }
-  [data-theme="dark"] .qr-code { border-color: #444; }
-  [data-theme="dark"] .channel-note { 
+  /* 🌟 移动端紧凑布局优化 (扩大断点至 640px，覆盖绝大多数手机和窄屏窗口) */
+  @media (max-width: 640px) {
+    .channel-card {
+      padding: 16px;
+    }
+    
+    .channel-header {
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+    }
+    
+    .channel-content {
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+    }
+    
+    .channel-left {
+      gap: 6px;
+    }
+    
+    .qr-code {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .channel-price {
+      font-size: 20px;
+    }
+    
+    .channel-info { 
+      align-items: center; 
+      gap: 4px;
+    }
+    
+    .payment-methods {
+      justify-content: center;
+      margin-top: 2px;
+      margin-bottom: 4px;
+    }
+    
+    .payment-highlight-note {
+      font-size: 11px;
+    }
+    
+    .buy-btn {
+      margin-top: 8px;
+      width: 100%;
+      max-width: 240px;
+    }
+  }
+
+  /* 暗黑模式适配 (使用 :global 确保生效) */
+  :global([data-theme="dark"]) .channel-card { background: #2d2d2d; border-color: #444; }
+  :global([data-theme="dark"]) .channel-header { border-bottom-color: #444; }
+  :global([data-theme="dark"]) .channel-name,
+  :global([data-theme="dark"]) .channel-title { color: #e2e8f0; }
+  :global([data-theme="dark"]) .channel-author,
+  :global([data-theme="dark"]) .method-label,
+  :global([data-theme="dark"]) .payment-highlight-note { color: #a0aec0; }
+  :global([data-theme="dark"]) .method-tag { background: #444; color: #e2e8f0; }
+  :global([data-theme="dark"]) .qr-code { border-color: #444; }
+  :global([data-theme="dark"]) .channel-note { 
     border-top-color: #444; 
-    color: #fc8181; /* 暗色模式下的柔和红色 */
+    color: #fc8181;
   }
 </style>
 
