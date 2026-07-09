@@ -27,9 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ========== 图片弹窗显示 Lightbox 灯箱功能 ==========
+// ========== Lightbox 灯箱功能 (含完美锚点缩放与拖拽) ==========
 function initLightbox() {
-  // 动态创建 Lightbox DOM, 包含底部缩放工具栏
   const lightboxHTML = `
     <div class="lightbox-overlay" id="lightbox">
       <span class="lightbox-close" id="lightbox-close">&times;</span>
@@ -50,20 +49,20 @@ function initLightbox() {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
 
-  // 缩放与平移状态变量
   let scale = 1;
   let translateX = 0;
   let translateY = 0;
   let isDragging = false;
   let startX, startY;
+  
+  // 核心新增：记录图片未变换时的视口原点坐标
+  let originX = 0; 
+  let originY = 0;
 
   function updateTransform() {
     lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-    if (scale > 1) {
-      lightboxImg.classList.add('zoomed');
-    } else {
-      lightboxImg.classList.remove('zoomed');
-    }
+    if (scale > 1) lightboxImg.classList.add('zoomed');
+    else lightboxImg.classList.remove('zoomed');
   }
 
   function resetTransform() {
@@ -73,36 +72,44 @@ function initLightbox() {
     updateTransform();
   }
 
-  function zoomIn() {
-    scale = Math.min(scale + 0.25, 4); // 最大放大 4 倍
+  // 核心重构：以视口中心为锚点的通用缩放函数
+  function zoomAtCenter(newScale) {
+    const scaleChange = newScale / scale;
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    
+    translateX = (cx - originX) - scaleChange * (cx - originX - translateX);
+    translateY = (cy - originY) - scaleChange * (cy - originY - translateY);
+    scale = newScale;
+    
+    if (scale <= 1) { translateX = 0; translateY = 0; scale = 1; }
     updateTransform();
   }
 
-  function zoomOut() {
-    scale = Math.max(scale - 0.25, 0.5); // 最小缩小 0.5 倍
-    if (scale <= 1) {
-      translateX = 0; // 缩小时自动回正位置
-      translateY = 0;
-    }
-    updateTransform();
-  }
+  function zoomIn() { zoomAtCenter(Math.min(scale + 0.25, 4)); }
+  function zoomOut() { zoomAtCenter(Math.max(scale - 0.25, 0.5)); }
 
   function openLightbox(src, alt) {
     lightboxImg.src = src;
     lightboxImg.alt = alt;
-    resetTransform(); // 每次打开重置缩放状态
+    resetTransform(); 
     lightboxImg.classList.remove('grabbing');
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // 核心修复：在 DOM 渲染后，获取图片未变换时的视口左上角坐标
+    requestAnimationFrame(() => {
+        const rect = lightboxImg.getBoundingClientRect();
+        originX = rect.left;
+        originY = rect.top;
+    });
   }
 
-  // 1. 为底部截图卡片图片绑定点击事件
+  // 1. 绑定触发器
   document.querySelectorAll('.screenshot-img').forEach(img => {
     img.style.cursor = 'zoom-in';
     img.addEventListener('click', () => openLightbox(img.src, img.alt));
   });
-
-  // 2. 为 Features 区域的文字链接绑定点击事件
   document.querySelectorAll('.lightbox-trigger').forEach(link => {
     link.style.cursor = 'zoom-in'; 
     link.addEventListener('click', (e) => {
@@ -112,12 +119,12 @@ function initLightbox() {
     });
   });
 
-  // 3. 绑定工具栏按钮
+  // 2. 工具栏按钮
   document.getElementById('lightbox-zoom-in').addEventListener('click', zoomIn);
   document.getElementById('lightbox-zoom-out').addEventListener('click', zoomOut);
   document.getElementById('lightbox-zoom-reset').addEventListener('click', resetTransform);
 
-  // 4. 鼠标与触摸拖拽平移 (仅在放大状态下生效)
+  // 3. 拖拽平移逻辑 (PC & 移动端单指)
   const handleDragStart = (clientX, clientY) => {
     if (scale > 1) {
       isDragging = true;
@@ -126,7 +133,6 @@ function initLightbox() {
       lightboxImg.classList.add('grabbing');
     }
   };
-
   const handleDragMove = (clientX, clientY) => {
     if (isDragging) {
       translateX = clientX - startX;
@@ -134,7 +140,6 @@ function initLightbox() {
       updateTransform();
     }
   };
-
   const handleDragEnd = () => {
     if (isDragging) {
       isDragging = false;
@@ -142,60 +147,88 @@ function initLightbox() {
     }
   };
 
-  // 鼠标事件 (PC端)
-  lightboxImg.addEventListener('mousedown', (e) => {
-    handleDragStart(e.clientX, e.clientY);
-    e.preventDefault();
-  });
+  lightboxImg.addEventListener('mousedown', (e) => { handleDragStart(e.clientX, e.clientY); e.preventDefault(); });
   document.addEventListener('mousemove', (e) => handleDragMove(e.clientX, e.clientY));
   document.addEventListener('mouseup', handleDragEnd);
 
-  // 触摸事件 (移动端支持)
+  // 4. 移动端触摸逻辑 (单指拖拽 + 双指完美锚点缩放)
+  let initialPinchDistance = 0, initialPinchScale = 1;
+  let initialPinchCenterX = 0, initialPinchCenterY = 0;
+  let initialTranslateX = 0, initialTranslateY = 0;
+  let isPinching = false;
+
+  const getPinchDistance = (touches) => Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+  const getPinchCenter = (touches) => ({ x: (touches[0].clientX + touches[1].clientX) / 2, y: (touches[0].clientY + touches[1].clientY) / 2 });
+
   lightboxImg.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
+    if (e.touches.length === 2) {
+      isPinching = true;
+      isDragging = false;
+      lightboxImg.classList.remove('grabbing');
+      initialPinchDistance = getPinchDistance(e.touches);
+      initialPinchScale = scale;
+      const center = getPinchCenter(e.touches);
+      initialPinchCenterX = center.x;
+      initialPinchCenterY = center.y;
+      initialTranslateX = translateX;
+      initialTranslateY = translateY;
+      lightboxImg.style.transition = 'none';
+    } else if (e.touches.length === 1 && !isPinching) {
       handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: true });
 
   lightboxImg.addEventListener('touchmove', (e) => {
-    if (e.touches.length === 1 && isDragging) {
-      handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
-      e.preventDefault(); // 核心：阻止在放大状态下拖动图片时引发整个页面的滚动
-    }
-  }, { passive: false }); // 必须为 false 才能触发 preventDefault
-
-  lightboxImg.addEventListener('touchend', handleDragEnd);
-  lightboxImg.addEventListener('touchcancel', handleDragEnd);
-
-  // 5. 鼠标滚轮缩放
-  lightbox.addEventListener('wheel', (e) => {
-    if (lightbox.classList.contains('active')) {
+    if (e.touches.length === 2 && isPinching) {
       e.preventDefault();
-      if (e.deltaY < 0) zoomIn();
-      else zoomOut();
+      const currentDistance = getPinchDistance(e.touches);
+      const ratio = currentDistance / initialPinchDistance;
+      const newScale = Math.max(0.5, Math.min(5, initialPinchScale * ratio));
+      const scaleChange = newScale / initialPinchScale;
+      const center = getPinchCenter(e.touches);
+      
+      // 🌟 核心修复：引入 originX/Y 进行坐标系对齐，实现真正的“指哪打哪”
+      translateX = (center.x - originX) - scaleChange * (initialPinchCenterX - originX - initialTranslateX);
+      translateY = (center.y - originY) - scaleChange * (initialPinchCenterY - originY - initialTranslateY);
+      
+      scale = newScale;
+      updateTransform();
+    } else if (e.touches.length === 1 && isDragging && !isPinching) {
+      e.preventDefault();
+      handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: false });
 
-  // 6. 双击图片：放大或重置
-  lightboxImg.addEventListener('dblclick', () => {
-    if (scale > 1) resetTransform();
-    else {
-      scale = 2;
-      updateTransform();
+  lightboxImg.addEventListener('touchend', (e) => {
+    if (isPinching && e.touches.length < 2) {
+      isPinching = false;
+      if (scale <= 1) resetTransform();
+      lightboxImg.style.transition = '';
+      if (e.touches.length === 1) handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (!isPinching) {
+      handleDragEnd();
     }
   });
+  lightboxImg.addEventListener('touchcancel', () => { isPinching = false; handleDragEnd(); lightboxImg.style.transition = ''; });
 
-  // 7. 关闭逻辑与快捷键支持
-  function closeLightbox() {
-    lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-  }
+  // 5. PC 端滚轮缩放 (以视口中心为锚点)
+  lightbox.addEventListener('wheel', (e) => {
+    if (lightbox.classList.contains('active')) {
+      e.preventDefault();
+      if (e.deltaY < 0) zoomIn(); else zoomOut();
+    }
+  }, { passive: false });
 
-  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', e => {
-    if (e.target === lightbox) closeLightbox();
+  // 6. 双击放大/重置
+  lightboxImg.addEventListener('dblclick', () => {
+    if (scale > 1) resetTransform();
+    else zoomAtCenter(2);
   });
 
+  // 7. 关闭逻辑与快捷键
+  function closeLightbox() { lightbox.classList.remove('active'); document.body.style.overflow = ''; }
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (lightbox.classList.contains('active')) {
       if (e.key === 'Escape') closeLightbox();
@@ -205,7 +238,6 @@ function initLightbox() {
     }
   });
 }
-
 // ========== 亮暗主题切换功能 ==========
 function initThemeToggle() {
   const toggleBtn = document.getElementById('theme-toggle');

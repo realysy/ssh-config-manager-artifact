@@ -577,7 +577,7 @@ a:hover {
 /* 图片缩放动画与拖拽状态 */
 #lightbox-img {
   transition: transform 0.15s ease-out; /* 按钮缩放时的平滑过渡 */
-  transform-origin: center center;
+  transform-origin: 0 0; /* 核心修复：强制以左上角为变换原点，使数学推导完美成立 */
   user-select: none;
   -webkit-user-drag: none; /* 防止浏览器默认的图片拖拽幽灵图 */
   touch-action: none;   /* 禁用浏览器默认的触摸手势，交由 JS 全权处理 */
