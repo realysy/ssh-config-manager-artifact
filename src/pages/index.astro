@@ -11,7 +11,9 @@ import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/main_page.png';
 import sshEditPage from '@/assets/screenshots/SSH_edit.png';
-import fmPage from '@/assets/screenshots/file_manager.png';
+import fmPageExplorer from '@/assets/screenshots/file_manager-explorer.png';
+import fmPageEditor from '@/assets/screenshots/file_manager-editor.png';
+import fmPageImageViewer from '@/assets/screenshots/file_manager-image-viewer.png';
 import activatePage from '@/assets/screenshots/activation_page.png';
 
 const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
@@ -76,8 +78,9 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
           <li>
             <p><strong>Built-in remote file manager</strong> for seamless file operations over SSH.</p>
             <ul>
-              <li>Supports uploading, downloading, renaming, and deleting files and folders directly through the WebUI.</li>
-              <li>Eliminates the need for external SFTP/SCP clients for quick file transfers and daily management.</li>
+              <li>Eliminates the need for external SFTP/SCP clients by allowing you to <a href={fmPageExplorer.src} class="lightbox-trigger" title="View File Manager Screenshot">upload, download, rename, and delete</a> files and folders directly through the WebUI.</li>
+              <li>Features a built-in <a href={fmPageEditor.src} class="lightbox-trigger" title="View Editor Screenshot">code editor</a> to directly edit remote files, supporting syntax highlighting, multi-line editing, and more.</li>
+              <li>Includes a built-in <a href={fmPageImageViewer.src} class="lightbox-trigger" title="View Image Viewer Screenshot">image viewer</a> to preview images on remote servers without downloading them.</li>
             </ul>
           </li>
 
@@ -111,8 +114,16 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
             <div class="caption">SSH Edit Page</div>
           </div>
           <div class="screenshot-card">
-            <img src={fmPage.src} alt="File Manager Page - Download/Upload and more" loading="lazy" class="screenshot-img">
-            <div class="caption">File Manager Page</div>
+            <img src={fmPageExplorer.src} alt="File Manager Page/File Explorer - Download/Upload and more" loading="lazy" class="screenshot-img">
+            <div class="caption">File Manager Page/File Explorer</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={fmPageEditor.src} alt="File Manager / File Editor - supports encoding switching, syntax highlighting, multi-line editing and more" loading="lazy" class="screenshot-img">
+            <div class="caption">File Manager / File Editor</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={fmPageImageViewer.src} alt="File Manager / Image Viewer - supports previewing images on remote servers" loading="lazy" class="screenshot-img">
+            <div class="caption">File Manager / Image Viewer</div>
           </div>
           <div class="screenshot-card">
             <img src={activatePage.src} alt="Activation Page" loading="lazy" class="screenshot-img">

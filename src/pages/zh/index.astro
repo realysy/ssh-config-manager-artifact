@@ -11,7 +11,9 @@ import { SITE_CONFIG } from '@/utils/config';
 
 import mainPage from '@/assets/screenshots/zh/main_page.png';
 import sshEditPage from '@/assets/screenshots/zh/SSH_edit.png';
-import fmPage from '@/assets/screenshots/zh/file_manager.png';
+import fmPageExplorer from '@/assets/screenshots/zh/file_manager-explorer.png';
+import fmPageEditor from '@/assets/screenshots/file_manager-editor.png';
+import fmPageImageViewer from '@/assets/screenshots/file_manager-image-viewer.png';
 import activatePage from '@/assets/screenshots/zh/activation_page.png';
 
 const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` + 
@@ -76,8 +78,9 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
           <li>
             <p><strong>内置远程文件管理器</strong>, 无缝进行 SSH 文件操作.</p>
             <ul>
-              <li>支持直接通过 WebUI 对文件和文件夹进行上传, 下载, 重命名, 删除等操作.</li>
-              <li>无需依赖外部 SFTP/SCP 客户端, 满足日常快速传输与管理文件的需求.</li>
+              <li>无需依赖外部 SFTP/SCP 客户端, 直接通过 WebUI 即可完成文件和文件夹的<a href={fmPageExplorer.src} class="lightbox-trigger" title="查看文件管理器截图">上传、下载、重命名与删除</a>等日常管理操作.</li>
+              <li>内置 <a href={fmPageEditor.src} class="lightbox-trigger" title="查看编辑器截图">代码编辑器</a>, 支持直接编辑远程文件, 提供代码高亮、多行编辑等专业功能.</li>
+              <li>内置 <a href={fmPageImageViewer.src} class="lightbox-trigger" title="查看图片查看器截图">图片查看器</a>, 支持直接预览远程服务器内的图片, 无需下载到本地.</li>
             </ul>
           </li>
 
@@ -111,8 +114,16 @@ const seoDescription = `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): ` 
             <div class="caption">SSH连接编辑页面</div>
           </div>
           <div class="screenshot-card">
-            <img src={fmPage.src} alt="文件管理页面 - 支持上传下载以及更多操作" loading="lazy" class="screenshot-img">
-            <div class="caption">文件管理页面</div>
+            <img src={fmPageExplorer.src} alt="文件管理页面/文件浏览 - 支持上传下载以及更多操作" loading="lazy" class="screenshot-img">
+            <div class="caption">文件管理页面/文件浏览</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={fmPageEditor.src} alt="文件管理页面/文件编辑器 - 支持编码切换/语言高亮/多行编辑等操作" loading="lazy" class="screenshot-img">
+            <div class="caption">文件管理页面/文件编辑器</div>
+          </div>
+          <div class="screenshot-card">
+            <img src={fmPageImageViewer.src} alt="文件管理页面/图片查看器 - 支持预览远程服务器内的图片" loading="lazy" class="screenshot-img">
+            <div class="caption">文件管理页面/图片查看器</div>
           </div>
           <div class="screenshot-card">
             <img src={activatePage.src} alt="激活页面" loading="lazy" class="screenshot-img">

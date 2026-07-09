@@ -41,7 +41,7 @@ function initLightbox() {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
 
-  // 为所有带有 screenshot-img 类的图片绑定点击事件
+  // 1. 为底部截图卡片图片绑定点击事件
   document.querySelectorAll('.screenshot-img').forEach(img => {
     img.style.cursor = 'zoom-in';
     img.addEventListener('click', () => {
@@ -52,7 +52,23 @@ function initLightbox() {
     });
   });
 
-  // 关闭逻辑
+  // 2. 核心新增：为 Features 区域的文字链接绑定点击事件
+  document.querySelectorAll('.lightbox-trigger').forEach(link => {
+    link.style.cursor = 'zoom-in'; // 鼠标悬浮时显示放大图标，暗示可预览
+    link.addEventListener('click', (e) => {
+      e.preventDefault(); // 🛑 核心：阻止 a 标签默认的跳转/下载行为
+      const imgSrc = link.getAttribute('href');
+      if (imgSrc) {
+        lightboxImg.src = imgSrc;
+        // 复用 a 标签的 title 属性作为图片的 alt 文本，提升可访问性
+        lightboxImg.alt = link.title || 'Screenshot Preview'; 
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  // 3. 关闭逻辑
   document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox) closeLightbox();
