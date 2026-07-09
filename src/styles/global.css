@@ -530,6 +530,67 @@ a:hover {
   cursor: pointer;
 }
 
+/* ========== Lightbox 缩放与工具栏样式 ========== */
+.lightbox-toolbar {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 24px;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.lightbox-toolbar button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.lightbox-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-toolbar button#lightbox-zoom-reset {
+  font-size: 13px;
+  font-weight: bold;
+  width: auto;
+  padding: 0 12px;
+  border-radius: 16px;
+}
+
+/* 图片缩放动画与拖拽状态 */
+#lightbox-img {
+  transition: transform 0.15s ease-out; /* 按钮缩放时的平滑过渡 */
+  transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none; /* 防止浏览器默认的图片拖拽幽灵图 */
+}
+
+#lightbox-img.zoomed {
+  cursor: grab; /* 放大后显示抓手图标 */
+  transition: none; /* 拖拽时禁用过渡动画，保证鼠标跟手 */
+}
+
+#lightbox-img.grabbing {
+  cursor: grabbing; /* 正在拖拽时的闭合抓手图标 */
+}
+
 /* 响应式设计 - 移动端及小屏设备优化 (覆盖所有手机及竖屏平板) */
 @media (max-width: 768px), 
        (max-device-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {

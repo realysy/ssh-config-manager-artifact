@@ -27,13 +27,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ========== Lightbox 灯箱功能 ==========
+// ========== 图片弹窗显示 Lightbox 灯箱功能 ==========
 function initLightbox() {
-  // 动态创建 Lightbox DOM, 避免在 Layout 中写死, 让 HTML 源码更干净
+  // 动态创建 Lightbox DOM, 包含底部缩放工具栏
   const lightboxHTML = `
     <div class="lightbox-overlay" id="lightbox">
       <span class="lightbox-close" id="lightbox-close">&times;</span>
       <img src="" alt="Screenshot Preview" id="lightbox-img">
+      <div class="lightbox-toolbar" id="lightbox-toolbar">
+        <button id="lightbox-zoom-out" title="缩小 (Zoom Out / -)">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </button>
+        <button id="lightbox-zoom-reset" title="重置 (Reset / 0)">1:1</button>
+        <button id="lightbox-zoom-in" title="放大 (Zoom In / +)">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </button>
+      </div>
     </div>
   `;
   document.body.insertAdjacentHTML('beforeend', lightboxHTML);
@@ -41,46 +50,136 @@ function initLightbox() {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
 
+  // 缩放与平移状态变量
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let startX, startY;
+
+  function updateTransform() {
+    lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    if (scale > 1) {
+      lightboxImg.classList.add('zoomed');
+    } else {
+      lightboxImg.classList.remove('zoomed');
+    }
+  }
+
+  function resetTransform() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+  }
+
+  function zoomIn() {
+    scale = Math.min(scale + 0.25, 4); // 最大放大 4 倍
+    updateTransform();
+  }
+
+  function zoomOut() {
+    scale = Math.max(scale - 0.25, 0.5); // 最小缩小 0.5 倍
+    if (scale <= 1) {
+      translateX = 0; // 缩小时自动回正位置
+      translateY = 0;
+    }
+    updateTransform();
+  }
+
+  function openLightbox(src, alt) {
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    resetTransform(); // 每次打开重置缩放状态
+    lightboxImg.classList.remove('grabbing');
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
   // 1. 为底部截图卡片图片绑定点击事件
   document.querySelectorAll('.screenshot-img').forEach(img => {
     img.style.cursor = 'zoom-in';
-    img.addEventListener('click', () => {
-      lightboxImg.src = img.src;
-      lightboxImg.alt = img.alt;
-      lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
+    img.addEventListener('click', () => openLightbox(img.src, img.alt));
   });
 
-  // 2. 核心新增：为 Features 区域的文字链接绑定点击事件
+  // 2. 为 Features 区域的文字链接绑定点击事件
   document.querySelectorAll('.lightbox-trigger').forEach(link => {
-    link.style.cursor = 'zoom-in'; // 鼠标悬浮时显示放大图标，暗示可预览
+    link.style.cursor = 'zoom-in'; 
     link.addEventListener('click', (e) => {
-      e.preventDefault(); // 🛑 核心：阻止 a 标签默认的跳转/下载行为
+      e.preventDefault(); 
       const imgSrc = link.getAttribute('href');
-      if (imgSrc) {
-        lightboxImg.src = imgSrc;
-        // 复用 a 标签的 title 属性作为图片的 alt 文本，提升可访问性
-        lightboxImg.alt = link.title || 'Screenshot Preview'; 
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
+      if (imgSrc) openLightbox(imgSrc, link.title || 'Screenshot Preview');
     });
   });
 
-  // 3. 关闭逻辑
-  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', e => {
-    if (e.target === lightbox) closeLightbox();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+  // 3. 绑定工具栏按钮
+  document.getElementById('lightbox-zoom-in').addEventListener('click', zoomIn);
+  document.getElementById('lightbox-zoom-out').addEventListener('click', zoomOut);
+  document.getElementById('lightbox-zoom-reset').addEventListener('click', resetTransform);
+
+  // 4. 鼠标拖拽平移 (仅在放大状态下生效)
+  lightboxImg.addEventListener('mousedown', (e) => {
+    if (scale > 1) {
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      lightboxImg.classList.add('grabbing');
+      e.preventDefault();
+    }
   });
 
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      lightboxImg.classList.remove('grabbing');
+    }
+  });
+
+  // 5. 鼠标滚轮缩放
+  lightbox.addEventListener('wheel', (e) => {
+    if (lightbox.classList.contains('active')) {
+      e.preventDefault();
+      if (e.deltaY < 0) zoomIn();
+      else zoomOut();
+    }
+  }, { passive: false });
+
+  // 6. 双击图片：放大或重置
+  lightboxImg.addEventListener('dblclick', () => {
+    if (scale > 1) resetTransform();
+    else {
+      scale = 2;
+      updateTransform();
+    }
+  });
+
+  // 7. 关闭逻辑与快捷键支持
   function closeLightbox() {
     lightbox.classList.remove('active');
     document.body.style.overflow = '';
   }
+
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (lightbox.classList.contains('active')) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === '+' || e.key === '=') zoomIn();
+      if (e.key === '-') zoomOut();
+      if (e.key === '0') resetTransform();
+    }
+  });
 }
 
 // ========== 亮暗主题切换功能 ==========
