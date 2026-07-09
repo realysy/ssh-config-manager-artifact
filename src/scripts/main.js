@@ -117,31 +117,55 @@ function initLightbox() {
   document.getElementById('lightbox-zoom-out').addEventListener('click', zoomOut);
   document.getElementById('lightbox-zoom-reset').addEventListener('click', resetTransform);
 
-  // 4. 鼠标拖拽平移 (仅在放大状态下生效)
-  lightboxImg.addEventListener('mousedown', (e) => {
+  // 4. 鼠标与触摸拖拽平移 (仅在放大状态下生效)
+  const handleDragStart = (clientX, clientY) => {
     if (scale > 1) {
       isDragging = true;
-      startX = e.clientX - translateX;
-      startY = e.clientY - translateY;
+      startX = clientX - translateX;
+      startY = clientY - translateY;
       lightboxImg.classList.add('grabbing');
-      e.preventDefault();
     }
-  });
+  };
 
-  document.addEventListener('mousemove', (e) => {
+  const handleDragMove = (clientX, clientY) => {
     if (isDragging) {
-      translateX = e.clientX - startX;
-      translateY = e.clientY - startY;
+      translateX = clientX - startX;
+      translateY = clientY - startY;
       updateTransform();
     }
-  });
+  };
 
-  document.addEventListener('mouseup', () => {
+  const handleDragEnd = () => {
     if (isDragging) {
       isDragging = false;
       lightboxImg.classList.remove('grabbing');
     }
+  };
+
+  // 鼠标事件 (PC端)
+  lightboxImg.addEventListener('mousedown', (e) => {
+    handleDragStart(e.clientX, e.clientY);
+    e.preventDefault();
   });
+  document.addEventListener('mousemove', (e) => handleDragMove(e.clientX, e.clientY));
+  document.addEventListener('mouseup', handleDragEnd);
+
+  // 触摸事件 (移动端支持)
+  lightboxImg.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
+
+  lightboxImg.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 1 && isDragging) {
+      handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault(); // 核心：阻止在放大状态下拖动图片时引发整个页面的滚动
+    }
+  }, { passive: false }); // 必须为 false 才能触发 preventDefault
+
+  lightboxImg.addEventListener('touchend', handleDragEnd);
+  lightboxImg.addEventListener('touchcancel', handleDragEnd);
 
   // 5. 鼠标滚轮缩放
   lightbox.addEventListener('wheel', (e) => {

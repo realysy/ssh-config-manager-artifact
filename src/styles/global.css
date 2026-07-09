@@ -580,6 +580,7 @@ a:hover {
   transform-origin: center center;
   user-select: none;
   -webkit-user-drag: none; /* 防止浏览器默认的图片拖拽幽灵图 */
+  touch-action: none;   /* 禁用浏览器默认的触摸手势，交由 JS 全权处理 */
 }
 
 #lightbox-img.zoomed {
