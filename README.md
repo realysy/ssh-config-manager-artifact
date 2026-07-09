@@ -8,4 +8,6 @@ SSH Config Manager (SMGR): A tool for group-based visual management of SSH conne
 
 ## TODO
 
-- [ ] 官网定价部分添加购买链接&二维码
+- [ ] FAQs 暗色模式字体颜色不对, 看不到字
+- [ ] 改进移动端的购买卡片样式, 让上下布局更紧凑一点
+- [ ] 

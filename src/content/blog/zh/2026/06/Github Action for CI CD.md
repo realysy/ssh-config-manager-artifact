@@ -5,6 +5,8 @@ pubDate: 2026-06-23
 
 这应该是我第二次使用 GitHub Action。我不记得第一次是什么时候了，只记得那时对这个工作流的很多东西都不了解。但这一次，我相信我已经大致搞懂了 GitHub Action 的整体工作流程。
 
+![Github Release Assets of this tool](@/assets/screenshots/github-action-assets.png)
+
 GitHub Action 给我带来的主要好处有两个：
 
 1. 从源代码编译为二进制文件，这样用户就无需自己编译或安装依赖。他们只需要下载并运行——如果一切按预期工作的话。

@@ -2,3 +2,6 @@
 
 允许某篇博客只有一种语言, 则网页切换语言时会回退到这种语言.
 
+博客中添加图片的方式:
+1. 图片放到 [src/assets/](src/assets/) 下面;
+2. 引用示例: `![main page](@/assets/screenshots/main_page.png)`
