@@ -87,7 +87,7 @@ const jsonLd = {
   "mainEntity": faqData
 };
 
-const headingText = isZh ? '❓ 常见问题 (FAQ)' : '❓ Frequently Asked Questions (FAQ)';
+const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Questions (FAQs)';
 ---
 
 <section class="faq-section" id="faq">
@@ -199,33 +199,33 @@ const headingText = isZh ? '❓ 常见问题 (FAQ)' : '❓ Frequently Asked Ques
     color: #667eea;
   }
 
-  /* 暗黑模式适配 */
-  [data-theme="dark"] .faq-heading {
+  /* 暗黑模式适配 (核心修复: 使用 :global() 确保能匹配到 <html> 上的 data-theme 属性) */
+  :global([data-theme="dark"]) .faq-heading {
     color: #e2e8f0;
     border-bottom-color: #444;
   }
-  [data-theme="dark"] .faq-item {
+  :global([data-theme="dark"]) .faq-item {
     border-color: #444;
   }
-  [data-theme="dark"] .faq-question {
+  :global([data-theme="dark"]) .faq-question {
     color: #e2e8f0;
   }
-  [data-theme="dark"] .faq-question:hover {
+  :global([data-theme="dark"]) .faq-question:hover {
     color: #8b9cf7;
   }
-  [data-theme="dark"] .faq-icon {
-    color: #a0aec0;
+  :global([data-theme="dark"]) .faq-icon {
+    color: #cbd5e0; /* 提亮图标颜色, 增强对比度 */
   }
-  [data-theme="dark"] .faq-item[open] .faq-icon {
+  :global([data-theme="dark"]) .faq-item[open] .faq-icon {
     color: #8b9cf7;
   }
-  [data-theme="dark"] .faq-answer {
-    color: #a0aec0;
+  :global([data-theme="dark"]) .faq-answer {
+    color: #cbd5e0; /* 提亮答案文字颜色, 确保在深色背景下清晰可读 */
   }
-  [data-theme="dark"] .faq-answer a {
+  :global([data-theme="dark"]) .faq-answer a {
     color: #8b9cf7;
   }
-  [data-theme="dark"] .faq-answer a:hover {
+  :global([data-theme="dark"]) .faq-answer a:hover {
     color: #a7b0ff;
   }
 </style>
