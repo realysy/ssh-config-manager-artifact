@@ -61,6 +61,22 @@ const faqs: FAQItem[] = [
   },
   {
     q: {
+      en: "Does it support X11 forwarding? How to set up X11? The ForwardX11 option cannot be set in the WebUI SSH editor, so how can I display the GUI of remote applications after connecting?",
+      zh: "是否支持 X11 转发? 如何设置 X11? WebUI 中 SSH 编辑时无法设置 ForwardX11, 那连接后如何显示远程GUI程序的图形界面?"
+    },
+    a: {
+      en: `Yes, it is supported. Although the WebUI SSH editor does not currently offer a ForwardX11 option, you can manually add X11 forwarding settings to the group file where the SSH configuration is located (e.g., ~/.ssh/config). For example:
+<pre class="code-block"><code>ForwardX11 yes
+ForwardX11Trusted yes</code></pre>
+Notes: ① In addition to adding the options, you may also need to configure both your local system and the remote server — this is standard X11 setup and publicly documented. ② X11 does not natively support the graphical interfaces of some GUI applications. This is not a limitation of the tool. You may consider using remote desktop protocols like VNC or RDP to display the GUI of remote applications instead.`,
+      zh: `支持. 虽然 WebUI 的 SSH 编辑界面暂不提供 ForwardX11 选项, 但你可以手动在这个SSH配置所在的分组文件(比如 ~/.ssh/config)中添加X11转发相关选项. 例如:
+<pre class="code-block"><code>ForwardX11 yes
+ForwardX11Trusted yes</code></pre>
+注意: ① 除了添加选项之外, 你可能还需要在本地系统和远程服务器做一些设置, 是 X11 的标准设置, 可以查到公开资料; ② X11 原生不支持某些GUI程序的图形界面, 这不是软件的问题, 你可以尝试使用 VNC 或 RDP 等远程桌面协议来显示远程GUI程序的图形界面.`
+    }
+  },
+  {
+    q: {
       en: "Will I lose my SSH configuration data if I don't pay after the trial ends?",
       zh: "试用期结束后如果不付费, 我的 SSH 配置数据会丢失吗?"
     },
