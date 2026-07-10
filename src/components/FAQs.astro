@@ -1,0 +1,231 @@
+---
+// src/components/FAQ.astro
+import { getLangFromPath } from '@/utils/i18n';
+import { SITE_CONFIG } from '@/utils/config';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+const currentPath = Astro.url.pathname;
+const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
+const currentLang = isZh ? 'zh' : 'en';
+
+const issuesUrl = `${SITE_CONFIG.githubRepo}/issues`;
+
+interface FAQItem {
+  q: { en: string; zh: string };
+  a: { en: string; zh: string };
+}
+
+// 💡 针对软件特性设计的 5 个核心 FAQ
+const faqs: FAQItem[] = [
+  {
+    q: {
+      en: "Is my SSH configuration data safe using this software? Will it be uploaded to the cloud?",
+      zh: "使用这个软件, 我的 SSH 配置数据安全吗? 会被上传到云端吗?"
+    },
+    a: {
+      en: "Yes, your data is extremely safe. First, the software features a built-in daily backup mechanism to automatically protect your configurations. Second, SSH Config Manager runs entirely locally and supports fully offline operation. All configurations and file transfers occur directly between your device and the target servers. No user data is ever uploaded to the cloud or routed through third-party relays, ensuring absolute privacy.",
+      zh: "非常安全. 首先, 软件内置了每日自动备份机制, 为您的配置文件提供持续保护. 其次, SSH Config Manager 支持完全离线运行, 所有的配置和文件传输都直接在您的设备和目标服务器之间进行. 软件绝不会将任何用户数据上传至云端或经过第三方中转, 确保您的隐私绝对安全."
+    }
+  },
+  {
+    q: {
+      en: "Why is the software closed-source and distributed as a portable executable?",
+      zh: "为什么软件是闭源的, 并且以绿色便携形式分发?"
+    },
+    a: {
+      en: "To protect our core intellectual property and licensing mechanism, the software is closed-source. It is distributed as a standalone, portable executable to eliminate the need for installing complex runtime environments (like Python) or dependencies. This \"extract-and-run\" approach ensures extremely low memory usage and seamless cross-platform compatibility right out of the box.",
+      zh: "为了保护核心代码和授权机制, 本软件采用闭源开发. 我们以独立的可执行文件形式分发, 旨在让用户无需安装复杂的运行环境 (如 Python) 或依赖库. 这种 \"解压即用\" 的便携设计不仅保证了极低的内存占用, 还提供了开箱即用的跨平台兼容性."
+    }
+  },
+  {
+    q: {
+      en: "What if I change my computer after the activation code is bound to my device?",
+      zh: "激活码绑定设备后, 如果我更换了电脑怎么办?"
+    },
+    a: {
+      en: "The activation code is bound to a single device by default. If you change your computer or reinstall the OS, you can use the 'Unbind' feature within the software to generate an unbind request, email it to us, and easily reactivate it on your new device.",
+      zh: "激活码默认绑定单台设备. 如果您更换了电脑或重装了系统, 可以通过软件内的解绑功能生成解绑请求, 发送邮件给我们, 即可轻松解绑并在新设备上重新激活."
+    }
+  },
+  {
+    q: {
+      en: "What if my favorite terminal emulator is not in the supported list?",
+      zh: "如果我常用的终端模拟器不在支持列表中怎么办?"
+    },
+    a: {
+      en: `We currently deeply integrate with modern and system built-in terminals like Wezterm, Alacritty, Kitty, Windows Terminal, GNOME Terminal, and Konsole. At present, the software does not support custom terminal configurations. If your favorite terminal is not on the list, please feel free to submit a feature request via <a href="${issuesUrl}" target="_blank" rel="noopener noreferrer">GitHub Issues</a>, and we will evaluate adding support in future updates.`,
+      zh: `目前我们深度集成了 Wezterm, Alacritty, Kitty, Windows Terminal, GNOME Terminal 和 Konsole 等主流现代与系统内置终端. 软件暂不支持自定义终端配置. 如果您常用的终端不在支持列表中, 欢迎前往 <a href="${issuesUrl}" target="_blank" rel="noopener noreferrer">GitHub Issues</a> 提交功能需求, 我们会在未来的更新中评估并添加支持.`
+    }
+  },
+  {
+    q: {
+      en: "Will I lose my SSH configuration data if I don't pay after the trial ends?",
+      zh: "试用期结束后如果不付费, 我的 SSH 配置数据会丢失吗?"
+    },
+    a: {
+      en: "Our licensing model consists of a free trial and a paid full version. If you choose not to renew after the trial or license expires, the software will no longer be usable. However, your data is completely yours. All SSH group configurations are saved locally in the exact same format as the standard `~/.ssh/config`. You will never lose your data, and you can easily open, edit, or seamlessly migrate your configurations to any other SSH tool at any time.",
+      zh: "我们的授权机制仅包含免费试用和付费解锁完整功能. 如果试用期或授权到期后未续费, 软件将无法继续使用. 但请放心, 您的数据完全属于您自己. 所有的 SSH 分组配置文件均保存在本地, 且采用与标准 `~/.ssh/config` 完全一致的通用格式. 您绝不会丢失任何数据, 并且可以随时使用文本编辑器查看, 或无缝迁移到任何其他 SSH 管理工具中."
+    }
+  }
+];
+
+// 🌟 动态生成 Schema.org JSON-LD 结构化数据, 提升 SEO 搜索排名
+const faqData = faqs.map(f => ({
+  "@type": "Question",
+  "name": f.q[currentLang],
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": f.a[currentLang]
+  }
+}));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqData
+};
+
+const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Questions (FAQs)';
+---
+
+<section class="faq-section" id="faq">
+  <h2 class="faq-heading">{headingText}</h2>
+  
+  <!-- SEO 结构化数据注入 -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+  <div class="faq-list">
+    {faqs.map((faq) => (
+      <details class="faq-item">
+        <summary class="faq-question">
+          <span>{faq.q[currentLang]}</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </summary>
+        <div class="faq-answer">
+          <p set:html={faq.a[currentLang]}></p>
+        </div>
+      </details>
+    ))}
+  </div>
+</section>
+
+<style>
+  .faq-section {
+    margin-top: 48px;
+    margin-bottom: 24px;
+  }
+
+  /* 复用全局的 H2 标题装饰条样式, 保持视觉统一 */
+  .faq-heading {
+    font-size: 1.5em;
+    margin: 32px 0 24px;
+    padding: 0 0 8px 16px;
+    border-bottom: 1px solid #d0d7de;
+    border-left: 4px solid #667eea;
+    color: #1F2328;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid #d0d7de;
+  }
+
+  /* 移除最后一个问题的下横线, 因为 Footer 已经有横线了 */
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  /* 🌟 使用原生 details/summary 实现零 JS 手风琴效果, 性能最佳且对屏幕阅读器友好 */
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 20px 0;
+    font-weight: 600;
+    font-size: 16px;
+    color: #1F2328;
+    list-style: none; /* 移除 Firefox 默认的三角形 */
+    transition: color 0.2s ease;
+  }
+
+  /* 移除 Safari/Chrome 默认的三角形 */
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question:hover {
+    color: #667eea;
+  }
+
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    color: #656d76;
+    margin-left: 16px;
+  }
+
+  /* 🌟 展开时旋转箭头 */
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+    color: #667eea;
+  }
+
+  .faq-answer {
+    padding-bottom: 20px;
+    color: #656d76;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  
+  .faq-answer p {
+    margin: 0;
+    color: inherit;
+  }
+
+  /* FAQ 答案中的链接样式, 与全站链接保持一致 */
+  .faq-answer a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .faq-answer a:hover {
+    text-decoration: underline;
+    color: #667eea;
+  }
+
+  /* 暗黑模式适配 (核心修复: 使用 :global() 确保能匹配到 <html> 上的 data-theme 属性) */
+  :global([data-theme="dark"]) .faq-heading {
+    color: #e2e8f0;
+    border-bottom-color: #444;
+  }
+  :global([data-theme="dark"]) .faq-item {
+    border-color: #444;
+  }
+  :global([data-theme="dark"]) .faq-question {
+    color: #e2e8f0;
+  }
+  :global([data-theme="dark"]) .faq-question:hover {
+    color: #8b9cf7;
+  }
+  :global([data-theme="dark"]) .faq-icon {
+    color: #cbd5e0; /* 提亮图标颜色, 增强对比度 */
+  }
+  :global([data-theme="dark"]) .faq-item[open] .faq-icon {
+    color: #8b9cf7;
+  }
+  :global([data-theme="dark"]) .faq-answer {
+    color: #cbd5e0; /* 提亮答案文字颜色, 确保在深色背景下清晰可读 */
+  }
+  :global([data-theme="dark"]) .faq-answer a {
+    color: #8b9cf7;
+  }
+  :global([data-theme="dark"]) .faq-answer a:hover {
+    color: #a7b0ff;
+  }
+</style>
