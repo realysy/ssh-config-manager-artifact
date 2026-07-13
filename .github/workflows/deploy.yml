@@ -46,3 +46,61 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # 🚀 新增: 下载构建产物以获取最新的本地 sitemap
+      - name: Download artifact to submit to IndexNow
+        if: success()
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: ./gh-artifact
+
+      # 🚀 新增: 解压并提取 URL 提交至 IndexNow
+      - name: Submit URLs to IndexNow
+        if: success()
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }} # ⚠️ 强烈建议存入 Repo Secrets, 使用 ${{ secrets.INDEXNOW_KEY }}
+          SITE_HOST: "www.mctek.site"
+        run: |
+          echo "📦 正在从构建产物中解压 sitemap..."
+          tar -xf ./gh-artifact/artifact.tar -C ./gh-artifact
+          
+          SITEMAP_PATH="./gh-artifact/sitemap-0.xml"
+          
+          if [ ! -f "$SITEMAP_PATH" ]; then
+            echo "⚠️ 未在产物中找到 sitemap-0.xml, 跳过 IndexNow 提交"
+            exit 0 # 显式声明成功退出, 不阻断 CI
+          fi
+          
+          echo "🔍 正在提取 URL 列表..."
+          URL_LIST=$(grep -oP '(?<=<loc>).*?(?=</loc>)' "$SITEMAP_PATH")
+          
+          if [ -z "$URL_LIST" ]; then
+            echo "⚠️ Sitemap 中未找到任何 URL, 跳过提交"
+            exit 0 # 显式声明成功退出
+          fi
+          
+          JSON_URLS=$(echo "$URL_LIST" | jq -R . | jq -s .)
+          URL_COUNT=$(echo "$JSON_URLS" | jq length)
+          echo "📊 共发现 $URL_COUNT 个 URL, 准备提交至 IndexNow..."
+          
+          # 🛡️ 核心防御: 使用 || echo "000" 防止 curl 因网络断开触发 set -e 导致脚本崩溃
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{
+              \"host\": \"$SITE_HOST\",
+              \"key\": \"$INDEXNOW_KEY\",
+              \"keyLocation\": \"https://$SITE_HOST/$INDEXNOW_KEY.txt\",
+              \"urlList\": $JSON_URLS
+            }" || echo "000")
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "202" ]; then
+            echo "✅ IndexNow 提交成功! (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ IndexNow 提交失败或受限! (HTTP $HTTP_CODE)"
+            echo "   提示: 这不影响网站的成功部署, 请检查 API 状态或 Key 配置."
+          fi
+          
+          # 🎯 最终兜底: 无论上述逻辑如何, 强制返回 0, 确保 Deploy Job 显示为绿色 Success
+          exit 0
