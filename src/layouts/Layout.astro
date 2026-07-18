@@ -109,25 +109,28 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
       const paths = window.SMGR_I18N_PATHS;
       if (!paths) return;
 
-      const currentLang = paths.current;
-      let targetLang = null;
-
-      // 1. 优先使用用户缓存的语言偏好
-      const cached = localStorage.getItem('smgr_lang');
-      if (cached === 'zh' || cached === 'en') {
-        if (cached !== currentLang) targetLang = cached;
-      } else {
-        // 2. 无缓存时检测浏览器语言 (非中英语言默认英语)
-        const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-        const preferZh = navLang.startsWith('zh') || navLang.startsWith('cn');
-        const browserLang = preferZh ? 'zh' : 'en';
-        
-        if (browserLang !== currentLang) targetLang = browserLang;
+      // 🚨 核心 SEO 保护机制：利用爬虫的“无痕模式”特性
+      // 搜索引擎爬虫 (Googlebot/Bingbot) 的 localStorage 永远是空的 (null)
+      // 只有真实用户手动切换过语言后，这里才会有值，从而触发回访时的自动跳转
+      let cachedLang = null;
+      try {
+        cachedLang = localStorage.getItem('smgr_lang');
+      } catch (e) {
+        // 某些极端隐私模式下 localStorage 可能会报错，直接放弃执行
+        return; 
       }
 
-      // 3. 执行重定向 (保留原有的 query 和 hash)
-      if (targetLang && paths[targetLang]) {
-        window.location.replace(paths[targetLang] + location.search + location.hash);
+      // 如果没有缓存（说明是首次访问的真实用户，或者是爬虫），直接放行，不重定向！
+      // 这样既保护了 SEO，又尊重了用户从外部点击进入的原始链接。
+      if (!cachedLang || (cachedLang !== 'zh' && cachedLang !== 'en')) {
+        return; 
+      }
+
+      const currentLang = paths.current;
+
+      // 仅当有缓存且缓存的语言与当前页面语言不一致时，才执行重定向
+      if (cachedLang !== currentLang && paths[cachedLang]) {
+        window.location.replace(paths[cachedLang] + location.search + location.hash);
       }
     })();
   </script>
