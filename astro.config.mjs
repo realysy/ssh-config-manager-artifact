@@ -10,15 +10,23 @@ import compress from 'astro-compress';
 const SITE_BASE = '/ssh-config-manager-artifact';
 const cwd = process.cwd();
 
-function slugify(text) {
-  return text.toString().toLowerCase()
-    .replace(/\.md$/, '').replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-')
-    .replace(/^-+/, '').replace(/-+$/, '');
-}
-
 const blogDir = path.join(cwd, 'src/content/blog');
 const blogGitTimeMap = new Map();
+
+// 🌟 核心修复：对路径的每一段分别 slugify，与 Astro 的 URL 生成逻辑完美对齐
+// 例如: 'zh/2026/06/Github Action for CI CD' → 'zh/2026/06/github-action-for-ci-cd'
+// 例如: '2026/07/v1.1.0-released-with-...' → '2026/07/v110-released-with-...'
+function slugifyPath(filePath) {
+  return filePath.split('/').map(segment => {
+    return segment.toString().toLowerCase()
+      .replace(/\.mdx?$/, '')      // 移除 .md/.mdx 后缀
+      .replace(/\s+/g, '-')        // 空格变连字符
+      .replace(/[^\w\-]+/g, '')    // 移除非字母数字和连字符的字符 (如点号)
+      .replace(/\-\-+/g, '-')      // 合并连续连字符
+      .replace(/^-+/, '')          // 移除开头连字符
+      .replace(/-+$/, '');         // 移除结尾连字符
+  }).join('/');
+}
 
 function getMdFiles(dir) {
   let results = [];
@@ -28,7 +36,7 @@ function getMdFiles(dir) {
     const fullPath = path.join(dir, file);
     if (fs.statSync(fullPath).isDirectory()) {
       results = results.concat(getMdFiles(fullPath));
-    } else if (file.endsWith('.md')) {
+    } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
       results.push(fullPath);
     }
   });
@@ -41,8 +49,10 @@ async function initBlogGitTimes() {
   
   for (const fullPath of mdFiles) {
     const relativePath = path.relative(cwd, fullPath).split(path.sep).join('/');
-    const relativeBlogPath = path.relative(blogDir, fullPath);
-    const slugifiedId = relativeBlogPath.split(path.sep).map(slugify).join('/');
+    // 🌟 核心优化：提取相对于 blogDir 的路径，并通过 slugifyPath 与 Astro URL 生成逻辑对齐
+    // 这样 'Github Action for CI CD.md' → 'github-action-for-ci-cd'，与 Sitemap 中的 URL slug 完美咬合
+    const rawRelativePath = path.relative(blogDir, fullPath).split(path.sep).join('/');
+    const mapKey = slugifyPath(rawRelativePath);
 
     try {
       // 使用原生 execSync，并强制指定 cwd，捕获所有输出
@@ -52,7 +62,7 @@ async function initBlogGitTimes() {
       ).trim();
 
       if (gitDate) {
-        blogGitTimeMap.set(slugifiedId, new Date(gitDate));
+        blogGitTimeMap.set(mapKey, new Date(gitDate));
         console.log(`[Sitemap] ✅ Git 成功: ${relativePath}`);
       } else {
         throw new Error('Git 返回为空');
@@ -65,10 +75,10 @@ async function initBlogGitTimes() {
       
       // 兜底：使用文件系统的最后修改时间 (mtime)
       const stat = fs.statSync(fullPath);
-      blogGitTimeMap.set(slugifiedId, stat.mtime);
+      blogGitTimeMap.set(mapKey, stat.mtime);
     }
   }
-  console.log(`[Sitemap] 🏁 扫描完成，共生成 ${blogGitTimeMap.size} 个时间戳。`);
+  console.log(`[Sitemap] 🏁 扫描完成，共生成 ${blogGitTimeMap.size} 个精准时间戳。`);
 }
 
 await initBlogGitTimes();
@@ -142,13 +152,14 @@ const blogListDeps = [
 ];
 const blogListMaxDate = getMaxGitDate(blogListDeps.map(p => path.join(cwd, p)));
 
-// 4. 博客详情页特定依赖
-const blogPostDeps = [
-  'src/components/Giscus.astro',
-];
-const blogPostMaxDate = getMaxGitDate(blogPostDeps.map(p => path.join(cwd, p)));
+// 🌟 4. 博客详情页依赖 (极致精细化：中英文模板分离)
+const enBlogPostDeps = ['src/pages/blog/[...slug].astro', 'src/components/Giscus.astro'];
+const enBlogPostMaxDate = getMaxGitDate(enBlogPostDeps.map(p => path.join(cwd, p)));
 
-console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${blogPostMaxDate?.toISOString()})`);
+const zhBlogPostDeps = ['src/pages/zh/blog/[...slug].astro', 'src/components/Giscus.astro'];
+const zhBlogPostMaxDate = getMaxGitDate(zhBlogPostDeps.map(p => path.join(cwd, p)));
+
+console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()})`);
 
 
 // 🛡️ 自定义 Astro 集成: 在构建完成后清理所有 HTML 文件中的注释
@@ -212,16 +223,24 @@ export default defineConfig({
         const url = item.url;
         
         // A. 匹配博客详情页 (正则兼容完整 URL)
-        const blogMatch = url.match(/\/(?:zh\/)?blog\/(.+)\/$/);
+        // 🌟 核心优化：修改正则，捕获组 1 为语言前缀 ('zh/' 或 undefined)，捕获组 2 为 slug
+        const blogMatch = url.match(/\/(zh\/)?blog\/(.+)\/$/);
         if (blogMatch) {
-          const slugId = blogMatch[1];
-          const postDate = blogGitTimeMap.get(slugId);
+          const langPrefix = blogMatch[1] || ''; // 'zh/' 或 ''
+          const slug = blogMatch[2]; // '2026/05/...'
           
-          // 🛠️ 核心优化：博客详情页的 lastmod = max(文章md修改时间, 全局依赖修改时间, 详情页组件修改时间)
-          item.lastmod = getLatestDate(postDate, globalMaxDate, blogPostMaxDate);
+          // 拼接出与 initBlogGitTimes 中完全一致的 Map Key
+          const mapKey = `${langPrefix}${slug}`;
+          const postDate = blogGitTimeMap.get(mapKey);
+          
+          // 🌟 极致精细化：根据语言前缀，精准选择对应的模板依赖时间
+          const templateDate = langPrefix === 'zh/' ? zhBlogPostMaxDate : enBlogPostMaxDate;
+          
+          // 博客详情页的 lastmod = max(文章md修改时间, 全局依赖修改时间, 对应语言模板修改时间)
+          item.lastmod = getLatestDate(postDate, globalMaxDate, templateDate);
           
           if (!postDate) {
-            console.warn(`[Sitemap] ❌ 未找到博客时间戳: ${slugId}`);
+            console.warn(`[Sitemap] ❌ 未找到博客时间戳: ${mapKey}`);
           }
         } else {
           // B. 匹配静态页面
@@ -238,28 +257,44 @@ export default defineConfig({
             pathname = pathname.substring(SITE_BASE.length);
           }
           
-          let cleanUrl = pathname.replace(/^\//, '').replace(/\/$/, '');
-          if (cleanUrl.startsWith('zh/')) cleanUrl = cleanUrl.replace(/^zh\//, '');
-          
+          // 🌟 深度 Review 修复：保留原始路径结构，优先查找带语言前缀的独立模板，找不到再回退到复用模板
+          let rawPathname = pathname.replace(/^\//, '').replace(/\/$/, '');
           let targetPath = '';
-          if (cleanUrl === '' || cleanUrl === 'index') {
+          
+          if (rawPathname === '' || rawPathname === 'index') {
             targetPath = path.join(cwd, 'src/pages/index.astro');
           } else {
-            const astroPath = path.join(cwd, 'src/pages', cleanUrl + '.astro');
-            if (fs.existsSync(astroPath)) {
-              targetPath = astroPath;
+            // 1. 优先尝试精确匹配 (包含 zh/ 前缀的独立模板)
+            const exactAstroPath = path.join(cwd, 'src/pages', rawPathname + '.astro');
+            const exactIndexPath = path.join(cwd, 'src/pages', rawPathname, 'index.astro');
+            
+            if (fs.existsSync(exactAstroPath)) {
+              targetPath = exactAstroPath;
+            } else if (fs.existsSync(exactIndexPath)) {
+              targetPath = exactIndexPath;
             } else {
-              targetPath = path.join(cwd, 'src/pages', cleanUrl, 'index.astro');
+              // 2. 回退：剥离 zh/ 前缀再找 (适用于多语言复用同一个 .astro 模板的情况)
+              let fallbackUrl = rawPathname;
+              if (fallbackUrl.startsWith('zh/')) fallbackUrl = fallbackUrl.replace(/^zh\//, '');
+              
+              const fallbackAstroPath = path.join(cwd, 'src/pages', fallbackUrl + '.astro');
+              const fallbackIndexPath = path.join(cwd, 'src/pages', fallbackUrl, 'index.astro');
+              
+              if (fs.existsSync(fallbackAstroPath)) {
+                targetPath = fallbackAstroPath;
+              } else if (fs.existsSync(fallbackIndexPath)) {
+                targetPath = fallbackIndexPath;
+              }
             }
           }
 
           const staticDate = getStaticPageGitDate(targetPath);
           
-          // 🛠️ 核心优化：根据页面类型，合并对应的依赖组件时间
-          if (cleanUrl === '' || cleanUrl === 'index') {
+          // 🛠️ 核心优化：根据页面类型，合并对应的依赖组件时间 (兼容中英文路径)
+          if (rawPathname === '' || rawPathname === 'index' || rawPathname === 'zh' || rawPathname === 'zh/index') {
             // 主页
             item.lastmod = getLatestDate(staticDate, globalMaxDate, homeMaxDate);
-          } else if (cleanUrl === 'blog') {
+          } else if (rawPathname === 'blog' || rawPathname === 'zh/blog') {
             // 博客列表页
             item.lastmod = getLatestDate(staticDate, globalMaxDate, blogListMaxDate);
           } else {
