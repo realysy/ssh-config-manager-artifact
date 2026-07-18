@@ -8,6 +8,7 @@ import compress from 'astro-compress';
 
 // 提取 base 配置，方便后续在 serialize 中复用
 const SITE_BASE = '/ssh-config-manager-artifact';
+const cwd = process.cwd();
 
 function slugify(text) {
   return text.toString().toLowerCase()
@@ -16,7 +17,7 @@ function slugify(text) {
     .replace(/^-+/, '').replace(/-+$/, '');
 }
 
-const blogDir = path.join(process.cwd(), 'src/content/blog');
+const blogDir = path.join(cwd, 'src/content/blog');
 const blogGitTimeMap = new Map();
 
 function getMdFiles(dir) {
@@ -39,7 +40,7 @@ async function initBlogGitTimes() {
   console.log(`[Sitemap] 🚀 开始扫描 ${mdFiles.length} 篇博客...`);
   
   for (const fullPath of mdFiles) {
-    const relativePath = path.relative(process.cwd(), fullPath).split(path.sep).join('/');
+    const relativePath = path.relative(cwd, fullPath).split(path.sep).join('/');
     const relativeBlogPath = path.relative(blogDir, fullPath);
     const slugifiedId = relativeBlogPath.split(path.sep).map(slugify).join('/');
 
@@ -47,7 +48,7 @@ async function initBlogGitTimes() {
       // 使用原生 execSync，并强制指定 cwd，捕获所有输出
       const gitDate = execSync(
         `git log -1 --format=%cI -- "${relativePath}"`, 
-        { encoding: 'utf-8', cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'] }
+        { encoding: 'utf-8', cwd: cwd, stdio: ['pipe', 'pipe', 'pipe'] }
       ).trim();
 
       if (gitDate) {
@@ -72,14 +73,14 @@ async function initBlogGitTimes() {
 
 await initBlogGitTimes();
 
-// 获取静态页面 (.astro) 的 Git 时间 (统一使用 execSync 替代未导入的 gitlog)
+// 获取静态页面 (.astro) 或任意文件的 Git 时间 (统一使用 execSync 替代未导入的 gitlog)
 function getStaticPageGitDate(targetPath) {
-  if (!fs.existsSync(targetPath)) return null;
-  const relativePath = path.relative(process.cwd(), targetPath).split(path.sep).join('/');
+  if (!targetPath || !fs.existsSync(targetPath)) return null;
+  const relativePath = path.relative(cwd, targetPath).split(path.sep).join('/');
   try {
     const gitDate = execSync(
       `git log -1 --format=%cI -- "${relativePath}"`,
-      { encoding: 'utf-8', cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'] }
+      { encoding: 'utf-8', cwd: cwd, stdio: ['pipe', 'pipe', 'pipe'] }
     ).trim();
     
     if (gitDate) {
@@ -90,6 +91,64 @@ function getStaticPageGitDate(targetPath) {
     return fs.statSync(targetPath).mtime; // 兜底
   }
 }
+
+// 🚀 新增：获取多个文件中最晚的 Git 修改时间
+function getMaxGitDate(filePaths) {
+  let maxDate = null;
+  for (const targetPath of filePaths) {
+    const date = getStaticPageGitDate(targetPath);
+    if (date) {
+      if (!maxDate || date > maxDate) {
+        maxDate = date;
+      }
+    }
+  }
+  return maxDate;
+}
+
+// 🚀 新增：获取多个日期中最晚的一个
+function getLatestDate(...dates) {
+  let max = null;
+  for (const d of dates) {
+    if (d && (!max || d > max)) max = d;
+  }
+  return max;
+}
+
+// 🚀 核心优化：计算全局及特定页面依赖组件的最新修改时间
+// 1. 全局依赖 (影响所有页面: 布局、全局样式、脚本、页眉页脚)
+const globalDeps = [
+  'src/layouts/Layout.astro',
+  'src/styles/global.css',
+  'src/scripts/main.js',
+  'src/components/Header.astro',
+  'src/components/Footer.astro',
+  'astro.config.mjs',
+];
+const globalMaxDate = getMaxGitDate(globalDeps.map(p => path.join(cwd, p)));
+
+// 2. 主页特定依赖
+const homeDeps = [
+  'src/components/FAQs.astro',
+  'src/components/PricingCards.astro',
+];
+const homeMaxDate = getMaxGitDate(homeDeps.map(p => path.join(cwd, p)));
+
+// 3. 博客列表页特定依赖
+const blogListDeps = [
+  'src/components/BlogCard.astro',
+  'src/utils/extractTags.ts',
+  'src/components/BlogListStyles.astro',
+];
+const blogListMaxDate = getMaxGitDate(blogListDeps.map(p => path.join(cwd, p)));
+
+// 4. 博客详情页特定依赖
+const blogPostDeps = [
+  'src/components/Giscus.astro',
+];
+const blogPostMaxDate = getMaxGitDate(blogPostDeps.map(p => path.join(cwd, p)));
+
+console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${blogPostMaxDate?.toISOString()})`);
 
 
 // 🛡️ 自定义 Astro 集成: 在构建完成后清理所有 HTML 文件中的注释
@@ -156,9 +215,12 @@ export default defineConfig({
         const blogMatch = url.match(/\/(?:zh\/)?blog\/(.+)\/$/);
         if (blogMatch) {
           const slugId = blogMatch[1];
-          if (blogGitTimeMap.has(slugId)) {
-            item.lastmod = blogGitTimeMap.get(slugId);
-          } else {
+          const postDate = blogGitTimeMap.get(slugId);
+          
+          // 🛠️ 核心优化：博客详情页的 lastmod = max(文章md修改时间, 全局依赖修改时间, 详情页组件修改时间)
+          item.lastmod = getLatestDate(postDate, globalMaxDate, blogPostMaxDate);
+          
+          if (!postDate) {
             console.warn(`[Sitemap] ❌ 未找到博客时间戳: ${slugId}`);
           }
         } else {
@@ -180,21 +242,32 @@ export default defineConfig({
           if (cleanUrl.startsWith('zh/')) cleanUrl = cleanUrl.replace(/^zh\//, '');
           
           let targetPath = '';
-          if (cleanUrl === '') {
-            targetPath = path.join(process.cwd(), 'src/pages/index.astro');
+          if (cleanUrl === '' || cleanUrl === 'index') {
+            targetPath = path.join(cwd, 'src/pages/index.astro');
           } else {
-            const astroPath = path.join(process.cwd(), 'src/pages', cleanUrl + '.astro');
+            const astroPath = path.join(cwd, 'src/pages', cleanUrl + '.astro');
             if (fs.existsSync(astroPath)) {
               targetPath = astroPath;
             } else {
-              targetPath = path.join(process.cwd(), 'src/pages', cleanUrl, 'index.astro');
+              targetPath = path.join(cwd, 'src/pages', cleanUrl, 'index.astro');
             }
           }
 
           const staticDate = getStaticPageGitDate(targetPath);
-          if (staticDate) {
-            item.lastmod = staticDate;
+          
+          // 🛠️ 核心优化：根据页面类型，合并对应的依赖组件时间
+          if (cleanUrl === '' || cleanUrl === 'index') {
+            // 主页
+            item.lastmod = getLatestDate(staticDate, globalMaxDate, homeMaxDate);
+          } else if (cleanUrl === 'blog') {
+            // 博客列表页
+            item.lastmod = getLatestDate(staticDate, globalMaxDate, blogListMaxDate);
           } else {
+            // 其他普通静态页面 (如 privacy, terms)
+            item.lastmod = getLatestDate(staticDate, globalMaxDate);
+          }
+
+          if (!item.lastmod) {
             console.warn(`[Sitemap] ⚠️ 未找到静态页面文件或 Git 时间: ${targetPath} (URL: ${url})`);
           }
         }
