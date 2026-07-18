@@ -135,14 +135,16 @@ const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Que
     margin-bottom: 24px;
   }
 
-  /* 复用全局的 H2 标题装饰条样式, 保持视觉统一 */
+  /* 🎨 视觉重构: 移除 H2 左侧的彩色装饰条, 保持极简 */
   .faq-heading {
     font-size: 1.5em;
     margin: 32px 0 24px;
-    padding: 0 0 8px 16px;
+    padding-bottom: 8px;
     border-bottom: 1px solid #d0d7de;
-    border-left: 4px solid #667eea;
+    border-left: none;
+    padding-left: 0;
     color: #1F2328;
+    font-weight: 600;
   }
 
   .faq-item {
@@ -174,7 +176,7 @@ const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Que
   }
 
   .faq-question:hover {
-    color: #667eea;
+    color: #0969da;
   }
 
   .faq-icon {
@@ -189,7 +191,7 @@ const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Que
   /* 🌟 展开时旋转箭头 */
   .faq-item[open] .faq-icon {
     transform: rotate(180deg);
-    color: #667eea;
+    color: #0969da;
   }
 
   .faq-answer {
@@ -212,28 +214,28 @@ const headingText = isZh ? '❓ 常见问题 (FAQs)' : '❓ Frequently Asked Que
   }
   .faq-answer a:hover {
     text-decoration: underline;
-    color: #667eea;
+    color: #0550ae;
   }
 
   /* 暗黑模式适配 (核心修复: 使用 :global() 确保能匹配到 <html> 上的 data-theme 属性) */
   :global([data-theme="dark"]) .faq-heading {
     color: #e2e8f0;
-    border-bottom-color: #444;
+    border-bottom-color: #30363d;
   }
   :global([data-theme="dark"]) .faq-item {
-    border-color: #444;
+    border-color: #30363d;
   }
   :global([data-theme="dark"]) .faq-question {
     color: #e2e8f0;
   }
   :global([data-theme="dark"]) .faq-question:hover {
-    color: #8b9cf7;
+    color: #2f81f7;
   }
   :global([data-theme="dark"]) .faq-icon {
     color: #cbd5e0; /* 提亮图标颜色, 增强对比度 */
   }
   :global([data-theme="dark"]) .faq-item[open] .faq-icon {
-    color: #8b9cf7;
+    color: #2f81f7;
   }
   :global([data-theme="dark"]) .faq-answer {
     color: #cbd5e0; /* 提亮答案文字颜色, 确保在深色背景下清晰可读 */

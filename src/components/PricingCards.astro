@@ -113,7 +113,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   }
 
   .channel-card:hover {
-    border-color: #667eea;
+    border-color: #0969da;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
     transform: translateY(-2px);
   }
@@ -286,18 +286,18 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   }
 
   /* 暗黑模式适配 (使用 :global 确保生效) */
-  :global([data-theme="dark"]) .channel-card { background: #2d2d2d; border-color: #444; }
-  :global([data-theme="dark"]) .channel-header { border-bottom-color: #444; }
+  :global([data-theme="dark"]) .channel-card { background: #161b22; border-color: #30363d; }
+  :global([data-theme="dark"]) .channel-header { border-bottom-color: #30363d; }
   :global([data-theme="dark"]) .channel-name,
   :global([data-theme="dark"]) .channel-title { color: #e2e8f0; }
   :global([data-theme="dark"]) .channel-author,
   :global([data-theme="dark"]) .method-label,
   :global([data-theme="dark"]) .payment-highlight-note { color: #a0aec0; }
-  :global([data-theme="dark"]) .method-tag { background: #444; color: #e2e8f0; }
-  :global([data-theme="dark"]) .qr-code { border-color: #444; }
+  :global([data-theme="dark"]) .method-tag { background: #30363d; color: #e2e8f0; }
+  :global([data-theme="dark"]) .qr-code { border-color: #30363d; }
   :global([data-theme="dark"]) .channel-note { 
-    border-top-color: #444; 
-    color: #fc8181;
+    border-top-color: #30363d; 
+    color: #f85149;
   }
 </style>
 
