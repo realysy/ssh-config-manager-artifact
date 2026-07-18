@@ -1,3 +1,5 @@
+// astro.config.mjs
+
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { execSync } from 'child_process';
