@@ -60,8 +60,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     <div class="channel-content">
       <div class="channel-left">
         <img src={qrCreem.src} alt={isZh ? 'Creem 购买二维码' : 'Creem QR Code'} class="qr-code" loading="lazy">
-        <div class="channel-price" id="price-creem">
-          $30.4 <span class="price-fee-note" title={isZh ? '包含 Creem 平台手续费, 故价格略高于 itch.io.' : 'Includes Creem platform fee, hence slightly higher than itch.io.'}>?</span>
+        <div class="channel-price">
+          <span id="price-creem">$30.4</span>
+          <button type="button" class="price-fee-note" title={isZh ? '包含 Creem 平台手续费, 故价格略高于 itch.io.' : 'Includes Creem platform fee, hence slightly higher than itch.io.'}>?</button>
         </div>
       </div>
 
@@ -210,13 +211,23 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     margin: 0;
   }
 
-  /* 价格手续费提示符号样式 */
+  /* 价格手续费提示符号样式 (使用 button 标签并重置默认样式) */
   .price-fee-note {
     font-size: 14px;
     color: #718096;
-    cursor: help;
+    cursor: pointer; /* 统一使用小手图标 */
     vertical-align: super;
     font-weight: normal;
+    
+    /* 🌟 核心重置: 清除 button 的默认样式 */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    line-height: 1;
+    appearance: none;
+    -webkit-appearance: none;
   }
   /* 🌟 移动端设备将鼠标样式改为 pointer, 提示可点击 */
   @media (hover: none) {
@@ -569,9 +580,15 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     let hideTimer: number | undefined;
 
     notes.forEach(note => {
-      note.addEventListener('click', (e: Event) => {
-        e.preventDefault(); // 🌟 阻止默认的锚点跳转或表单提交行为 (修复移动端点击后页面异常滑动的问题)
-        e.stopPropagation(); // 阻止冒泡到 document 的关闭事件
+      // 🌟 核心修复 1: 使用 pointerdown 替代 click
+      // 避开浏览器默认的 click 焦点获取行为，以及 Astro 对 click 事件的全局路由拦截
+      note.addEventListener('pointerdown', (e: PointerEvent) => {
+        e.preventDefault(); // 阻止获取焦点和默认的点击前行为
+        e.stopPropagation(); // 阻止冒泡
+        
+        // 🌟 核心修复 2: 记录当前滚动位置，防止底层重排导致页面跳动
+        const currentScrollY = window.scrollY;
+
         const text = note.getAttribute('title') || note.getAttribute('data-tooltip');
         if (!text || !tooltip) return;
 
@@ -580,6 +597,9 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
         // 强制重绘以触发 transition 动画
         void tooltip.offsetWidth; 
         tooltip.style.opacity = '1';
+
+        // 🌟 核心修复 3: 强制恢复滚动位置，确保页面绝对不会发生任何偏移
+        window.scrollTo(0, currentScrollY);
 
         if (hideTimer) clearTimeout(hideTimer);
         // 3秒后自动隐藏
@@ -591,7 +611,12 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     });
 
     // 点击页面任意其他位置关闭提示
-    document.addEventListener('click', () => {
+    document.addEventListener('click', (e: Event) => {
+      // 🌟 核心修复: 如果点击的是价格提示符号本身, 则忽略此次 click 事件 (防止 pointerdown 显示后立刻被 click 关闭)
+      if ((e.target as HTMLElement).closest('.price-fee-note')) {
+        return;
+      }
+      
       if (tooltip && tooltip.style.opacity === '1') {
         tooltip.style.opacity = '0';
         window.setTimeout(() => { if (tooltip) tooltip.style.display = 'none'; }, 300);
