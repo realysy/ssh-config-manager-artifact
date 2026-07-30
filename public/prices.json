@@ -6,5 +6,9 @@
   "tb": {
     "price": 88,
     "currency": "CNY"
+  },
+  "creem": {
+    "price": 30.4,
+    "currency": "USD"
   }
 }

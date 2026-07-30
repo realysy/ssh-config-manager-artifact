@@ -83,6 +83,61 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
     <p class="channel-note" id="note-tb" style="display: none;"></p>
   </div>
+
+  <!-- Creem 渠道卡片 -->
+  <div class="channel-card">
+    <div class="channel-header">
+      <span class="channel-icon">💳</span>
+      <span class="channel-name">{isZh ? '国际用户 (Creem)' : 'International Users (Creem)'}</span>
+    </div>
+    <div class="channel-content">
+      <div class="channel-left">
+        <!-- 🌟 使用 Creem 官方 SVG 作为占位图/Logo, 保持与二维码相同的尺寸和圆角 -->
+        <div class="qr-code creem-logo-placeholder">
+          <svg width="60" height="60" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="channel-price" id="price-creem">$30.4</div>
+      </div>
+
+      <div class="channel-info">
+        <h3 class="channel-title">SSH Config Manager</h3>
+        <p class="channel-author">by realysy</p>
+        <div class="payment-methods">
+          <span class="method-label">{isZh ? '支持:' : 'Supports:'}</span>
+          <span class="method-tag">{isZh ? '信用卡' : 'Credit Card'}</span>
+          <span class="method-tag">{isZh ? '借记卡' : 'Debit Card'}</span>
+          <span class="method-tag">PayPal</span>
+          <span class="method-tag">Apple Pay</span>
+          <span class="method-tag">Google Pay</span>
+        </div>
+        <div class="payment-highlight-note">✨ {isZh ? '安全快捷的国际支付网关, 支持多种本地支付方式.' : 'Secure and fast international payment gateway, supports various local payment methods.'}</div>
+        <div class="payment-highlight-note">✨ {isZh ? '支付成功后, 激活码将自动发送至您的邮箱.' : 'After payment, the activation code will be automatically sent to your email.'}</div>
+        
+        <!-- 🌟 Creem 购买按钮容器, 包含浅色和深色两个按钮, 通过 CSS 控制暗黑模式切换 -->
+        <div class="creem-btn-container">
+          <!-- 浅色主题按钮 (默认显示) -->
+          <a href="https://www.creem.io/payment/prod_7PRk3MakptaCRPG2p6ahW5" data-creem-checkout data-creem-theme="light" class="creem-buy-btn creem-btn-light">
+            <svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/>
+            </svg>
+            <span>{isZh ? '使用 Creem 购买' : 'Buy with Creem'}</span>
+          </a>
+          <!-- 深色主题按钮 (暗黑模式下显示) -->
+          <a href="https://www.creem.io/payment/prod_7PRk3MakptaCRPG2p6ahW5" data-creem-checkout data-creem-theme="dark" class="creem-buy-btn creem-btn-dark">
+            <svg width="15" height="15" viewBox="0 0 121 121" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M22.1102 11C24.1187 11 25.9669 12.0982 26.9281 13.8619L51.2059 58.4106C52.5699 60.9134 55.7048 61.8368 58.2077 60.473C60.7108 59.109 61.6342 55.9742 60.2701 53.4712L41.5466 19.113C39.554 15.4566 42.2004 11 46.3645 11H103.806C107.885 11 110.539 15.2933 108.715 18.9416L65.0579 106.254C63.0356 110.298 57.2654 110.298 55.2431 106.254L11.5863 18.9416C9.76212 15.2933 12.4156 11 16.4946 11H22.1102Z" fill="#151617"/>
+            </svg>
+            <span>{isZh ? '使用 Creem 购买' : 'Buy with Creem'}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
+    <p class="channel-note" id="note-creem" style="display: none;"></p>
+  </div>
 </div>
 
 <style>
@@ -160,6 +215,69 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
+  }
+
+  /* Creem Logo 占位符基础样式 */
+  .creem-logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    color: #2d3748;
+  }
+
+  /* ========== Creem 购买按钮样式 ========== */
+  .creem-btn-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .creem-buy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 12px;
+    border: 2px solid #151617;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: fit-content;
+  }
+
+  .creem-buy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 0 #151617;
+    text-decoration: none;
+  }
+
+  .creem-buy-btn svg {
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  /* 浅色按钮 (默认显示) */
+  .creem-btn-light {
+    background: #FFBE98;
+    color: #151617;
+    box-shadow: 3px 3px 0 0 #151617;
+  }
+
+  /* 深色按钮 (默认隐藏) */
+  .creem-btn-dark {
+    background: #FFBE98;
+    color: #151617;
+    box-shadow: 3px 3px 0 0 #000000;
+    display: none; 
+  }
+  
+  .creem-btn-dark:hover {
+    box-shadow: 4px 4px 0 0 #000000;
   }
 
   .channel-info {
@@ -299,6 +417,18 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     border-top-color: #30363d; 
     color: #f85149;
   }
+  /* 🌟 Creem Logo 占位符暗黑模式适配 */
+  :global([data-theme="dark"]) .creem-logo-placeholder {
+    background: #2d3748;
+    color: #e2e8f0;
+  }
+  /* 🌟 暗黑模式下切换按钮显示状态 */
+  :global([data-theme="dark"]) .creem-btn-light {
+    display: none;
+  }
+  :global([data-theme="dark"]) .creem-btn-dark {
+    display: inline-flex;
+  }
 </style>
 
 
@@ -312,6 +442,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   interface PriceData {
     itch?: PriceInfo;
     tb?: PriceInfo;
+    creem?: PriceInfo;
   }
 
   // 🌍 根据当前 HTML lang 属性判断语言, 决定错误提示文本
@@ -322,6 +453,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
 
   const noteItch = document.getElementById('note-itch');
   const noteTb = document.getElementById('note-tb');
+  const noteCreem = document.getElementById('note-creem');
 
   // 🌟 2. 为 data 参数添加类型注解, 修复隐式 any 报错
   function updatePriceFromData(data: PriceData): boolean {
@@ -330,6 +462,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     // 🌟 3. 提前获取 DOM 元素, 并使用 if 判空修复 'Object is possibly null' 报错
     const priceItchEl = document.getElementById('price-itch');
     const priceTbEl = document.getElementById('price-tb');
+    const priceCreemEl = document.getElementById('price-creem');
 
     // 更新 itch.io 价格
     if (data.itch && typeof data.itch.price !== 'undefined') {
@@ -349,6 +482,16 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     } else if (noteTb) {
       noteTb.textContent = errorMsg;
       noteTb.style.display = 'block';
+    }
+
+    // 更新 Creem 价格
+    if (data.creem && typeof data.creem.price !== 'undefined') {
+      const symbol = data.creem.currency === 'USD' ? '$' : (data.creem.currency + ' ');
+      if (priceCreemEl) priceCreemEl.textContent = symbol + data.creem.price;
+      success = true;
+    } else if (noteCreem) {
+      noteCreem.textContent = errorMsg;
+      noteCreem.style.display = 'block';
     }
     
     return success;
@@ -391,6 +534,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
         // 3. 两个 URL 都失败, 显示错误提示
         if (noteItch) { noteItch.textContent = errorMsg; noteItch.style.display = 'block'; }
         if (noteTb) { noteTb.textContent = errorMsg; noteTb.style.display = 'block'; }
+        if (noteCreem) { noteCreem.textContent = errorMsg; noteCreem.style.display = 'block'; }
       }
     }
   }
@@ -398,3 +542,6 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   // 页面加载完成后执行
   fetchPrices();
 </script>
+
+<!-- 🌟 引入 Creem 官方支付脚本, 使用 is:inline 确保不被 Astro 打包处理 -->
+<script src="https://www.creem.io/embed.js" is:inline async></script>
