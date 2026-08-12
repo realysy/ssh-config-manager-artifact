@@ -17,40 +17,6 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
 ---
 
 <div class="channels-grid">
-  <!-- itch.io 渠道卡片 -->
-  <div class="channel-card">
-    <div class="channel-header">
-      <span class="channel-icon">🌍</span>
-      <span class="channel-name">{isZh ? '海外用户 (itch.io)' : 'Global Users (itch.io)'}</span>
-    </div>
-    <div class="channel-content">
-      <div class="channel-left">
-        <!-- 🌟 2. 使用 .src 属性渲染图片, Astro 会自动注入正确的完整 URL -->
-        <img src={qrItch.src} alt={isZh ? 'itch.io 购买二维码' : 'itch.io QR Code'} class="qr-code" loading="lazy">
-        <div class="channel-price" id="price-itch">$28.9</div>
-      </div>
-
-      <div class="channel-info">
-        <h3 class="channel-title">SSH Config Manager</h3>
-        <p class="channel-author">by realysy</p>
-        <div class="payment-methods">
-          <span class="method-label">{isZh ? '支持:' : 'Supports:'}</span>
-          <span class="method-tag">PayPal</span>
-          <span class="method-tag">{isZh ? '信用卡' : 'Credit Card'}</span>
-          <span class="method-tag">{isZh ? '借记卡' : 'Debit Card'}</span>
-        </div>
-        <div class="payment-highlight-note">✨ {isZh ? '无需注册账号, 凭邮箱即可购买.' : 'No account registration required, purchase with email.'}</div>
-        <div class="payment-highlight-note">✨ {isZh ? '支付成功后, itch.io 会自动发放 download key 作为激活码.' : 'After payment, itch.io automatically issues a download key as the activation code.'}</div>
-        <a href="https://realysy.itch.io/ssh-config-manager" target="_blank" rel="noopener noreferrer" class="buy-btn itch-buy-btn">
-          🛒 {isZh ? '前往 itch.io 购买' : 'Buy on itch.io'}
-        </a>
-      </div>
-    </div>
-
-    <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
-    <p class="channel-note" id="note-itch" style="display: none;"></p>
-  </div>
-
   <!-- Creem 渠道卡片 -->
   <div class="channel-card">
     <div class="channel-header">
@@ -105,6 +71,40 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
 
     <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
     <p class="channel-note" id="note-creem" style="display: none;"></p>
+  </div>
+
+  <!-- itch.io 渠道卡片 -->
+  <div class="channel-card">
+    <div class="channel-header">
+      <span class="channel-icon">🌍</span>
+      <span class="channel-name">{isZh ? '海外用户 (itch.io)' : 'International Users (itch.io)'}</span>
+    </div>
+    <div class="channel-content">
+      <div class="channel-left">
+        <!-- 🌟 2. 使用 .src 属性渲染图片, Astro 会自动注入正确的完整 URL -->
+        <img src={qrItch.src} alt={isZh ? 'itch.io 购买二维码' : 'itch.io QR Code'} class="qr-code" loading="lazy">
+        <div class="channel-price" id="price-itch">$28.9</div>
+      </div>
+
+      <div class="channel-info">
+        <h3 class="channel-title">SSH Config Manager</h3>
+        <p class="channel-author">by realysy</p>
+        <div class="payment-methods">
+          <span class="method-label">{isZh ? '支持:' : 'Supports:'}</span>
+          <span class="method-tag">PayPal</span>
+          <span class="method-tag">{isZh ? '信用卡' : 'Credit Card'}</span>
+          <span class="method-tag">{isZh ? '借记卡' : 'Debit Card'}</span>
+        </div>
+        <div class="payment-highlight-note">✨ {isZh ? '无需注册账号, 凭邮箱即可购买.' : 'No account registration required, purchase with email.'}</div>
+        <div class="payment-highlight-note">✨ {isZh ? '支付成功后, itch.io 会自动发放 download key 作为激活码.' : 'After payment, itch.io automatically issues a download key as the activation code.'}</div>
+        <a href="https://realysy.itch.io/ssh-config-manager" target="_blank" rel="noopener noreferrer" class="buy-btn itch-buy-btn">
+          🛒 {isZh ? '前往 itch.io 购买' : 'Buy on itch.io'}
+        </a>
+      </div>
+    </div>
+
+    <!-- 🌟 添加错误提示占位符, 默认隐藏 -->
+    <p class="channel-note" id="note-itch" style="display: none;"></p>
   </div>
 
   <!-- 淘宝渠道卡片 -->
