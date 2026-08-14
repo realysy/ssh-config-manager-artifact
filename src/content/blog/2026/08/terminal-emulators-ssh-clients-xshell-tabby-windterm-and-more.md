@@ -15,6 +15,6 @@ lang: en
 - xTerminal: I used this consistently from 2024 to 2026, but I can no longer recommend it. Although newer versions have fixed the initial startup lag, the free version restricts you to only 2 concurrent sessions. More importantly, its terminal is not natively implemented; it lacks standard features like scrolling up through history and `Ctrl+Shift+C` for copying.
 - Electerm: The UI logic leaves much to be desired. On Ubuntu 20, it fails to connect to the local shell; saved workspace layouts do not auto-reconnect upon reopening; and it lacks multi-tab support. That said, its actual terminal experience is better than xTerminal's.
 - Shell360: Cannot be installed on Ubuntu 20 and is far too barebones. It appears to only support basic SSH connections, lacking essential features like split panes, custom layouts, and SFTP file transfers.
-- [WezTerm](/blog/2026/08/wezterm-install-and-my-config/): Excellent performance. A single tab containing 3 cmd panes uses only about 101MB of RAM. However, it lacks a visual SSH management interface.
+- [WezTerm](./wezterm-install-and-my-config.md): Excellent performance. A single tab containing 3 cmd panes uses only about 101MB of RAM. However, it lacks a visual SSH management interface.
 - Contour Terminal: Slightly heavier on resources; an empty PowerShell terminal tab consumes around 115MB of memory.
 - Termora: Currently in its 2.0 beta phase, with account synchronization locked behind a paywall.
