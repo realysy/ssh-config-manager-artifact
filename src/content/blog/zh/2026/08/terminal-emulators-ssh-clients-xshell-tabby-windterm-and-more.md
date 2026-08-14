@@ -14,6 +14,6 @@ description: "介绍了常见的、作者用过的终端模拟器/SSH客户端, 
 - xTerminal：近两年24~26我一直在用，不再推荐，新版解决了启动卡顿问题，但限制只能有2个会话；终端不是原生的，不支持向上历史、Ctrl+Shift+C复制
 - Electerm: 界面逻辑不太行; ubuntu 20 不支持连本地shell；layout 工作区保存后再打开不能自动重连；不支持多tab。但终端比 xterminal 好用。
 - Shell360：ubuntu 20不支持安装；而且过于简陋了，似乎只能打开ssh，不支持左右并排拆分、自定义布局，不支持sftp传输文件
-- WezTerm：1个标签页包含3个cmd pane，内存101M，但没有可视化 SSH 管理页面
+- [WezTerm](/blog/2026/08/wezterm-install-and-my-config/)：1个标签页包含3个cmd pane，内存101M，但没有可视化 SSH 管理页面
 - contour terminal: 1个空终端标签页Powershell内存115M
 - termora：2.0 beta, 账号同步收费
