@@ -164,15 +164,15 @@ const zhBlogPostMaxDate = getMaxGitDate(zhBlogPostDeps.map(p => path.join(cwd, p
 console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()})`);
 
 
-// 🛡️ 自定义 Astro 集成: 在构建完成后清理所有 HTML 文件中的注释
-function removeHtmlComments() {
+// 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
+function postBuildCleanup() {
   return {
-    name: 'remove-html-comments',
+    name: 'post-build-cleanup',
     hooks: {
       'astro:build:done': async ({ dir }) => {
         // dir 是一个 URL 对象, 需要转换为本地文件系统路径
         const outDir = fileURLToPath(dir);
-        let cleanedCount = 0;
+        let processedCount = 0;
 
         // 递归遍历 dist 目录
         const processDir = (currentDir) => {
@@ -184,21 +184,37 @@ function removeHtmlComments() {
             if (stat.isDirectory()) {
               processDir(fullPath);
             } else if (file.endsWith('.html')) {
-              const content = fs.readFileSync(fullPath, 'utf-8');
-              // 正则匹配并移除 HTML 注释 (包含换行)
-              const newContent = content.replace(/<!--[\s\S]*?-->/g, '');
+              let content = fs.readFileSync(fullPath, 'utf-8');
+              const originalContent = content;
+
+              // 🌟 1: 智能修复本地 .md/.mdx 链接 (完美兼顾 VSCode 跳转与 Astro 路由)
+              content = content.replace(/href="(?!https?:\/\/|mailto:|#|data:)(?:\.\/)?([^"]*?)\.mdx?(?=[?#"])/gi, (match, p1) => {
+                // p1 是去掉 .md 和可能存在的 ./ 后的路径
+                // 例如: "wezterm-slug" (同级) 或 "../07/old-slug" (跨级)
+                
+                // 在 Astro 的 directory 模式下，URL 表现为目录 (如 /slug/)
+                // 如果 p1 不包含 "/" (说明是物理同级的兄弟文件)，在浏览器中必须退一级 "../" 才能跳到兄弟目录
+                if (!p1.includes('/')) {
+                  return `href="../${p1}/"`;
+                }
+                // 如果包含 "/" (说明是跨目录的相对路径，如 ../07/slug)，直接补全尾部 "/"
+                return `href="${p1}/"`;
+              });
+
+              // 🌟 2: 移除所有 HTML 注释 (包含换行)
+              content = content.replace(/<!--[\s\S]*?-->/g, '');
               
               // 只有内容发生改变时才写回磁盘, 减少不必要的 I/O
-              if (content !== newContent) {
-                fs.writeFileSync(fullPath, newContent, 'utf-8');
-                cleanedCount++;
+              if (content !== originalContent) {
+                fs.writeFileSync(fullPath, content, 'utf-8');
+                processedCount++;
               }
             }
           }
         };
 
         processDir(outDir);
-        console.log(`[remove-html-comments] 🧹 清理完成, 共处理 ${cleanedCount} 个 HTML 文件.`);
+        console.log(`[post-build-cleanup] 🧹 构建后处理完成, 共优化 ${processedCount} 个 HTML 文件 (含链接修复与注释清理).`);
       }
     }
   };
@@ -348,7 +364,7 @@ export default defineConfig({
       html: false,
     }),
 
-    // 🌟 新增: 注入自定义的 HTML 注释清理集成
-    removeHtmlComments(),
+    // 注入自定义的 postBuild 集成
+    postBuildCleanup(),
   ],
 });

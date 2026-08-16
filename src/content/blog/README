@@ -2,6 +2,27 @@
 
 允许某篇博客只有一种语言, 则网页切换语言时会回退到这种语言.
 
-博客中添加图片的方式:
+## 引用链接
+
+### 博客中添加图片的方式:
 1. 图片放到 [src/assets/](src/assets/) 下面;
-2. 引用示例: `![main page](@/assets/screenshots/main_page.png)`
+2. 图片引用示例: `![main page](@/assets/screenshots/main_page.png)`
+
+### 在一篇博客中引用其他博客页面链接引用示例
+
+写法示例: [WezTerm](./wezterm-install-and-my-config.md)
+
+然后`pnpm build`之后会自动处理为正确链接 postBuildCleanup().
+
+### 在非博客页面(.astro)中引用博客页面链接
+
+写法示例
+```astro
+<!-- 🌟 正确做法：使用 import.meta.env.BASE_URL 动态拼接 -->
+<p>
+  想了解更多终端配置？请查看我们的深度文章：
+  <a href={`${import.meta.env.BASE_URL}blog/2026/08/wezterm-install-and-my-config/`}>
+    WezTerm 安装与我的配置分享
+  </a>
+</p>
+```
