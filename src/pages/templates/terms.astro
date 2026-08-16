@@ -9,7 +9,11 @@ let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
 ---
 
-<Layout title="Terms of Use" lang="en">
+<Layout 
+  title=`Terms of Use - ${SITE_CONFIG.appName}` 
+  lang="en"
+  description=`${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): These Terms of Use govern your use of the software. By downloading, installing, or using the software, you agree to be bound by these terms.`
+>
   <div class="page-wrapper">
     <Header />
     <div class="container markdown-content">

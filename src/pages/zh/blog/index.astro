@@ -33,7 +33,11 @@ function getColorIndex(str: string) {
 }
 ---
 
-<Layout title=`博客 - ${SITE_CONFIG.appName}` lang="zh">
+<Layout 
+  title=`博客 - ${SITE_CONFIG.appName}`
+  lang="zh"
+  description=`${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): 关于 ${SITE_CONFIG.appName} 的最新开发动态和教程。`
+>
   <BlogListStyles />
 
   <div class="page-wrapper">

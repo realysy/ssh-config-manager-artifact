@@ -2,13 +2,18 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { SITE_CONFIG } from '@/utils/config';
 
 // 🛡️ 防呆处理
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
 ---
 
-<Layout title="使用条款" lang="zh-CN">
+<Layout 
+  lang="zh-CN"
+  title=`使用条款 - ${SITE_CONFIG.appName}` 
+  description=`${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): 本使用条款约束您对本软件的使用。下载、安装或使用本软件即表示您同意受本条款的约束。`
+>
   <div class="page-wrapper">
     <Header />
     <div class="container markdown-content">

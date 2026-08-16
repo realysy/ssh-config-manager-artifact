@@ -34,7 +34,11 @@ function getColorIndex(str: string) {
 }
 ---
 
-<Layout title=`Blog - ${SITE_CONFIG.appName}` lang="en">
+<Layout 
+  title=`Blog - ${SITE_CONFIG.appName}` 
+  lang="en"
+  description=`${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}): The latest development updates and tutorials about ${SITE_CONFIG.appName}.`
+>
   <BlogListStyles />
 
   <div class="page-wrapper">
