@@ -1,5 +1,5 @@
 ---
-title: "How to Create a Linux .desktop Launcher to Start SSH Config Manager from the Start Menu or Desktop"
+title: "How to Create a Linux .desktop Launcher to Start SSH Config Manager from the Start Menu or Desktop?"
 pubDate: 2026-08-17
 tags: ["Linux", "launcher", "desktop", "icon", "start menu"]
 description: "A step-by-step guide to creating a .desktop launcher file on Linux for launching SSH Config Manager from the start menu or desktop."
