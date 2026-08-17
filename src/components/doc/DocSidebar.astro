@@ -1,0 +1,60 @@
+---
+/**
+ * src/components/doc/DocSidebar.astro
+ * 文档左侧导航栏: 按目录分组显示所有文档
+ */
+import { getCollection } from 'astro:content';
+
+interface Props {
+  lang: 'en' | 'zh';
+  currentSlug: string;
+}
+
+const { lang, currentSlug } = Astro.props;
+const allDocs = await getCollection('docs');
+
+// 过滤出当前语言的文档
+const langPrefix = lang === 'zh' ? 'zh/' : 'en/';
+const docs = allDocs.filter(doc => doc.id.startsWith(langPrefix));
+
+// 按目录分组
+const groupedDocs = docs.reduce((acc, doc) => {
+  // 移除语言前缀和文件后缀, 获取纯路径
+  const cleanPath = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
+  const parts = cleanPath.split('/');
+  // 如果有多级目录, 取第一级作为分类; 否则归为 'general'
+  const category = parts.length > 1 ? parts[0] : 'general';
+  if (!acc[category]) acc[category] = [];
+  acc[category].push({ ...doc, cleanPath });
+  return acc;
+}, {} as Record<string, any[]>);
+
+// 排序
+Object.keys(groupedDocs).forEach(cat => {
+  groupedDocs[cat].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+});
+
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<nav class="doc-sidebar">
+  <h3 class="sidebar-title">{lang === 'zh' ? '文档目录' : 'Documentation'}</h3>
+  {Object.entries(groupedDocs).map(([category, items]) => (
+    <div class="sidebar-group">
+      <h4 class="sidebar-category">{category.replace(/-/g, ' ')}</h4>
+      <ul>
+        {items.map(doc => {
+          const isActive = doc.cleanPath === currentSlug;
+          const href = `${baseUrl}${lang === 'zh' ? 'zh/' : ''}doc/${doc.cleanPath}/`;
+          return (
+            <li>
+              <a href={href} class:list={[{ active: isActive }]}>
+                {doc.data.title}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  ))}
+</nav>

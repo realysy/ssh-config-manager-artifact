@@ -1,0 +1,57 @@
+---
+// src/pages/doc/index.astro
+// 英文文档首页: 显示所有文档目录分类
+
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import DocStyles from "@/components/docs/DocStyles.astro";
+import { getCollection } from "astro:content";
+import { SITE_CONFIG } from '@/utils/config';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith("/")) baseUrl += "/";
+
+const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("en/"));
+
+// 按目录分组
+const groupedDocs = allDocs.reduce((acc, doc) => {
+  const cleanPath = doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
+  const parts = cleanPath.split("/");
+  const category = parts.length > 1 ? parts[0] : "general";
+  if (!acc[category]) acc[category] = [];
+  acc[category].push({ ...doc, cleanPath });
+  return acc;
+}, {} as Record<string, any[]>);
+
+Object.keys(groupedDocs).forEach(cat => {
+  groupedDocs[cat].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+});
+---
+
+<Layout title={`Documentation - ${SITE_CONFIG.appName}`} lang="en">
+  <DocStyles />
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <h1 class="doc-main-title">📚 Documentation</h1>
+      <div class="doc-index-grid">
+        {Object.entries(groupedDocs).map(([category, docs]) => (
+          <div class="doc-category-card">
+            <h2>{category.replace(/-/g, ' ')}</h2>
+            <ul>
+              {docs.map(doc => (
+                <li>
+                  <a href={`${baseUrl}doc/${doc.cleanPath}/`}>
+                    {doc.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>

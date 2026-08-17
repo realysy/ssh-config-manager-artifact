@@ -12,8 +12,8 @@ import compress from 'astro-compress';
 const SITE_BASE = '/ssh-config-manager-artifact';
 const cwd = process.cwd();
 
-const blogDir = path.join(cwd, 'src/content/blog');
-const blogGitTimeMap = new Map();
+const blogDir = path.join(cwd, 'src/content/blog');  // 博客目录与时间戳 Map
+const docsDir = path.join(cwd, 'src/content/docs');  // 文档目录与时间戳 Map
 
 // 🌟 核心修复：对路径的每一段分别 slugify，与 Astro 的 URL 生成逻辑完美对齐
 // 例如: 'zh/2026/06/Github Action for CI CD' → 'zh/2026/06/github-action-for-ci-cd'
@@ -45,45 +45,48 @@ function getMdFiles(dir) {
   return results;
 }
 
-async function initBlogGitTimes() {
-  const mdFiles = getMdFiles(blogDir);
-  console.log(`[Sitemap] 🚀 开始扫描 ${mdFiles.length} 篇博客...`);
+// 文件 Git 时间扫描函数
+async function scanDirectoryForGitTimes(dir, label) {
+  const timeMap = new Map();
+  const mdFiles = getMdFiles(dir);
+  
+  if (mdFiles.length === 0) {
+    console.log(`[Sitemap] ℹ️ 未发现${label}文件, 跳过 Git 扫描。`);
+    return timeMap;
+  }
+  
+  console.log(`[Sitemap] 🚀 开始扫描 ${mdFiles.length} 篇${label}...`);
   
   for (const fullPath of mdFiles) {
     const relativePath = path.relative(cwd, fullPath).split(path.sep).join('/');
-    // 🌟 核心优化：提取相对于 blogDir 的路径，并通过 slugifyPath 与 Astro URL 生成逻辑对齐
-    // 这样 'Github Action for CI CD.md' → 'github-action-for-ci-cd'，与 Sitemap 中的 URL slug 完美咬合
-    const rawRelativePath = path.relative(blogDir, fullPath).split(path.sep).join('/');
+    const rawRelativePath = path.relative(dir, fullPath).split(path.sep).join('/');
     const mapKey = slugifyPath(rawRelativePath);
 
     try {
-      // 使用原生 execSync，并强制指定 cwd，捕获所有输出
       const gitDate = execSync(
         `git log -1 --format=%cI -- "${relativePath}"`, 
         { encoding: 'utf-8', cwd: cwd, stdio: ['pipe', 'pipe', 'pipe'] }
       ).trim();
 
       if (gitDate) {
-        blogGitTimeMap.set(mapKey, new Date(gitDate));
-        console.log(`[Sitemap] ✅ Git 成功: ${relativePath}`);
+        timeMap.set(mapKey, new Date(gitDate));
       } else {
         throw new Error('Git 返回为空');
       }
     } catch (e) {
-      // 🎯 核心诊断：打印出 Git 的真实报错信息
-      const errMsg = e.stderr ? e.stderr.toString().trim() : e.message;
-      console.warn(`[Sitemap] ❌ Git 失败: ${relativePath}`);
-      console.warn(`   └─ 原因: ${errMsg}`);
-      
       // 兜底：使用文件系统的最后修改时间 (mtime)
       const stat = fs.statSync(fullPath);
-      blogGitTimeMap.set(mapKey, stat.mtime);
+      timeMap.set(mapKey, stat.mtime);
     }
   }
-  console.log(`[Sitemap] 🏁 扫描完成，共生成 ${blogGitTimeMap.size} 个精准时间戳。`);
+  console.log(`[Sitemap] 🏁 ${label}扫描完成，共生成 ${timeMap.size} 个精准时间戳。`);
+  return timeMap;
 }
 
-await initBlogGitTimes();
+// 分别扫描博客和文档目录，直接赋值给常量
+const blogGitTimeMap = await scanDirectoryForGitTimes(blogDir, '博客');
+const docGitTimeMap = await scanDirectoryForGitTimes(docsDir, '文档');
+
 
 // 获取静态页面 (.astro) 或任意文件的 Git 时间 (统一使用 execSync 替代未导入的 gitlog)
 function getStaticPageGitDate(targetPath) {
@@ -154,14 +157,27 @@ const blogListDeps = [
 ];
 const blogListMaxDate = getMaxGitDate(blogListDeps.map(p => path.join(cwd, p)));
 
-// 🌟 4. 博客详情页依赖 (极致精细化：中英文模板分离)
+// 4. 博客详情页依赖 (极致精细化：中英文模板分离)
 const enBlogPostDeps = ['src/pages/blog/[...slug].astro', 'src/components/Giscus.astro'];
 const enBlogPostMaxDate = getMaxGitDate(enBlogPostDeps.map(p => path.join(cwd, p)));
 
 const zhBlogPostDeps = ['src/pages/zh/blog/[...slug].astro', 'src/components/Giscus.astro'];
 const zhBlogPostMaxDate = getMaxGitDate(zhBlogPostDeps.map(p => path.join(cwd, p)));
 
-console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()})`);
+// 文档详情页及列表页的依赖组件 (Sidebar, TOC, PrevNext 等)
+const docDeps = [
+  'src/pages/doc/[...slug].astro',
+  'src/pages/zh/doc/[...slug].astro',
+  'src/pages/doc/index.astro',
+  'src/pages/zh/doc/index.astro',
+  'src/components/docs/DocSidebar.astro',
+  'src/components/docs/DocTOC.astro',
+  'src/components/docs/DocPrevNext.astro',
+  'src/components/docs/DocStyles.astro',
+];
+const docMaxDate = getMaxGitDate(docDeps.map(p => path.join(cwd, p)));
+
+console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()}), 文档(${docMaxDate?.toISOString()})`);
 
 
 // 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
@@ -247,7 +263,7 @@ export default defineConfig({
           const langPrefix = blogMatch[1] || ''; // 'zh/' 或 ''
           const slug = blogMatch[2]; // '2026/05/...'
           
-          // 拼接出与 initBlogGitTimes 中完全一致的 Map Key
+          // 拼接出与 scanDirectoryForGitTimes() 中完全一致的 Map Key
           const mapKey = `${langPrefix}${slug}`;
           const postDate = blogGitTimeMap.get(mapKey);
           

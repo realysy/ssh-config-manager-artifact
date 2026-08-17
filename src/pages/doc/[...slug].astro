@@ -1,0 +1,61 @@
+---
+// src/pages/doc/[...slug].astro
+// 英文文档详情页: 三栏布局 (左侧目录, 中间内容, 右侧 TOC)
+
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import DocSidebar from "@/components/docs/DocSidebar.astro";
+import DocTOC from "@/components/docs/DocTOC.astro";
+import DocPrevNext from "@/components/docs/DocPrevNext.astro";
+import DocStyles from "@/components/docs/DocStyles.astro";
+import { getCollection, render } from "astro:content";
+import { SITE_CONFIG } from '@/utils/config';
+
+export async function getStaticPaths() {
+  const docs = await getCollection("docs");
+  return docs
+    .filter(doc => doc.id.startsWith("en/"))
+    .map(doc => ({
+      // 🌟 核心修复: 移除 .md/.mdx 后缀, 确保与 Astro 路由和 Sidebar 的 slug 完美对齐
+      params: { slug: doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '') },
+      props: { doc },
+    }));
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+
+// 获取所有英文文档用于计算上一篇/下一篇
+const allDocs = (await getCollection("docs"))
+  .filter(d => d.id.startsWith("en/"))
+  .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+
+const currentIndex = allDocs.findIndex(d => d.id === doc.id);
+const prevDoc = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
+
+const slug = doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
+const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
+---
+
+<Layout title={seoTitle} lang="en" description={doc.data.description}>
+  <DocStyles />
+  <div class="page-wrapper">
+    <Header />
+    <div class="container doc-layout">
+      <DocSidebar lang="en" currentSlug={slug} />
+      <main class="doc-content markdown-content">
+        <h1>{doc.data.title}</h1>
+        <Content />
+        <DocPrevNext 
+          lang="en"
+          prev={prevDoc ? { title: prevDoc.data.title, slug: prevDoc.id.replace(/^en\//, '').replace(/\.mdx?$/, '') } : null}
+          next={nextDoc ? { title: nextDoc.data.title, slug: nextDoc.id.replace(/^en\//, '').replace(/\.mdx?$/, '') } : null}
+        />
+      </main>
+      <DocTOC headings={headings} lang="en" />
+    </div>
+    <Footer />
+  </div>
+</Layout>
