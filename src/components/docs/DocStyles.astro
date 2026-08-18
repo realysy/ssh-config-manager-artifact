@@ -16,50 +16,65 @@
     color: #1f2328;
   }
 
-  .doc-index-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+  /* 🌟 新增: 文档首页专属 Wrapper, 实现内容不满一页时 Footer 沉底 */
+  .doc-index-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* 减去 body 的上下 padding (20px * 2) 以确保精准撑满视口 */
+    min-height: calc(100vh - 40px); 
   }
 
-  .doc-category-card {
-    background: #f6f8fa;
-    border: 1px solid #d0d7de;
-    border-radius: 8px;
-    padding: 24px;
+  .doc-index-wrapper .container {
+    flex: 1; /* 撑开中间内容区域, 将 Footer 自然推至底部 */
   }
 
-  .doc-category-card h2 {
+  /* 🌟 修改: 从网格卡片布局改为垂直目录列表布局 */
+  .doc-index-list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* 🌟 修改: 移除卡片样式, 改为极简的目录区块样式 */
+  .doc-category-section {
+    /* 移除原有的 background, border, border-radius, padding */
+  }
+
+  .doc-category-section h2 {
     font-size: 1.25em;
     margin-top: 0;
     border: none;
-    padding: 0;
-    margin-bottom: 16px;
-    /* 🌟 修改: 移除蓝色，改为正文色，增加字重以区分层级 */
+    padding: 0 0 8px 0;
+    margin-bottom: 12px;
     color: #1f2328;
     font-weight: 600;
   }
 
-  .doc-category-card ul {
+  .doc-category-section ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
-  .doc-category-card li {
-    margin-bottom: 8px;
+  .doc-category-section li {
+    margin-bottom: 0; /* 移除原有的 8px, 改为由 a 标签的 padding 控制间距 */
   }
 
-  .doc-category-card a {
-    /* 🌟 修改: 文档链接改为科技蓝 */
+  .doc-category-section a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    /* 保留原有的科技蓝 */
     color: #0969da;
     text-decoration: none;
+    transition: background 0.15s, color 0.15s;
   }
 
-  .doc-category-card a:hover {
-    /* 🌟 修改: hover 时变为深蓝色，并保留下划线 */
+  .doc-category-section a:hover {
+    /* 🌟 修改: hover 时增加浅灰背景, 移除下划线, 提升目录交互感 */
+    background: #f6f8fa;
     color: #0550ae;
-    text-decoration: underline;
+    text-decoration: none; 
   }
 
   /* Sidebar */
@@ -239,23 +254,19 @@
   }
 
   /* Dark mode */
-  [data-theme="dark"] .doc-category-card {
-    background: #161b22;
-    border-color: #30363d;
-  }
-
-  [data-theme="dark"] .doc-category-card h2 {
+  [data-theme="dark"] .doc-category-section h2 {
     /* 暗黑模式下标题改为正文色 */
     color: #e6edf3;
   }
 
-  [data-theme="dark"] .doc-category-card a {
+  [data-theme="dark"] .doc-category-section a {
     /* 暗黑模式下链接改为科技蓝 */
     color: #58a6ff;
   }
 
   /* 暗黑模式下链接的 hover 状态 */
-  [data-theme="dark"] .doc-category-card a:hover {
+  [data-theme="dark"] .doc-category-section a:hover {
+    background: #161b22;
     color: #79c0ff;
   }
 

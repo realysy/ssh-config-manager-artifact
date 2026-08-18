@@ -13,6 +13,22 @@ interface Props {
 const { lang, currentSlug } = Astro.props;
 const allDocs = await getCollection('docs');
 
+// 定义明确的类型接口, 消除 TS 隐式 any 报错
+interface DocItem {
+  id: string;
+  data: {
+    title: string;
+    order?: number;
+  };
+  cleanPath: string;
+}
+
+interface CategoryGroup {
+  title: string;
+  order: number;
+  items: DocItem[];
+}
+
 const langPrefix = lang === 'zh' ? 'zh/' : 'en/';
 const docs = allDocs.filter(doc => doc.id.startsWith(langPrefix));
 
@@ -33,9 +49,10 @@ const groupedDocs = regularDocs.reduce((acc, doc) => {
       items: []
     };
   }
-  acc[categorySlug].items.push({ ...doc, cleanPath });
+  // 显式断言为 DocItem 类型
+  acc[categorySlug].items.push({ ...doc, cleanPath } as DocItem);
   return acc;
-}, {} as Record<string, any>);
+}, {} as Record<string, CategoryGroup>);
 
 // 🌟 应用分类配置 (覆盖默认标题和排序)
 categoryMeta.forEach(meta => {

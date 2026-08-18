@@ -14,6 +14,22 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
 const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("en/"));
 
+// 定义明确的类型接口, 消除 TS 隐式 any 报错
+interface DocItem {
+  id: string;
+  data: {
+    title: string;
+    order?: number;
+  };
+  cleanPath: string;
+}
+
+interface CategoryGroup {
+  title: string;
+  order: number;
+  docs: DocItem[];
+}
+
 // 🌟 核心逻辑: 分离分类配置和普通文档
 const categoryMeta = allDocs.filter(d => d.data.category === true);
 const regularDocs = allDocs.filter(d => d.data.category !== true);
@@ -26,9 +42,10 @@ const groupedDocs = regularDocs.reduce((acc, doc) => {
   if (!acc[categorySlug]) {
     acc[categorySlug] = { title: categorySlug.replace(/-/g, ' '), order: 999, docs: [] };
   }
-  acc[categorySlug].docs.push({ ...doc, cleanPath });
+  // 显式断言为 DocItem 类型
+  acc[categorySlug].docs.push({ ...doc, cleanPath } as DocItem);
   return acc;
-}, {} as Record<string, any>);
+}, {} as Record<string, CategoryGroup>);
 
 categoryMeta.forEach(meta => {
   const metaPath = meta.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
@@ -47,13 +64,13 @@ sortedCategories.forEach(([_, cat]) => {
 
 <Layout title={`Documentation - ${SITE_CONFIG.appName}`} lang="en">
   <DocStyles />
-  <div class="page-wrapper">
+  <div class="page-wrapper doc-index-wrapper">
     <Header />
     <div class="container">
       <h1 class="doc-main-title">📚 Documentation</h1>
-      <div class="doc-index-grid">
+      <div class="doc-index-list">
         {sortedCategories.map(([slug, cat]) => (
-          <div class="doc-category-card">
+          <div class="doc-category-section">
             <h2>{cat.title}</h2>
             <ul>
               {cat.docs.map(doc => (
