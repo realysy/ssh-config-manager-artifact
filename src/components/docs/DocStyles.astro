@@ -16,28 +16,11 @@
     color: #1f2328;
   }
 
-  /* 🌟 新增: 文档首页专属 Wrapper, 实现内容不满一页时 Footer 沉底 */
-  .doc-index-wrapper {
-    display: flex;
-    flex-direction: column;
-    /* 减去 body 的上下 padding (20px * 2) 以确保精准撑满视口 */
-    min-height: calc(100vh - 40px); 
-  }
-
-  .doc-index-wrapper .container {
-    flex: 1; /* 撑开中间内容区域, 将 Footer 自然推至底部 */
-  }
-
-  /* 🌟 修改: 从网格卡片布局改为垂直目录列表布局 */
+  /* 🌟 文档首页设置为垂直目录列表布局 */
   .doc-index-list {
     display: flex;
     flex-direction: column;
     gap: 32px;
-  }
-
-  /* 🌟 修改: 移除卡片样式, 改为极简的目录区块样式 */
-  .doc-category-section {
-    /* 移除原有的 background, border, border-radius, padding */
   }
 
   .doc-category-section h2 {
