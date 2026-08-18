@@ -31,8 +31,8 @@ const { node, baseUrl, urlPrefix, isRoot = false } = Astro.props;
     )}
   </div>
 ) : (
-  <!-- 子节点根据类型渲染为链接或子文件夹 -->
   node.type === 'file' ? (
+    <!-- 子节点根据类型渲染为链接或子文件夹 -->
     <a href={`${baseUrl}${urlPrefix}doc/${node.slug}/`}>{node.title}</a>
   ) : (
     <div class="sub-folder">
