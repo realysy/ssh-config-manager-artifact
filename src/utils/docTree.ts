@@ -1,78 +1,73 @@
 /**
  * src/utils/docTree.ts
- * 文档树形结构构建与展平工具
+ * 文档树形结构构建与展平工具 (v3 - 显式路径注册表，彻底杜绝重复节点)
  */
 import type { CollectionEntry } from 'astro:content';
 
 export interface DocNode {
   id: string;
-  slug: string; 
+  slug: string;
   type: 'folder' | 'file';
   title: string;
   order: number;
   children: DocNode[];
-  doc?: CollectionEntry<'docs'>; 
+  doc?: CollectionEntry<'docs'>;
 }
 
-/**
- * 构建文档树
- * @param docs 所有文档的集合
- * @param langPrefix 语言前缀 (如 'en/' 或 'zh/')
- */
 export function buildDocTree(docs: CollectionEntry<'docs'>[], langPrefix: string): DocNode[] {
-  const roots: DocNode[] = [];
-  // 🌟 核心修复: 使用 Map 确保节点引用的绝对唯一性，彻底消灭重复节点
-  const nodeMap = new Map<string, DocNode>();
+  // 🌟 核心数据结构: 使用精确的原始路径作为 Key，绝不进行任何隐式转换
+  const registry = new Map<string, DocNode>();
 
-  // 1. 先注册所有显式文件夹配置 (category: true)
-  docs.forEach(doc => {
-    if (doc.data.category) {
-      const rawSlug = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
-      const folderSlug = rawSlug.split('/').slice(0, -1).join('/');
-      
-      if (!nodeMap.has(folderSlug)) {
-        nodeMap.set(folderSlug, {
-          id: `${langPrefix}${folderSlug}`,
-          slug: folderSlug,
-          type: 'folder',
-          title: doc.data.title,
-          order: doc.data.order ?? 999,
-          children: []
-        });
-      } else {
-        const node = nodeMap.get(folderSlug)!;
-        node.title = doc.data.title;
-        node.order = doc.data.order ?? 999;
-      }
+  // 辅助函数: 安全地获取或创建文件夹节点
+  const ensureFolder = (folderPath: string): DocNode => {
+    if (registry.has(folderPath)) {
+      return registry.get(folderPath)!;
     }
+    
+    const name = folderPath.split('/').pop() || folderPath;
+    const node: DocNode = {
+      id: `${langPrefix}${folderPath}`,
+      slug: folderPath,
+      type: 'folder',
+      title: name.replace(/-/g, ' '), // 默认标题
+      order: 999,
+      children: []
+    };
+    registry.set(folderPath, node);
+    return node;
+  };
+
+  // 1. 第一遍: 仅处理 category: true 的文件，建立所有显式文件夹
+  docs.forEach(doc => {
+    if (!doc.data.category) return;
+    
+    // 移除语言前缀和文件名(index.md)，得到纯文件夹路径
+    const fullPath = doc.id.substring(langPrefix.length).replace(/\/index\.mdx?$/, '');
+    const folder = ensureFolder(fullPath);
+    
+    // 显式配置无条件覆盖默认值
+    folder.title = doc.data.title;
+    folder.order = doc.data.order ?? 999;
   });
 
-  // 2. 注册所有普通文件节点，并确保其祖先文件夹存在
+  // 2. 第二遍: 处理普通文件，并补全缺失的隐式祖先文件夹
   docs.forEach(doc => {
-    if (doc.data.category) return; 
-
-    const rawSlug = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
-    const parts = rawSlug.split('/');
+    if (doc.data.category) return;
     
-    // 确保所有祖先文件夹都存在 (隐式创建)
-    for (let i = 0; i < parts.length - 1; i++) {
-      const folderSlug = parts.slice(0, i + 1).join('/');
-      if (!nodeMap.has(folderSlug)) {
-        nodeMap.set(folderSlug, {
-          id: `${langPrefix}${folderSlug}`,
-          slug: folderSlug,
-          type: 'folder',
-          title: folderSlug.split('/').pop()?.replace(/-/g, ' ') || folderSlug,
-          order: 999,
-          children: []
-        });
-      }
+    // 移除语言前缀和 .md/.mdx 后缀，得到文件的完整路径(不含扩展名)
+    const filePath = doc.id.substring(langPrefix.length).replace(/\.mdx?$/, '');
+    const parts = filePath.split('/');
+    
+    // 向上遍历，确保每一级祖先文件夹都存在
+    for (let i = 1; i < parts.length; i++) {
+      const ancestorPath = parts.slice(0, i).join('/');
+      ensureFolder(ancestorPath);
     }
-
+    
     // 注册文件节点
-    nodeMap.set(rawSlug, {
+    registry.set(filePath, {
       id: doc.id,
-      slug: rawSlug,
+      slug: filePath,
       type: 'file',
       title: doc.data.title,
       order: doc.data.order ?? 0,
@@ -81,18 +76,24 @@ export function buildDocTree(docs: CollectionEntry<'docs'>[], langPrefix: string
     });
   });
 
-  // 3. 构建树形层级关系
-  nodeMap.forEach(node => {
+  // 3. 第三遍: 根据路径层级关系组装树
+  const roots: DocNode[] = [];
+  registry.forEach(node => {
     const parts = node.slug.split('/');
     if (parts.length === 1) {
+      // 顶层节点
       roots.push(node);
     } else {
-      const parentSlug = parts.slice(0, -1).join('/');
-      const parent = nodeMap.get(parentSlug);
-      if (parent) {
+      // 查找直接父节点
+      const parentPath = parts.slice(0, -1).join('/');
+      const parent = registry.get(parentPath);
+      
+      if (parent && parent.type === 'folder') {
         parent.children.push(node);
       } else {
-        roots.push(node); 
+        // 🛡️ 极端兜底: 如果父节点丢失(理论上不应发生)，作为根节点处理
+        console.warn(`[DocTree] ⚠️ 节点 "${node.slug}" 找不到父节点 "${parentPath}"，已提升为根节点`);
+        roots.push(node);
       }
     }
   });
@@ -106,8 +107,8 @@ export function buildDocTree(docs: CollectionEntry<'docs'>[], langPrefix: string
     });
     list.forEach(n => sortNodes(n.children));
   };
-
   sortNodes(roots);
+
   return roots;
 }
 
