@@ -1,0 +1,24 @@
+---
+/**
+ * src/components/docs/DocTOC.astro
+ * 文档右侧目录: 提取当前文档的 H2/H3 标题
+ */
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  lang: 'en' | 'zh';
+}
+const { headings, lang } = Astro.props;
+---
+
+<aside class="doc-toc">
+  <h3 class="toc-title">{lang === 'zh' ? '本页目录' : 'On this page'}</h3>
+  {headings.length > 0 && (
+    <ul class="toc-list">
+      {headings.map(h => (
+        <li class={`toc-item depth-${h.depth}`}>
+          <a href={`#${h.slug}`}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  )}
+</aside>

@@ -1,0 +1,33 @@
+---
+/**
+ * src/components/docs/DocPrevNext.astro
+ * 文档底部导航: 上一篇 / 下一篇
+ */
+interface Props {
+  prev?: { title: string; slug: string } | null;
+  next?: { title: string; slug: string } | null;
+  lang: 'en' | 'zh';
+}
+const { prev, next, lang } = Astro.props;
+
+// 确保 baseUrl 以斜杠结尾，防止与后续路径粘连
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith("/")) baseUrl += "/";
+
+const prefix = lang === 'zh' ? 'zh/' : '';
+---
+
+<div class="doc-prev-next">
+  {prev ? (
+    <a href={`${baseUrl}${prefix}doc/${prev.slug}/`} class="doc-nav-card prev">
+      <span class="nav-label">{lang === 'zh' ? '上一篇' : 'Previous'}</span>
+      <span class="nav-title">← {prev.title}</span>
+    </a>
+  ) : <div />}
+  {next ? (
+    <a href={`${baseUrl}${prefix}doc/${next.slug}/`} class="doc-nav-card next">
+      <span class="nav-label">{lang === 'zh' ? '下一篇' : 'Next'}</span>
+      <span class="nav-title">{next.title} →</span>
+    </a>
+  ) : <div />}
+</div>

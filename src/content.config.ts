@@ -30,7 +30,7 @@ const docs = defineCollection({
   schema: z.object({
     title: z.string(),                        // 必需: 标题
     order: z.number().optional(),             // 用于控制同级文档的排序, 数字越小越靠前
-    pubDate: z.coerce.date().optional(),                 // 发布日期, 自动将字符串转为 Date
+    pubDate: z.coerce.date().optional(),      // 发布日期, 自动将字符串转为 Date
     updatedDate: z.coerce.date().optional(),  // 更新日期
     description: z.string().optional(),       // 摘要
     image: z.string().optional(),             // 配图路径

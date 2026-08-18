@@ -276,7 +276,26 @@ export default defineConfig({
           if (!postDate) {
             console.warn(`[Sitemap] ❌ 未找到博客时间戳: ${mapKey}`);
           }
-        } else {
+        } 
+        // 🌟 新增: 匹配文档详情页
+        else if (url.match(/\/(zh\/)?doc\/(.+)\/$/)) {
+          const docMatch = url.match(/\/(zh\/)?doc\/(.+)\/$/);
+          // 英文 URL 没有 zh/ 前缀，默认补全 'en/' 以匹配 Map 中的 Key
+          const langPrefix = docMatch[1] || 'en/'; 
+          const slug = docMatch[2]; 
+          
+          // 拼接出与 initDocGitTimes 中完全一致的 Map Key (如 'en/getting-started/installation')
+          const mapKey = `${langPrefix}${slug}`;
+          const postDate = docGitTimeMap.get(mapKey);
+          
+          // 文档详情页的 lastmod = max(文章md修改时间, 全局依赖修改时间, 文档组件修改时间)
+          item.lastmod = getLatestDate(postDate, globalMaxDate, docMaxDate);
+          
+          if (!postDate) {
+            console.warn(`[Sitemap] ❌ 未找到文档时间戳: ${mapKey}`);
+          }
+        } 
+        else {
           // B. 匹配静态页面
           // 🛠️ 核心修复：item.url 是完整的绝对 URL (如 https://.../base/zh/)，
           // 必须先提取 pathname 并剥离 base，才能正确映射到 src/pages 目录
@@ -331,6 +350,9 @@ export default defineConfig({
           } else if (rawPathname === 'blog' || rawPathname === 'zh/blog') {
             // 博客列表页
             item.lastmod = getLatestDate(staticDate, globalMaxDate, blogListMaxDate);
+          } else if (rawPathname === 'doc' || rawPathname === 'zh/doc') {
+            // 文档列表页
+            item.lastmod = getLatestDate(staticDate, globalMaxDate, docMaxDate);
           } else {
             // 其他普通静态页面 (如 privacy, terms)
             item.lastmod = getLatestDate(staticDate, globalMaxDate);
