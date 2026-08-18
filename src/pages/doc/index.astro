@@ -14,18 +14,34 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
 const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("en/"));
 
-// 按目录分组
-const groupedDocs = allDocs.reduce((acc, doc) => {
+// 🌟 核心逻辑: 分离分类配置和普通文档
+const categoryMeta = allDocs.filter(d => d.data.category === true);
+const regularDocs = allDocs.filter(d => d.data.category !== true);
+
+const groupedDocs = regularDocs.reduce((acc, doc) => {
   const cleanPath = doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
   const parts = cleanPath.split("/");
-  const category = parts.length > 1 ? parts[0] : "general";
-  if (!acc[category]) acc[category] = [];
-  acc[category].push({ ...doc, cleanPath });
+  const categorySlug = parts.length > 1 ? parts[0] : "general";
+  
+  if (!acc[categorySlug]) {
+    acc[categorySlug] = { title: categorySlug.replace(/-/g, ' '), order: 999, docs: [] };
+  }
+  acc[categorySlug].docs.push({ ...doc, cleanPath });
   return acc;
-}, {} as Record<string, any[]>);
+}, {} as Record<string, any>);
 
-Object.keys(groupedDocs).forEach(cat => {
-  groupedDocs[cat].sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+categoryMeta.forEach(meta => {
+  const metaPath = meta.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
+  const categorySlug = metaPath.split('/')[0]; 
+  if (groupedDocs[categorySlug]) {
+    groupedDocs[categorySlug].title = meta.data.title;
+    if (meta.data.order !== undefined) groupedDocs[categorySlug].order = meta.data.order;
+  }
+});
+
+const sortedCategories = Object.entries(groupedDocs).sort((a, b) => (a[1].order ?? 999) - (b[1].order ?? 999));
+sortedCategories.forEach(([_, cat]) => {
+  cat.docs.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 });
 ---
 
@@ -36,11 +52,11 @@ Object.keys(groupedDocs).forEach(cat => {
     <div class="container">
       <h1 class="doc-main-title">📚 Documentation</h1>
       <div class="doc-index-grid">
-        {Object.entries(groupedDocs).map(([category, docs]) => (
+        {sortedCategories.map(([slug, cat]) => (
           <div class="doc-category-card">
-            <h2>{category.replace(/-/g, ' ')}</h2>
+            <h2>{cat.title}</h2>
             <ul>
-              {docs.map(doc => (
+              {cat.docs.map(doc => (
                 <li>
                   <a href={`${baseUrl}doc/${doc.cleanPath}/`}>
                     {doc.data.title}

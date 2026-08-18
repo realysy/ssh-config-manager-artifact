@@ -35,6 +35,7 @@ const docs = defineCollection({
     description: z.string().optional(),       // 摘要
     image: z.string().optional(),             // 配图路径
     minutesRead: z.number().optional(),       // 自定义: 阅读时间
+    category: z.boolean().optional().default(false),  // 标识该文件是否为分类配置文件
   }),
 });
 

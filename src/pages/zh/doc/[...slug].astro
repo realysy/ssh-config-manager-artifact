@@ -1,6 +1,6 @@
 ---
-// src/pages/zh/doc/[...slug].astro
-// 中文文档详情页: 三栏布局 (左侧目录, 中间内容, 右侧 TOC)
+// src/pages/doc/[...slug].astro
+// 英文文档详情页: 三栏布局 (左侧目录, 中间内容, 右侧 TOC)
 
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
@@ -15,9 +15,9 @@ import { SITE_CONFIG } from '@/utils/config';
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs
-    .filter(doc => doc.id.startsWith("zh/"))
+    // 🌟 核心修复: 排除分类配置文件，防止生成无内容的路由页面
+    .filter(doc => doc.id.startsWith("zh/") && doc.data.category !== true) 
     .map(doc => ({
-      // 🌟 核心修复: 移除 .md/.mdx 后缀, 确保与 Astro 路由和 Sidebar 的 slug 完美对齐
       params: { slug: doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') },
       props: { doc },
     }));
@@ -26,35 +26,55 @@ export async function getStaticPaths() {
 const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
 
-// 获取所有英文文档用于计算上一篇/下一篇
-const allDocs = (await getCollection("docs"))
-  .filter(d => d.id.startsWith("zh/"))
-  .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+// 🌟 核心重构: 获取所有普通文档并计算全局排序 (保证 Prev/Next 顺序与 Sidebar 完全一致)
+const allRegularDocs = (await getCollection("docs"))
+  .filter(d => d.id.startsWith("zh/") && d.data.category !== true);
 
-const currentIndex = allDocs.findIndex(d => d.id === doc.id);
-const prevDoc = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
-const nextDoc = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
+const categoryMeta = (await getCollection("docs"))
+  .filter(d => d.id.startsWith("zh/") && d.data.category === true);
+
+// 建立分类 order 映射表
+const categoryOrderMap = new Map<string, number>();
+categoryMeta.forEach(meta => {
+  const slug = meta.id.replace(/^zh\//, '').split('/')[0];
+  categoryOrderMap.set(slug, meta.data.order ?? 999);
+});
+
+// 全局排序：先按分类 order，再按文档 order
+allRegularDocs.sort((a, b) => {
+  const catA = a.id.replace(/^zh\//, '').split('/')[0];
+  const catB = b.id.replace(/^zh\//, '').split('/')[0];
+  const orderA = categoryOrderMap.get(catA) ?? 999;
+  const orderB = categoryOrderMap.get(catB) ?? 999;
+  if (orderA !== orderB) return orderA - orderB;
+  return (a.data.order ?? 0) - (b.data.order ?? 0);
+});
+
+const currentIndex = allRegularDocs.findIndex(d => d.id === doc.id);
+const prevDoc = currentIndex > 0 ? allRegularDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < allRegularDocs.length - 1 ? allRegularDocs[currentIndex + 1] : null;
 
 const slug = doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
 const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
 ---
 
+<!-- 下方 <Layout> 及模板部分保持原样，无需修改 -->
 <Layout title={seoTitle} lang="zh" description={doc.data.description}>
   <DocStyles />
   <div class="page-wrapper">
     <Header />
     <div class="container doc-layout">
-      <DocSidebar lang="en" currentSlug={slug} />
+      <DocSidebar lang="zh" currentSlug={slug} />
       <main class="doc-content markdown-content">
         <h1>{doc.data.title}</h1>
         <Content />
         <DocPrevNext 
-          lang="en"
+          lang="zh"
           prev={prevDoc ? { title: prevDoc.data.title, slug: prevDoc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') } : null}
           next={nextDoc ? { title: nextDoc.data.title, slug: nextDoc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') } : null}
         />
       </main>
-      <DocTOC headings={headings} lang="en" />
+      <DocTOC headings={headings} lang="zh" />
     </div>
     <Footer />
   </div>

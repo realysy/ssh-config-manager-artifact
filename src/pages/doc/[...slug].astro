@@ -15,9 +15,9 @@ import { SITE_CONFIG } from '@/utils/config';
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs
-    .filter(doc => doc.id.startsWith("en/"))
+    // 🌟 核心修复: 排除分类配置文件，防止生成无内容的路由页面
+    .filter(doc => doc.id.startsWith("en/") && doc.data.category !== true) 
     .map(doc => ({
-      // 🌟 核心修复: 移除 .md/.mdx 后缀, 确保与 Astro 路由和 Sidebar 的 slug 完美对齐
       params: { slug: doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '') },
       props: { doc },
     }));
@@ -26,19 +26,39 @@ export async function getStaticPaths() {
 const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
 
-// 获取所有英文文档用于计算上一篇/下一篇
-const allDocs = (await getCollection("docs"))
-  .filter(d => d.id.startsWith("en/"))
-  .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+// 🌟 核心重构: 获取所有普通文档并计算全局排序 (保证 Prev/Next 顺序与 Sidebar 完全一致)
+const allRegularDocs = (await getCollection("docs"))
+  .filter(d => d.id.startsWith("en/") && d.data.category !== true);
 
-const currentIndex = allDocs.findIndex(d => d.id === doc.id);
-const prevDoc = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
-const nextDoc = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
+const categoryMeta = (await getCollection("docs"))
+  .filter(d => d.id.startsWith("en/") && d.data.category === true);
+
+// 建立分类 order 映射表
+const categoryOrderMap = new Map<string, number>();
+categoryMeta.forEach(meta => {
+  const slug = meta.id.replace(/^en\//, '').split('/')[0];
+  categoryOrderMap.set(slug, meta.data.order ?? 999);
+});
+
+// 全局排序：先按分类 order，再按文档 order
+allRegularDocs.sort((a, b) => {
+  const catA = a.id.replace(/^en\//, '').split('/')[0];
+  const catB = b.id.replace(/^en\//, '').split('/')[0];
+  const orderA = categoryOrderMap.get(catA) ?? 999;
+  const orderB = categoryOrderMap.get(catB) ?? 999;
+  if (orderA !== orderB) return orderA - orderB;
+  return (a.data.order ?? 0) - (b.data.order ?? 0);
+});
+
+const currentIndex = allRegularDocs.findIndex(d => d.id === doc.id);
+const prevDoc = currentIndex > 0 ? allRegularDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < allRegularDocs.length - 1 ? allRegularDocs[currentIndex + 1] : null;
 
 const slug = doc.id.replace(/^en\//, '').replace(/\.mdx?$/, '');
 const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
 ---
 
+<!-- 下方 <Layout> 及模板部分保持原样，无需修改 -->
 <Layout title={seoTitle} lang="en" description={doc.data.description}>
   <DocStyles />
   <div class="page-wrapper">
