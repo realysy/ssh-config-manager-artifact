@@ -4,20 +4,23 @@
  * 侧边栏递归渲染节点
  */
 import type { DocNode } from '@/utils/docTree';
+import SidebarNode from './SidebarNode.astro';
 
 interface Props {
   node: DocNode;
   currentSlug: string;
   baseUrl: string;
-  langPrefix: string;
+  urlPrefix: string; // 🌟 修改: 接收 urlPrefix
   depth?: number;
 }
 
-const { node, currentSlug, baseUrl, langPrefix, depth = 0 } = Astro.props;
+const { node, currentSlug, baseUrl, urlPrefix, depth = 0 } = Astro.props;
 const isActive = node.type === 'file' && node.slug === currentSlug;
-const href = node.type === 'file' ? `${baseUrl}${langPrefix}doc/${node.slug}/` : '#';
+// 🌟 核心修复: 使用 urlPrefix 拼接 URL
+const href = node.type === 'file' ? `${baseUrl}${urlPrefix}doc/${node.slug}/` : '#';
 ---
 
+<!-- 下方 HTML 模板保持不变，只需将 props 中的 langPrefix 改为 urlPrefix -->
 <li class={`sidebar-node depth-${depth}`}>
   {node.type === 'folder' ? (
     <>
@@ -29,7 +32,7 @@ const href = node.type === 'file' ? `${baseUrl}${langPrefix}doc/${node.slug}/` :
               node={child} 
               currentSlug={currentSlug} 
               baseUrl={baseUrl} 
-              langPrefix={langPrefix} 
+              urlPrefix={urlPrefix} 
               depth={depth + 1} 
             />
           ))}

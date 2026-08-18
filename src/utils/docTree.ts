@@ -6,12 +6,12 @@ import type { CollectionEntry } from 'astro:content';
 
 export interface DocNode {
   id: string;
-  slug: string; // 去除语言前缀和 .md 后缀的路径
+  slug: string; 
   type: 'folder' | 'file';
   title: string;
   order: number;
   children: DocNode[];
-  doc?: CollectionEntry<'docs'>; // 仅 file 类型包含原始文档数据
+  doc?: CollectionEntry<'docs'>; 
 }
 
 /**
@@ -20,84 +20,87 @@ export interface DocNode {
  * @param langPrefix 语言前缀 (如 'en/' 或 'zh/')
  */
 export function buildDocTree(docs: CollectionEntry<'docs'>[], langPrefix: string): DocNode[] {
-  const nodes: Record<string, DocNode> = {};
   const roots: DocNode[] = [];
+  // 🌟 核心修复: 使用 Map 确保节点引用的绝对唯一性，彻底消灭重复节点
+  const nodeMap = new Map<string, DocNode>();
 
-  // 1. 预处理：提取所有节点（包括隐式文件夹）
+  // 1. 先注册所有显式文件夹配置 (category: true)
   docs.forEach(doc => {
-    const rawSlug = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
-    const parts = rawSlug.split('/');
-    
-    // 注册所有层级的文件夹 (确保父节点始终存在)
-    for (let i = 0; i < parts.length - 1; i++) {
-      const folderSlug = parts.slice(0, i + 1).join('/');
-      if (!nodes[folderSlug]) {
-        nodes[folderSlug] = {
+    if (doc.data.category) {
+      const rawSlug = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
+      const folderSlug = rawSlug.split('/').slice(0, -1).join('/');
+      
+      if (!nodeMap.has(folderSlug)) {
+        nodeMap.set(folderSlug, {
           id: `${langPrefix}${folderSlug}`,
           slug: folderSlug,
-          type: 'folder',
-          // 默认使用文件夹名称作为标题 (将连字符替换为空格)
-          title: folderSlug.split('/').pop()?.replace(/-/g, ' ') || folderSlug,
-          order: 999,
-          children: []
-        };
-      }
-    }
-
-    // 注册文件或文件夹的元数据 (index.md)
-    if (doc.data.category) {
-      // 这是一个文件夹的配置文件 (如 features/index.md)
-      const actualFolderSlug = parts.slice(0, -1).join('/');
-      
-      if (!nodes[actualFolderSlug]) {
-         nodes[actualFolderSlug] = {
-          id: `${langPrefix}${actualFolderSlug}`,
-          slug: actualFolderSlug,
           type: 'folder',
           title: doc.data.title,
           order: doc.data.order ?? 999,
           children: []
-        };
+        });
       } else {
-        // 覆盖默认标题和排序
-        nodes[actualFolderSlug].title = doc.data.title;
-        nodes[actualFolderSlug].order = doc.data.order ?? 999;
+        const node = nodeMap.get(folderSlug)!;
+        node.title = doc.data.title;
+        node.order = doc.data.order ?? 999;
       }
-    } else {
-      // 这是一个普通文档文件
-      const fileSlug = rawSlug;
-      nodes[fileSlug] = {
-        id: doc.id,
-        slug: fileSlug,
-        type: 'file',
-        title: doc.data.title,
-        order: doc.data.order ?? 0,
-        children: [],
-        doc: doc
-      };
     }
   });
 
-  // 2. 构建树形层级关系
-  Object.values(nodes).forEach(node => {
+  // 2. 注册所有普通文件节点，并确保其祖先文件夹存在
+  docs.forEach(doc => {
+    if (doc.data.category) return; 
+
+    const rawSlug = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
+    const parts = rawSlug.split('/');
+    
+    // 确保所有祖先文件夹都存在 (隐式创建)
+    for (let i = 0; i < parts.length - 1; i++) {
+      const folderSlug = parts.slice(0, i + 1).join('/');
+      if (!nodeMap.has(folderSlug)) {
+        nodeMap.set(folderSlug, {
+          id: `${langPrefix}${folderSlug}`,
+          slug: folderSlug,
+          type: 'folder',
+          title: folderSlug.split('/').pop()?.replace(/-/g, ' ') || folderSlug,
+          order: 999,
+          children: []
+        });
+      }
+    }
+
+    // 注册文件节点
+    nodeMap.set(rawSlug, {
+      id: doc.id,
+      slug: rawSlug,
+      type: 'file',
+      title: doc.data.title,
+      order: doc.data.order ?? 0,
+      children: [],
+      doc: doc
+    });
+  });
+
+  // 3. 构建树形层级关系
+  nodeMap.forEach(node => {
     const parts = node.slug.split('/');
     if (parts.length === 1) {
       roots.push(node);
     } else {
       const parentSlug = parts.slice(0, -1).join('/');
-      if (nodes[parentSlug]) {
-        nodes[parentSlug].children.push(node);
+      const parent = nodeMap.get(parentSlug);
+      if (parent) {
+        parent.children.push(node);
       } else {
-        roots.push(node); // 兜底
+        roots.push(node); 
       }
     }
   });
 
-  // 3. 递归排序 (文件夹和文件混合排序)
+  // 4. 递归排序
   const sortNodes = (list: DocNode[]) => {
     list.sort((a, b) => {
       if (a.order !== b.order) return a.order - b.order;
-      // order 相同时，文件夹优先，或者按字母顺序
       if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
       return a.title.localeCompare(b.title);
     });
@@ -108,10 +111,6 @@ export function buildDocTree(docs: CollectionEntry<'docs'>[], langPrefix: string
   return roots;
 }
 
-/**
- * 展平文档树 (先序遍历 DFS)
- * 用于计算"上一篇/下一篇"，确保能完美跨越文件夹边界
- */
 export function flattenDocTree(roots: DocNode[]): DocNode[] {
   const flat: DocNode[] = [];
   const traverse = (nodes: DocNode[]) => {

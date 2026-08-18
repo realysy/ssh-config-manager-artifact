@@ -14,11 +14,13 @@ interface Props {
 
 const { lang, currentSlug } = Astro.props;
 const allDocs = await getCollection('docs');
-const langPrefix = lang === 'zh' ? 'zh/' : 'en/';
 
-// 🌟 核心重构: 构建多层级文档树
-const docs = allDocs.filter(doc => doc.id.startsWith(langPrefix));
-const treeRoots = buildDocTree(docs, langPrefix);
+// 🌟 核心修复: 区分 Collection 前缀和 URL 前缀
+const collectionPrefix = lang === 'zh' ? 'zh/' : 'en/';
+const urlPrefix = lang === 'zh' ? 'zh/' : ''; // 英文 URL 不带 en/
+
+const docs = allDocs.filter(doc => doc.id.startsWith(collectionPrefix));
+const treeRoots = buildDocTree(docs, collectionPrefix);
 
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
@@ -32,7 +34,7 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
         node={root} 
         currentSlug={currentSlug} 
         baseUrl={baseUrl} 
-        langPrefix={langPrefix} 
+        urlPrefix={urlPrefix} 
       />
     ))}
   </ul>

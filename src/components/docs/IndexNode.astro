@@ -1,0 +1,51 @@
+---
+/**
+ * src/components/docs/IndexNode.astro
+ * 首页目录递归渲染节点
+ */
+import type { DocNode } from '@/utils/docTree';
+import IndexNode from './IndexNode.astro';
+
+interface Props {
+  node: DocNode;
+  baseUrl: string;
+  urlPrefix: string;
+  isRoot?: boolean;
+}
+
+const { node, baseUrl, urlPrefix, isRoot = false } = Astro.props;
+---
+
+{isRoot ? (
+  <!-- 根节点渲染为带标题的区块 -->
+  <div class="doc-category-section">
+    <h2>{node.title}</h2>
+    {node.children.length > 0 && (
+      <ul>
+        {node.children.map(child => (
+          <li>
+            <IndexNode node={child} baseUrl={baseUrl} urlPrefix={urlPrefix} />
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+) : (
+  <!-- 子节点根据类型渲染为链接或子文件夹 -->
+  node.type === 'file' ? (
+    <a href={`${baseUrl}${urlPrefix}doc/${node.slug}/`}>{node.title}</a>
+  ) : (
+    <div class="sub-folder">
+      <div class="sub-folder-title">{node.title}</div>
+      {node.children.length > 0 && (
+        <ul class="sub-folder-list">
+          {node.children.map(child => (
+            <li>
+              <IndexNode node={child} baseUrl={baseUrl} urlPrefix={urlPrefix} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+)}

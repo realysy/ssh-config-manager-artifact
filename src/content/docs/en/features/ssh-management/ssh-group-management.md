@@ -1,7 +1,7 @@
 ---
 title: "SSH Group Management"
 pubDate: 2026-08-18
-order: 0
+order: 20220
 description: "SSH group management using SSH Config Manager (SMGR)."
 ---
 

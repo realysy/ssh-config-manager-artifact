@@ -1,9 +1,12 @@
 ---
-// src/pages/doc/index.astro (中文版同理，替换 en/ 为 zh/)
+// src/pages/doc/index.astro
+// 英文文档首页: 显示所有文档目录分类
+
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import DocStyles from "@/components/docs/DocStyles.astro";
+import IndexNode from "@/components/docs/IndexNode.astro";
 import { getCollection } from "astro:content";
 import { SITE_CONFIG } from '@/utils/config';
 import { buildDocTree } from "@/utils/docTree";
@@ -11,8 +14,12 @@ import { buildDocTree } from "@/utils/docTree";
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
 
-const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("en/"));
-const roots = buildDocTree(allDocs, 'en/');
+// 🌟 核心配置: 英文 Collection 前缀为 'en/', URL 前缀为空
+const collectionPrefix = 'en/';
+const urlPrefix = ''; 
+
+const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collectionPrefix));
+const roots = buildDocTree(allDocs, collectionPrefix);
 ---
 
 <Layout title={`Documentation - ${SITE_CONFIG.appName}`} lang="en">
@@ -22,31 +29,9 @@ const roots = buildDocTree(allDocs, 'en/');
     <div class="container">
       <h1 class="doc-main-title">📚 Documentation</h1>
       <div class="doc-index-list">
+        <!-- 🌟 核心优化: 使用递归组件渲染, 完美支持任意深度和不对称结构 -->
         {roots.map(root => (
-          <div class="doc-category-section">
-            <h2>{root.title}</h2>
-            <ul>
-              {root.children.map(child => (
-                <li>
-                  {child.type === 'file' ? (
-                    <a href={`${baseUrl}doc/${child.slug}/`}>{child.title}</a>
-                  ) : (
-                    <!-- 渲染子文件夹及其内部的文档 -->
-                    <div class="sub-folder">
-                      <div class="sub-folder-title">{child.title}</div>
-                      <ul class="sub-folder-list">
-                        {child.children.map(sub => (
-                          <li>
-                            <a href={`${baseUrl}doc/${sub.slug}/`}>{sub.title}</a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <IndexNode node={root} baseUrl={baseUrl} urlPrefix={urlPrefix} isRoot={true} />
         ))}
       </div>
     </div>

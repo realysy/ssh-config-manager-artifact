@@ -177,8 +177,12 @@ const docDeps = [
 ];
 const docMaxDate = getMaxGitDate(docDeps.map(p => path.join(cwd, p)));
 
-console.log(`[Sitemap] 🕒 依赖时间戳计算完成: 全局(${globalMaxDate?.toISOString()}), 主页(${homeMaxDate?.toISOString()}), 列表(${blogListMaxDate?.toISOString()}), 详情(${zhBlogPostMaxDate?.toISOString()}), 文档(${docMaxDate?.toISOString()})`);
-
+console.log(`[Sitemap] 🕒 依赖时间戳计算完成:
+ - 全局(${globalMaxDate?.toISOString()})
+ - 主页(${homeMaxDate?.toISOString()})
+ - 列表(${blogListMaxDate?.toISOString()})
+ - 详情(${zhBlogPostMaxDate?.toISOString()})
+ - 文档(${docMaxDate?.toISOString()})`);
 
 // 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
 function postBuildCleanup() {

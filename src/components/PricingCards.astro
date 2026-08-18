@@ -627,7 +627,25 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   // 页面加载完成后执行
   fetchPrices();
   initPriceFeeNoteClick();
-</script>
 
-<!-- 🌟 引入 Creem 官方支付脚本, 使用 is:inline 确保不被 Astro 打包处理 -->
-<script src="https://www.creem.io/embed.js" is:inline async></script>
+  // 🌟 核心优化: 使用 IntersectionObserver 懒加载 Creem 脚本, 避免国内网络阻塞页面加载指示器
+  const creemContainer = document.querySelector('.creem-btn-container');
+  if (creemContainer) {
+    const creemObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // 检查是否已经加载过, 防止重复注入
+          if (!document.querySelector('script[src="https://www.creem.io/embed.js"]')) {
+            const script = document.createElement('script');
+            script.src = 'https://www.creem.io/embed.js';
+            script.async = true;
+            document.body.appendChild(script);
+          }
+          creemObserver.disconnect(); // 注入后停止监听
+        }
+      });
+    }, { rootMargin: '200px' }); // 提前 200px 开始加载
+
+    creemObserver.observe(creemContainer);
+  }
+</script>

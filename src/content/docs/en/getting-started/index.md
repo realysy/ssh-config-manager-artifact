@@ -1,5 +1,5 @@
 ---
 title: "Getting Started"
-order: 0
+order: 10000
 category: true
 ---

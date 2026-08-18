@@ -1,7 +1,7 @@
 ---
 title: "File Manager"
 pubDate: 2026-08-18
-order: 0
+order: 20300
 description: "File manager using SSH Config Manager (SMGR): remote file viewer, editor, image viewer and upload/download."
 ---
 

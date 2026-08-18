@@ -1,7 +1,7 @@
 ---
 title: "Installation"
 pubDate: 2026-08-18
-order: 0
+order: 10100
 description: "Install instruction of SSH Config Manager (SMGR), cross-platform support: Windows, Linux, macOS."
 ---
 

@@ -1,0 +1,84 @@
+## 文档顺序设置 order
+
+目前的实现采用的是 **“两级独立排序机制”**。
+
+简单来说：**文件夹和文件夹之间比大小，文档和文档之间（在同一个文件夹内）比大小。** 它们的 `order` 作用域是独立的，互不干扰。
+
+以下是具体的排序逻辑和设置方法：
+
+### 1. 第一级：文件夹（分类）之间的排序
+通过在文件夹根目录下的 **`index.md`** (即 `category: true` 的文件) 中设置 `order` 来决定**整个文件夹的显示顺序**。
+* 数字越小，文件夹排得越靠前。
+* 如果没有设置，默认值为 `9999999999`（排到最后）。
+
+### 2. 第二级：文件夹内部文档的排序
+通过在每个普通的 **`.md`** 文档中设置 `order` 来决定**该文件夹内部**文档的显示顺序。
+* 数字越小，文档在该文件夹内排得越靠前。
+* 如果没有设置，默认值为 `0`。
+* **注意**：不同文件夹里的文档 `order` 互不影响。A 文件夹的 `order: 10` 和 B 文件夹的 `order: 1` 不会放在一起比较。
+
+---
+
+### 💡 具体设置示例
+
+假设您的目录结构如下：
+
+```text
+src/content/docs/en/
+├── getting-started/
+│   ├── index.md           <-- 文件夹配置
+│   ├── installation.md    <-- 文档 A
+│   └── configuration.md   <-- 文档 B
+├── features/
+│   ├── index.md           <-- 文件夹配置
+│   ├── ssh-management.md  <-- 文档 C
+│   └── file-manager.md    <-- 文档 D
+```
+
+#### 步骤 1：设置文件夹顺序 (让 `getting-started` 排在 `features` 前面)
+
+**`getting-started/index.md`**:
+```markdown
+---
+title: "Getting Started"
+order: 1        # 文件夹级别 order: 1
+category: true
+---
+```
+
+**`features/index.md`**:
+```markdown
+---
+title: "Core Features"
+order: 2        # 文件夹级别 order: 2
+category: true
+---
+```
+
+#### 步骤 2：设置文件夹内部文档顺序
+
+在 **`getting-started`** 文件夹内：
+* **`installation.md`**: 设置 `order: 1` (排第一)
+* **`configuration.md`**: 设置 `order: 2` (排第二)
+
+在 **`features`** 文件夹内：
+* **`ssh-management.md`**: 设置 `order: 10` (排第一)
+* **`file-manager.md`**: 设置 `order: 20` (排第二)
+*(注意：这里用 10 和 20 只是为了演示，即使数字比 getting-started 里的 1 和 2 大，也不会影响文件夹之间的排序，它们只在 features 内部生效。)*
+
+---
+
+### 🚀 最终网页上的显示效果
+
+**左侧边栏 / 文档首页目录：**
+1. **Getting Started** (由 `order: 1` 决定)
+   - Installation (由内部 `order: 1` 决定)
+   - Configuration (由内部 `order: 2` 决定)
+2. **Core Features** (由 `order: 2` 决定)
+   - SSH Management (由内部 `order: 10` 决定)
+   - File Manager (由内部 `order: 20` 决定)
+
+### 📖 关于底部的“上一篇 / 下一篇” (Prev/Next)
+虽然显示上是分组的，但在代码实现中，底部的 Prev/Next 导航会**将所有文件夹按第一级排序后，再把里面的文档按第二级排序“展平”**。
+
+这意味着，当用户在 `getting-started` 的最后一篇文档（Configuration）点击 **“下一篇”** 时，会**无缝跨越文件夹**，直接跳转到 `features` 的第一篇文档（SSH Management），提供极其连贯的阅读体验。
