@@ -704,11 +704,6 @@ a:hover {
   border-left-color: #2f81f7; /* 暗黑模式下的科技蓝竖条 */
 }
 
-/* 🛠️ 修复: 博客主标题在暗色模式下的底边线颜色 */
-[data-theme="dark"] .blog-main-title {
-  border-bottom-color: #2f81f7;
-}
-
 [data-theme="dark"] .link-button,
 [data-theme="dark"] .lang-select {
   background: #161b22;

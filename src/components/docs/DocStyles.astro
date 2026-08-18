@@ -57,14 +57,13 @@
     display: block;
     padding: 8px 12px;
     border-radius: 6px;
-    /* 保留原有的科技蓝 */
     color: #0969da;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
   }
 
   .doc-category-section a:hover {
-    /* 🌟 修改: hover 时增加浅灰背景, 移除下划线, 提升目录交互感 */
+    /* 🌟 hover 时增加浅灰背景, 移除下划线, 提升目录交互感 */
     background: #f6f8fa;
     color: #0550ae;
     text-decoration: none; 
@@ -136,12 +135,15 @@
     font-size: 0.9em;
     font-weight: 600;
     color: #656d76;
-    margin-bottom: 4px;
+    margin-bottom: 16px;
+    padding-left: 12px;
   }
   .sub-folder-list {
     padding-left: 16px;
     border-left: 2px solid #eaecef;
+    margin-left: 14px !important;
   }
+
 
   /* 侧边栏多层级树形样式 */
   .sidebar-tree, .sidebar-children {
@@ -150,10 +152,9 @@
     margin: 0;
   }
   .sidebar-children {
-    padding-left: 12px;
     border-left: 1px solid #d0d7de;
-    margin-left: 8px;
     margin-top: 4px;
+    margin-left: 2px !important;
   }
   .sidebar-folder-title {
     font-size: 0.85em;
@@ -163,9 +164,15 @@
     margin-top: 12px;
     letter-spacing: 0.03em;
   }
+  li.sidebar-node.depth-1 {
+    padding-left: 6px;
+  }
+  li.sidebar-node.depth-1 > a {
+    padding-left: 6px;
+  }
   .sidebar-node a {
     display: block;
-    padding: 6px 12px;
+    padding: 4px 6px;
     border-radius: 6px;
     color: #1f2328;
     text-decoration: none;
@@ -301,6 +308,9 @@
   }
 
   /* Dark mode */
+  [data-theme="dark"] .doc-main-title { 
+    color: #e6edf3;
+  }
   [data-theme="dark"] .doc-category-section h2 {
     /* 暗黑模式下标题改为正文色 */
     color: #e6edf3;
