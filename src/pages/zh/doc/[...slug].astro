@@ -1,7 +1,5 @@
 ---
 // src/pages/doc/[...slug].astro
-// 英文文档详情页: 三栏布局 (左侧目录, 中间内容, 右侧 TOC)
-
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -11,11 +9,11 @@ import DocPrevNext from "@/components/docs/DocPrevNext.astro";
 import DocStyles from "@/components/docs/DocStyles.astro";
 import { getCollection, render } from "astro:content";
 import { SITE_CONFIG } from '@/utils/config';
+import { buildDocTree, flattenDocTree } from "@/utils/docTree";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs
-    // 🌟 核心修复: 排除分类配置文件，防止生成无内容的路由页面
     .filter(doc => doc.id.startsWith("zh/") && doc.data.category !== true) 
     .map(doc => ({
       params: { slug: doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') },
@@ -25,43 +23,24 @@ export async function getStaticPaths() {
 
 const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
-
-// 🌟 核心重构: 获取所有普通文档并计算全局排序 (保证 Prev/Next 顺序与 Sidebar 完全一致)
-const allRegularDocs = (await getCollection("docs"))
-  .filter(d => d.id.startsWith("zh/") && d.data.category !== true);
-
-const categoryMeta = (await getCollection("docs"))
-  .filter(d => d.id.startsWith("zh/") && d.data.category === true);
-
-// 建立分类 order 映射表
-const categoryOrderMap = new Map<string, number>();
-categoryMeta.forEach(meta => {
-  const slug = meta.id.replace(/^zh\//, '').split('/')[0];
-  categoryOrderMap.set(slug, meta.data.order ?? 999);
-});
-
-// 全局排序：先按分类 order，再按文档 order
-allRegularDocs.sort((a, b) => {
-  const catA = a.id.replace(/^zh\//, '').split('/')[0];
-  const catB = b.id.replace(/^zh\//, '').split('/')[0];
-  const orderA = categoryOrderMap.get(catA) ?? 999;
-  const orderB = categoryOrderMap.get(catB) ?? 999;
-  if (orderA !== orderB) return orderA - orderB;
-  return (a.data.order ?? 0) - (b.data.order ?? 0);
-});
-
-const currentIndex = allRegularDocs.findIndex(d => d.id === doc.id);
-const prevDoc = currentIndex > 0 ? allRegularDocs[currentIndex - 1] : null;
-const nextDoc = currentIndex < allRegularDocs.length - 1 ? allRegularDocs[currentIndex + 1] : null;
-
 const slug = doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
+
+// 🌟 核心重构: 构建树并展平，确保 Prev/Next 能完美跨越文件夹边界
+const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("zh/"));
+const tree = buildDocTree(allDocs, 'zh/');
+const flatDocs = flattenDocTree(tree);
+
+const currentIndex = flatDocs.findIndex(d => d.slug === slug);
+const prevDoc = currentIndex > 0 ? flatDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < flatDocs.length - 1 ? flatDocs[currentIndex + 1] : null;
+
 const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
 ---
 
-<!-- 下方 <Layout> 及模板部分保持原样，无需修改 -->
 <Layout title={seoTitle} lang="zh" description={doc.data.description}>
   <DocStyles />
-  <div class="page-wrapper">
+  <!-- 🌟 修改: 增加 doc-page class 触发宽屏自适应布局 -->
+  <div class="page-wrapper doc-page">
     <Header />
     <div class="container doc-layout">
       <DocSidebar lang="zh" currentSlug={slug} />
@@ -70,8 +49,8 @@ const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
         <Content />
         <DocPrevNext 
           lang="zh"
-          prev={prevDoc ? { title: prevDoc.data.title, slug: prevDoc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') } : null}
-          next={nextDoc ? { title: nextDoc.data.title, slug: nextDoc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') } : null}
+          prev={prevDoc ? { title: prevDoc.title, slug: prevDoc.slug } : null}
+          next={nextDoc ? { title: nextDoc.title, slug: nextDoc.slug } : null}
         />
       </main>
       <DocTOC headings={headings} lang="zh" />

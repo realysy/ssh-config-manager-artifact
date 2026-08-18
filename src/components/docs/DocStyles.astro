@@ -1,11 +1,21 @@
 <!-- src/components/docs/DocStyles.astro -->
 <style is:global>
+  /* 文档详情页专属宽屏布局, 突破全局 1012px 限制 */
+  .page-wrapper.doc-page {
+    max-width: 1280px;
+  }
+
   /* 3-column layout */
   .doc-layout {
     display: grid;
     grid-template-columns: 240px 1fr 200px;
     gap: 40px;
     align-items: start;
+  }
+
+  /* 限制正文区域的极限宽度, 防止超宽屏下行宽过长导致阅读疲劳 */
+  .doc-content {
+    max-width: 80ch; /* 约 80 个字符宽度, 最佳阅读体验 */
   }
 
   .doc-main-title {
@@ -113,6 +123,63 @@
   }
 
   .doc-sidebar a.active {
+    background: #ddf4ff;
+    color: #0969da;
+    font-weight: 600;
+  }
+
+  /* 🌟 新增: 首页子文件夹样式 */
+  .sub-folder {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  .sub-folder-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #656d76;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .sub-folder-list {
+    padding-left: 16px;
+    border-left: 2px solid #eaecef;
+  }
+
+  /* 侧边栏多层级树形样式 */
+  .sidebar-tree, .sidebar-children {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .sidebar-children {
+    padding-left: 12px;
+    border-left: 1px solid #d0d7de;
+    margin-left: 8px;
+    margin-top: 4px;
+  }
+  .sidebar-folder-title {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #656d76;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    margin-top: 12px;
+    letter-spacing: 0.03em;
+  }
+  .sidebar-node a {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #1f2328;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.15s;
+  }
+  .sidebar-node a:hover {
+    background: #f3f4f6;
+    color: #0969da;
+  }
+  .sidebar-node a.active {
     background: #ddf4ff;
     color: #0969da;
     font-weight: 600;
@@ -256,6 +323,30 @@
   [data-theme="dark"] .doc-sidebar a.active {
     background: rgba(56, 139, 253, 0.15);
     color: #58a6ff;
+  }
+
+  [data-theme="dark"] .sidebar-children {
+    border-left-color: #30363d;
+  }
+  [data-theme="dark"] .sidebar-folder-title {
+    color: #8b949e;
+  }
+  [data-theme="dark"] .sidebar-node a {
+    color: #e6edf3;
+  }
+  [data-theme="dark"] .sidebar-node a:hover {
+    background: #161b22;
+    color: #58a6ff;
+  }
+  [data-theme="dark"] .sidebar-node a.active {
+    background: rgba(56, 139, 253, 0.15);
+    color: #58a6ff;
+  }
+  [data-theme="dark"] .sub-folder-title {
+    color: #8b949e;
+  }
+  [data-theme="dark"] .sub-folder-list {
+    border-left-color: #30363d;
   }
 
   [data-theme="dark"] .doc-toc {

@@ -1,9 +1,11 @@
 ---
 /**
  * src/components/docs/DocSidebar.astro
- * 文档左侧导航栏: 按目录分组显示所有文档
+ * 文档左侧导航栏: 支持多层级树形渲染
  */
 import { getCollection } from 'astro:content';
+import { buildDocTree } from '@/utils/docTree';
+import SidebarNode from './SidebarNode.astro';
 
 interface Props {
   lang: 'en' | 'zh';
@@ -12,70 +14,11 @@ interface Props {
 
 const { lang, currentSlug } = Astro.props;
 const allDocs = await getCollection('docs');
-
-// 定义明确的类型接口, 消除 TS 隐式 any 报错
-interface DocItem {
-  id: string;
-  data: {
-    title: string;
-    order?: number;
-  };
-  cleanPath: string;
-}
-
-interface CategoryGroup {
-  title: string;
-  order: number;
-  items: DocItem[];
-}
-
 const langPrefix = lang === 'zh' ? 'zh/' : 'en/';
+
+// 🌟 核心重构: 构建多层级文档树
 const docs = allDocs.filter(doc => doc.id.startsWith(langPrefix));
-
-// 🌟 核心逻辑: 分离分类配置和普通文档
-const categoryMeta = docs.filter(d => d.data.category === true);
-const regularDocs = docs.filter(d => d.data.category !== true);
-
-// 按目录分组普通文档
-const groupedDocs = regularDocs.reduce((acc, doc) => {
-  const cleanPath = doc.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
-  const parts = cleanPath.split('/');
-  const categorySlug = parts.length > 1 ? parts[0] : 'general';
-  
-  if (!acc[categorySlug]) {
-    acc[categorySlug] = {
-      title: categorySlug.replace(/-/g, ' '), // 默认标题 (如 getting-started -> getting started)
-      order: 999, 
-      items: []
-    };
-  }
-  // 显式断言为 DocItem 类型
-  acc[categorySlug].items.push({ ...doc, cleanPath } as DocItem);
-  return acc;
-}, {} as Record<string, CategoryGroup>);
-
-// 🌟 应用分类配置 (覆盖默认标题和排序)
-categoryMeta.forEach(meta => {
-  const metaPath = meta.id.replace(langPrefix, '').replace(/\.mdx?$/, '');
-  const categorySlug = metaPath.split('/')[0]; 
-  
-  if (groupedDocs[categorySlug]) {
-    groupedDocs[categorySlug].title = meta.data.title;
-    if (meta.data.order !== undefined) {
-      groupedDocs[categorySlug].order = meta.data.order;
-    }
-  }
-});
-
-// 对分组进行排序
-const sortedCategories = Object.entries(groupedDocs).sort((a, b) => {
-  return (a[1].order ?? 999) - (b[1].order ?? 999);
-});
-
-// 对分组内的文档进行排序
-sortedCategories.forEach(([_, cat]) => {
-  cat.items.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-});
+const treeRoots = buildDocTree(docs, langPrefix);
 
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
@@ -83,22 +26,14 @@ if (!baseUrl.endsWith("/")) baseUrl += "/";
 
 <nav class="doc-sidebar">
   <h3 class="sidebar-title">{lang === 'zh' ? '文档目录' : 'Documentation'}</h3>
-  {sortedCategories.map(([slug, cat]) => (
-    <div class="sidebar-group">
-      <h4 class="sidebar-category">{cat.title}</h4>
-      <ul>
-        {cat.items.map(doc => {
-          const isActive = doc.cleanPath === currentSlug;
-          const href = `${baseUrl}${lang === 'zh' ? 'zh/' : ''}doc/${doc.cleanPath}/`;
-          return (
-            <li>
-              <a href={href} class:list={[{ active: isActive }]}>
-                {doc.data.title}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  ))}
+  <ul class="sidebar-tree">
+    {treeRoots.map(root => (
+      <SidebarNode 
+        node={root} 
+        currentSlug={currentSlug} 
+        baseUrl={baseUrl} 
+        langPrefix={langPrefix} 
+      />
+    ))}
+  </ul>
 </nav>

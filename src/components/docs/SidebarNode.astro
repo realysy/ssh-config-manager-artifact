@@ -1,0 +1,44 @@
+---
+/**
+ * src/components/docs/SidebarNode.astro
+ * 侧边栏递归渲染节点
+ */
+import type { DocNode } from '@/utils/docTree';
+
+interface Props {
+  node: DocNode;
+  currentSlug: string;
+  baseUrl: string;
+  langPrefix: string;
+  depth?: number;
+}
+
+const { node, currentSlug, baseUrl, langPrefix, depth = 0 } = Astro.props;
+const isActive = node.type === 'file' && node.slug === currentSlug;
+const href = node.type === 'file' ? `${baseUrl}${langPrefix}doc/${node.slug}/` : '#';
+---
+
+<li class={`sidebar-node depth-${depth}`}>
+  {node.type === 'folder' ? (
+    <>
+      <div class="sidebar-folder-title">{node.title}</div>
+      {node.children.length > 0 && (
+        <ul class="sidebar-children">
+          {node.children.map(child => (
+            <SidebarNode 
+              node={child} 
+              currentSlug={currentSlug} 
+              baseUrl={baseUrl} 
+              langPrefix={langPrefix} 
+              depth={depth + 1} 
+            />
+          ))}
+        </ul>
+      )}
+    </>
+  ) : (
+    <a href={href} class:list={[{ active: isActive }]}>
+      {node.title}
+    </a>
+  )}
+</li>

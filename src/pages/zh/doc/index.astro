@@ -1,65 +1,18 @@
 ---
-// src/pages/zh/doc/index.astro
-// 中文文档首页: 显示所有文档目录分类
-
+// src/pages/doc/index.astro
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import DocStyles from "@/components/docs/DocStyles.astro";
 import { getCollection } from "astro:content";
 import { SITE_CONFIG } from '@/utils/config';
+import { buildDocTree } from "@/utils/docTree";
 
 let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith("/")) baseUrl += "/";
 
 const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("zh/"));
-
-// 定义明确的类型接口, 消除 TS 隐式 any 报错
-interface DocItem {
-  id: string;
-  data: {
-    title: string;
-    order?: number;
-  };
-  cleanPath: string;
-}
-
-interface CategoryGroup {
-  title: string;
-  order: number;
-  docs: DocItem[];
-}
-
-// 🌟 核心逻辑: 分离分类配置和普通文档
-const categoryMeta = allDocs.filter(d => d.data.category === true);
-const regularDocs = allDocs.filter(d => d.data.category !== true);
-
-const groupedDocs = regularDocs.reduce((acc, doc) => {
-  const cleanPath = doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
-  const parts = cleanPath.split("/");
-  const categorySlug = parts.length > 1 ? parts[0] : "general";
-  
-  if (!acc[categorySlug]) {
-    acc[categorySlug] = { title: categorySlug.replace(/-/g, ' '), order: 999, docs: [] };
-  }
-  // 显式断言为 DocItem 类型
-  acc[categorySlug].docs.push({ ...doc, cleanPath } as DocItem);
-  return acc;
-}, {} as Record<string, CategoryGroup>);
-
-categoryMeta.forEach(meta => {
-  const metaPath = meta.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
-  const categorySlug = metaPath.split('/')[0]; 
-  if (groupedDocs[categorySlug]) {
-    groupedDocs[categorySlug].title = meta.data.title;
-    if (meta.data.order !== undefined) groupedDocs[categorySlug].order = meta.data.order;
-  }
-});
-
-const sortedCategories = Object.entries(groupedDocs).sort((a, b) => (a[1].order ?? 999) - (b[1].order ?? 999));
-sortedCategories.forEach(([_, cat]) => {
-  cat.docs.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-});
+const roots = buildDocTree(allDocs, 'zh/');
 ---
 
 <Layout title={`Documentation - ${SITE_CONFIG.appName}`} lang="zh">
@@ -69,15 +22,27 @@ sortedCategories.forEach(([_, cat]) => {
     <div class="container">
       <h1 class="doc-main-title">📚 Documentation</h1>
       <div class="doc-index-list">
-        {sortedCategories.map(([slug, cat]) => (
+        {roots.map(root => (
           <div class="doc-category-section">
-            <h2>{cat.title}</h2>
+            <h2>{root.title}</h2>
             <ul>
-              {cat.docs.map(doc => (
+              {root.children.map(child => (
                 <li>
-                  <a href={`${baseUrl}doc/${doc.cleanPath}/`}>
-                    {doc.data.title}
-                  </a>
+                  {child.type === 'file' ? (
+                    <a href={`${baseUrl}doc/${child.slug}/`}>{child.title}</a>
+                  ) : (
+                    <!-- 渲染子文件夹及其内部的文档 -->
+                    <div class="sub-folder">
+                      <div class="sub-folder-title">{child.title}</div>
+                      <ul class="sub-folder-list">
+                        {child.children.map(sub => (
+                          <li>
+                            <a href={`${baseUrl}doc/${sub.slug}/`}>{sub.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
