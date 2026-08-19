@@ -1,7 +1,7 @@
 ---
 title: "安装"
 pubDate: 2026-08-18
-order: 0
+order: 10000
 description: "SSH Config Manager (SMGR) 的安装步骤文档, 支持跨平台: Windows, Linux, macOS."
 ---
 

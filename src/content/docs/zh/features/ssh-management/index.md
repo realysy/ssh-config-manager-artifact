@@ -1,5 +1,5 @@
 ---
-title: "快速开始"
+title: "SSH Management"
 order: 10000
 category: true
 ---
