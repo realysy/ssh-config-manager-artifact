@@ -22,7 +22,11 @@ const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collec
 const roots = buildDocTree(allDocs, collectionPrefix);
 ---
 
-<Layout title={`文档 - ${SITE_CONFIG.appName}`} lang="zh">
+<Layout 
+  title={`文档 - ${SITE_CONFIG.appName}`} 
+  lang="zh" 
+  description=`关于 ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) 的完整、详尽、结构清晰的技术文档，涵盖从下载、安装到日常使用各个场景的全面说明。`
+>
   <DocStyles />
   <div class="page-wrapper">
     <Header />

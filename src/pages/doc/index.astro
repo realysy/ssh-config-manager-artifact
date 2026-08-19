@@ -22,7 +22,11 @@ const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collec
 const roots = buildDocTree(allDocs, collectionPrefix);
 ---
 
-<Layout title={`Documentation - ${SITE_CONFIG.appName}`} lang="en">
+<Layout 
+  title={`Documentation - ${SITE_CONFIG.appName}`} 
+  lang="en"
+  description=`Complete, detailed, well-organized structured document about ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}), with thorough guidance covering every scenario from download and installation to daily usage.`
+>
   <DocStyles />
   <div class="page-wrapper">
     <Header />
