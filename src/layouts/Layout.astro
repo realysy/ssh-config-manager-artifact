@@ -90,6 +90,12 @@ const i18nScript = `window.SMGR_I18N_PATHS = ${JSON.stringify({
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
   <link rel="icon" type="image/x-icon" href={`${baseUrl}favicon.ico`} />
+
+  <!-- 注入 base-url 供 Search 组件的 JS 读取 -->
+  <meta name="base-url" content={baseUrl} />
+  
+  <!-- 提前加载 Pagefind UI CSS (文件极小, 避免弹窗打开时样式闪烁) -->
+  <link rel="stylesheet" href={`${baseUrl}pagefind/pagefind-ui.css`}>
   
   <link rel="sitemap" href={`${baseUrl}sitemap-index.xml`} />
 

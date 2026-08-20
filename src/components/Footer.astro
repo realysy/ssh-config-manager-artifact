@@ -12,7 +12,7 @@ let baseUrl = import.meta.env.BASE_URL;
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 ---
 
-<footer class="footer">
+<footer class="footer" data-pagefind-ignore>
   <div class="footer-links">
     <a href={`${baseUrl}${langPrefix}templates/privacy/`}>
       {isZh ? "隐私政策" : "Privacy Policy"}
