@@ -6,6 +6,7 @@ description: "Organize your SSH connections into logical groups for easier manag
 ---
 
 ## Why Use Groups?
+
 Grouping is essential for organized management in various scenarios:
 - **Different Contexts**: Separating personal private servers from company office servers.
 - **Different Projects**: Managing multiple devices belonging to a specific project.
@@ -14,9 +15,11 @@ Grouping is essential for organized management in various scenarios:
 Grouping makes subsequent management, searching, and maintenance significantly easier and more intuitive.
 
 ## Universal Format
+
 All group configuration files strictly follow the universal `~/.ssh/config` format. This ensures seamless migration and compatibility with other standard SSH tools.
 
 ## Supported Operations
+
 - **Create Group**: Organize hosts into logical categories.
 - **Delete Group**: Remove unnecessary groups (Note: The default `~/.ssh/config` group cannot be deleted for security reasons).
 - **Collapse Group**: Fold groups to keep the interface clean.

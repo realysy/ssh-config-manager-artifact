@@ -7,16 +7,21 @@
 
 ### 在一篇 markdown 中引用其他 markdown 页面链接引用示例
 
-写法示例: 使用本地 markdown 文件的相对路径即可, 带上 ./ or ../ 以及 .md 后缀
+写法1: 使用本地 markdown 文件的相对路径即可, 带上 ./ or ../ 以及 .md 后缀
+
 - [WezTerm](./wezterm-install-and-my-config.md)
 
 然后`pnpm build`之后会自动处理为正确链接 postBuildCleanup().
 
 
-### 在 markdown 页面中引用本站其它非 markdown 页面的链接
+### 在 markdown 页面中引用本站其它页面的链接
 
-写法示例: 使用页面 url 的相对路径即可
+写法: 使用页面 url 的相对路径即可
+
 - **Official Website**: [Home](/) | [Documentation](/doc/) | [Blog](/blog/)
+- 也可用于引用其它 markdown 页面, 比如在 doc 中引用 blog 页面, 由于文件的相对路径可能较长还不如直接用网站页面的相对路径
+
+  Tutorial: [How to Create a Linux .desktop Launcher to Start SSH Config Manager from the Start Menu or Desktop?](/blog/2026/08/linux-desktop-launcher-file-creation-of-ssh-config-manager/)
 
 然后`pnpm build`之后会自动处理为正确链接 postBuildCleanup(), astro 中设置 BASE 也能正常工作.
 

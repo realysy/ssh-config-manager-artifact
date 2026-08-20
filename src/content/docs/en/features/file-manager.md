@@ -6,9 +6,11 @@ description: "Manage remote files seamlessly with SMGR's built-in SFTP file mana
 ---
 
 ## How to Access
+
 Click the "File Manager" button located next to any configured SSH host to enter the file management interface.
 
 ## Supported Features
+
 - **Explorer**: 
   - Create new files and folders.
   - Rename and delete files/folders.
