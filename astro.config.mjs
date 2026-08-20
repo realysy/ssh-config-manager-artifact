@@ -185,6 +185,7 @@ console.log(`[Sitemap] 🕒 依赖时间戳计算完成:
  - 文档(${docMaxDate?.toISOString()})`);
 
 // 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
+// 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
 function postBuildCleanup() {
   return {
     name: 'post-build-cleanup',
@@ -193,6 +194,16 @@ function postBuildCleanup() {
         // dir 是一个 URL 对象, 需要转换为本地文件系统路径
         const outDir = fileURLToPath(dir);
         let processedCount = 0;
+
+        // 🌟 1. 预构建文档 URL 映射表 (基于 docGitTimeMap 的 key)
+        // docGitTimeMap 的 key 已经是 slugify 过的，例如 'zh/features/ssh-management/ssh-group-management'
+        const docUrlMap = new Map();
+        for (const key of docGitTimeMap.keys()) {
+          const isZh = key.startsWith('zh/');
+          const slug = isZh ? key.slice(3) : key.slice(3); // 移除 'zh/' 或 'en/'
+          const urlPath = (isZh ? '/zh/doc/' : '/doc/') + slug + '/';
+          docUrlMap.set(key, urlPath);
+        }
 
         // 递归遍历 dist 目录
         const processDir = (currentDir) => {
@@ -207,21 +218,56 @@ function postBuildCleanup() {
               let content = fs.readFileSync(fullPath, 'utf-8');
               const originalContent = content;
 
-              // 🌟 1: 智能修复本地 .md/.mdx 链接 (完美兼顾 VSCode 跳转与 Astro 路由)
-              content = content.replace(/href="(?!https?:\/\/|mailto:|#|data:)(?:\.\/)?([^"]*?)\.mdx?(?=[?#"])/gi, (match, p1) => {
-                // p1 是去掉 .md 和可能存在的 ./ 后的路径
-                // 例如: "wezterm-slug" (同级) 或 "../07/old-slug" (跨级)
-                
-                // 在 Astro 的 directory 模式下，URL 表现为目录 (如 /slug/)
-                // 如果 p1 不包含 "/" (说明是物理同级的兄弟文件)，在浏览器中必须退一级 "../" 才能跳到兄弟目录
-                if (!p1.includes('/')) {
-                  return `href="../${p1}/"`;
+              // 🌟 2. 确定当前 HTML 文件的虚拟源 Markdown 路径
+              const currentHtmlRelPath = path.relative(outDir, fullPath).split(path.sep).join('/');
+              const isZh = currentHtmlRelPath.startsWith('zh/doc/');
+              
+              let virtualSourceMd = '';
+              if (currentHtmlRelPath.endsWith('/index.html')) {
+                const docPrefix = isZh ? 'zh/doc/' : 'doc/';
+                if (currentHtmlRelPath.startsWith(docPrefix)) {
+                  const langPrefix = isZh ? 'zh/' : 'en/';
+                  const withoutIndex = currentHtmlRelPath.slice(0, -'index.html'.length);
+                  // 修复：去除末尾的 '/' 以获取干净的 slug
+                  const slug = withoutIndex.slice(docPrefix.length).replace(/\/$/, ''); 
+                  virtualSourceMd = slug ? `${langPrefix}${slug}.md` : `${langPrefix}index.md`;
                 }
-                // 如果包含 "/" (说明是跨目录的相对路径，如 ../07/slug)，直接补全尾部 "/"
-                return `href="${p1}/"`;
+              }
+
+              // 🌟 3. 智能修复本地 .md/.mdx 链接 (完美兼顾 VSCode 跳转与 Astro 路由)
+              // 正则优化: 增加 p2 捕获组，完美保留链接末尾的 #hash 或 ?query 参数
+              content = content.replace(/href="(?!https?:\/\/|mailto:|#|data:)(?:\.\/)?([^"]*?)\.mdx?((?:[?#][^"]*)?)"/gi, (match, p1, p2) => {
+                if (virtualSourceMd && docUrlMap.size > 0) {
+                  const currentDirVirtual = path.posix.dirname(virtualSourceMd);
+                  
+                  // 尝试 A: 严格的相对路径解析 (支持 VSCode 的 ../ 跳转)
+                  const targetVirtualMd = path.posix.normalize(path.posix.join(currentDirVirtual, p1 + '.md'));
+                  const targetKey = slugifyPath(targetVirtualMd);
+                  let targetUrl = docUrlMap.get(targetKey);
+                  
+                  // 🌟 容错机制 B: 如果相对路径解析失败 (例如用户漏写了 ../)，尝试将 p1 视为相对于语言根目录的路径
+                  if (!targetUrl) {
+                    const langPrefix = isZh ? 'zh/' : 'en/';
+                    // 移除开头的 ./ 或 ../，将其视为绝对相对于该语言文档根目录的路径
+                    const cleanP1 = p1.replace(/^\.\.?\//, ''); 
+                    const fallbackKey = slugifyPath(langPrefix + cleanP1);
+                    targetUrl = docUrlMap.get(fallbackKey);
+                  }
+                  
+                  // 🌟 如果成功匹配到映射，直接使用绝对路径 (带 base)，这是最稳健的做法！
+                  if (targetUrl) {
+                    return `href="${SITE_BASE}${targetUrl}${p2}"`;
+                  }
+                }
+                
+                // 最终兜底：如果所有映射都失败，保留原始相对路径行为
+                if (!p1.includes('/')) {
+                  return `href="../${p1}/${p2}"`;
+                }
+                return `href="${p1}/${p2}"`;
               });
 
-              // 🌟 2: 移除所有 HTML 注释 (包含换行)
+              // 🌟 4. 移除所有 HTML 注释 (包含换行)
               content = content.replace(/<!--[\s\S]*?-->/g, '');
               
               // 只有内容发生改变时才写回磁盘, 减少不必要的 I/O
