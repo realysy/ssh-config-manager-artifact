@@ -1,0 +1,49 @@
+## 文档/博客 markdown 文档中引用链接的写法
+
+### 添加图片的方式
+1. 图片放到 [src/assets/](src/assets/) 下面;
+2. 图片引用示例: `![main page](@/assets/screenshots/main_page.png)`
+
+
+### 在一篇 markdown 中引用其他 markdown 页面链接引用示例
+
+写法示例: 使用本地 markdown 文件的相对路径即可, 带上 ./ or ../ 以及 .md 后缀
+- [WezTerm](./wezterm-install-and-my-config.md)
+
+然后`pnpm build`之后会自动处理为正确链接 postBuildCleanup().
+
+
+### 在 markdown 页面中引用本站其它非 markdown 页面的链接
+
+写法示例: 使用页面 url 的相对路径即可
+- **Official Website**: [Home](/) | [Documentation](/doc/) | [Blog](/blog/)
+
+然后`pnpm build`之后会自动处理为正确链接 postBuildCleanup(), astro 中设置 BASE 也能正常工作.
+
+
+### 在非 markdown 页面(.astro)中引用 markdown 页面的链接
+
+写法: 使用 BASE_URL + LANG 拼接
+
+```astro
+import { getLangFromPath } from '@/utils/i18n';
+
+// 获取当前路径判断语言
+const currentPath = Astro.url.pathname;
+const isZh = getLangFromPath(currentPath, import.meta.env.BASE_URL) === 'zh';
+const langPrefix = isZh ? 'zh/' : '';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith('/')) baseUrl += '/';
+
+---
+
+<!-- 🌟 正确做法：使用 import.meta.env.BASE_URL 动态拼接 -->
+<p>
+  想了解更多终端配置？请查看我们的深度文章：
+  <a href={`${baseUrl}${langPrefix}blog/2026/08/wezterm-install-and-my-config/`}>
+    WezTerm 安装与我的配置分享
+  </a>
+</p>
+
+```
