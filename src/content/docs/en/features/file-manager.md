@@ -5,10 +5,10 @@ order: 10200
 description: "File manager using SSH Config Manager (SMGR): remote file viewer, editor, image viewer and upload/download."
 ---
 
-#### How to Access
+## How to Access
 Click the "File Manager" button located next to any configured SSH host to enter the file management interface.
 
-#### Supported Features
+## Supported Features
 - **Explorer**: 
   - Create new files and folders.
   - Rename and delete files/folders.

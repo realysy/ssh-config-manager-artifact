@@ -5,6 +5,8 @@ order: 10000
 description: "SSH config edit using SSH Config Manager (SMGR): create, add, delete, modify and more."
 ---
 
+## Supported fields
+
 The GUI supports editing common SSH host fields, such as `HostName`, `User`, `Port`, and `IdentityFile`. 
 
 For fields not currently supported by the GUI, you can manually edit the configuration file. Manually added fields are fully effective and available during connection. Common examples of manually added fields include:
@@ -12,7 +14,8 @@ For fields not currently supported by the GUI, you can manually edit the configu
 - `LocalForward` / `RemoteForward`: For port forwarding.
 - `ServerAliveInterval`: To keep the connection alive.
 
-#### Supported Operations
+## Supported Operations
+
 After adding an SSH host, you can perform various operations directly from the interface:
 - **Test Connection**: Verify network reachability and authentication.
 - **Connect to External Terminal**: Launch the connection in your preferred local terminal emulator.
