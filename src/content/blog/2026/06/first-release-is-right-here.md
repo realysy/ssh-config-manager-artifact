@@ -1,6 +1,8 @@
 ---
 title: "The first release version is right here!"
 pubDate: 2026-06-20
+tags: ["Release", "v1.0.0", "SSH", "Cross-Platform"]
+description: "The first official release of SSH Config Manager is here! Manage SSH connections in groups, use your favorite terminal, and enjoy cross-platform support."
 ---
 
 The first release version of SSH Config Manager is right here.

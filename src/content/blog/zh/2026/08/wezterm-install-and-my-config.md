@@ -1,8 +1,8 @@
 ---
 title: "WezTerm 终端模拟器 - 跨平台 高性能 多功能 易用"
 pubDate: 2026-08-14
-tags: ["WezTerm", "终端模拟器", "终端", "SSH", "xshell"]
-description: "介绍了常见的、作者用过的终端模拟器/SSH客户端, 包括但不限于: Xshell, Tabby, WindTerm, xTerminal..."
+tags: ["WezTerm", "终端模拟器", "终端", "SSH", "配置"]
+description: "WezTerm 终端模拟器安装与配置指南, 包含跨平台动态 Tab 标题设置, 工作目录上报以及 Lua 配置文件详解."
 ---
 
 ## Wezterm 主要特性

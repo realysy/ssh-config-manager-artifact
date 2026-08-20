@@ -2,7 +2,7 @@
 title: "SSH Group Management"
 pubDate: 2026-08-18
 order: 10100
-description: "SSH group management using SSH Config Manager (SMGR)."
+description: "Organize your SSH connections into logical groups for easier management, while maintaining strict compatibility with the standard ~/.ssh/config format."
 ---
 
 ## Why Use Groups?

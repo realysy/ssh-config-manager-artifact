@@ -2,7 +2,7 @@
 title: "Installation"
 pubDate: 2026-08-18
 order: 10100
-description: "Install instruction of SSH Config Manager (SMGR), cross-platform support: Windows, Linux, macOS."
+description: "Step-by-step installation guide for SSH Config Manager (SMGR) on Windows, Linux, and macOS. Download the portable archive and start managing SSH today."
 ---
 
 SSH Config Manager is distributed as a portable archive. You can download the latest version directly from [GitHub Releases](https://github.com/realysy/ssh-config-manager-artifact/releases).

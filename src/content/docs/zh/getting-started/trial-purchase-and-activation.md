@@ -2,7 +2,7 @@
 title: "试用, 购买与激活"
 pubDate: 2026-08-18
 order: 10100
-description: "SSH Config Manager (SMGR) 的试用, 购买与激活指南."
+description: "了解 SSH Config Manager (SMGR) 的 30 天免费试用政策, 查看详细定价方案, 以及如何进行在线或离线激活."
 ---
 
 ## 免费试用

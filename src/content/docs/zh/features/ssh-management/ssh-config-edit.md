@@ -2,7 +2,7 @@
 title: "SSH 配置编辑"
 pubDate: 2026-08-18
 order: 10000
-description: "使用 SSH Config Manager (SMGR) 编辑 SSH 配置: 创建, 添加, 删除, 修改等."
+description: "通过 SMGR 直观的图形界面轻松创建和编辑 SSH 主机配置, 并完全支持 ProxyJump 等高级手动配置字段."
 ---
 
 ## 支持的字段

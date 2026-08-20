@@ -2,7 +2,7 @@
 title: "SSH 配置信息的分组管理"
 pubDate: 2026-08-18
 order: 10100
-description: "使用 SSH Config Manager (SMGR) 对 SSH 配置信息进行分组管理."
+description: "将 SSH 连接按项目或网络环境进行逻辑分组管理, 提升维护效率, 同时保持与标准 ~/.ssh/config 格式的完全兼容."
 ---
 
 ## 为什么需要分组?

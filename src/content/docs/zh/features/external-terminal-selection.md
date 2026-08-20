@@ -2,7 +2,7 @@
 title: "选择用于连接 SSH 的外部终端模拟器"
 pubDate: 2026-08-19
 order: 10100
-description: "选择用于连接 SSH 的外部终端模拟器."
+description: "了解如何使用 SSH Config Manager (SMGR) 连接 WezTerm, Alacritty, Windows Terminal 等您偏好的外部终端模拟器."
 ---
 
 SSH Config Manager 支持跨平台及多种终端模拟器, 无需改变您的终端使用习惯.

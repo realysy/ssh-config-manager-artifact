@@ -2,7 +2,7 @@
 title: "SSH Config Edit"
 pubDate: 2026-08-18
 order: 10000
-description: "SSH config edit using SSH Config Manager (SMGR): create, add, delete, modify and more."
+description: "Easily create, edit, and manage SSH host configurations via SMGR's intuitive GUI, with full support for advanced manual fields like ProxyJump."
 ---
 
 ## Supported fields

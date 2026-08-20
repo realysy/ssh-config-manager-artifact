@@ -2,7 +2,7 @@
 title: "Select External Terminal Emulator for SSH Connection"
 pubDate: 2026-08-19
 order: 10100
-description: "Select external terminal emulator for SSH Connection."
+description: "Learn how to connect SSH hosts using your preferred terminal emulator like WezTerm, Alacritty, or Windows Terminal with SSH Config Manager (SMGR)."
 ---
 
 SSH Config Manager is cross-platform and supports multiple terminal emulators without changing your terminal usage habits.

@@ -1,6 +1,8 @@
 ---
-title: "即将发布，基本功能已完成"
+title: "即将发布, 基本功能已完成"
 pubDate: 2026-05-11
+tags: ["开发日志", "SSH", "WezTerm"]
+description: "SSH Config Manager 开发日志: 分组管理 SSH, 兼容 ~/.ssh/config 以及集成 WezTerm 等核心功能已开发完成."
 ---
 
 这个工具的基本功能已经完成：

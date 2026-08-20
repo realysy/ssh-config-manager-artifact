@@ -2,7 +2,7 @@
 title: "Trial, Purchase and Activation"
 pubDate: 2026-08-18
 order: 10100
-description: "Trial, purchase and activation guide for SSH Config Manager (SMGR)."
+description: "Explore the 30-day free trial of SSH Config Manager (SMGR), view pricing options, and learn how to easily activate your license online or offline."
 ---
 
 ## Free Trial

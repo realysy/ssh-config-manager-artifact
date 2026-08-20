@@ -1,8 +1,8 @@
 ---
 title: "如何创建一个 linux .desktop launcher 文件从开始菜单或桌面启动 SSH Config Manager 软件?"
 pubDate: 2026-08-17
-tags: ["Linux", "launcher", "desktop", "icon", "start menu"]
-description: "介绍了 Linux 平台创建 .desktop launch 文件从开始菜单启动SSH Config Manager 软件的步骤."
+tags: ["Linux", "启动器", "桌面", "图标", "开始菜单"]
+description: "介绍了 Linux 平台创建 .desktop launch 文件从开始菜单启动 SSH Config Manager 软件的步骤."
 ---
 
 SSH Config Manager 以便携版形式提供编译好的压缩包，你可以直接从命令行启动：

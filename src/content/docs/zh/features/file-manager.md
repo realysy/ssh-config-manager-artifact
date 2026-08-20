@@ -2,7 +2,7 @@
 title: "远程文件管理器"
 pubDate: 2026-08-18
 order: 10200
-description: "使用 SSH Config Manager (SMGR) 的文件管理器: 远程文件查看, 编辑, 图片预览及上传下载."
+description: "使用 SMGR 内置的 SFTP 文件管理器无缝管理远程文件. 支持代码编辑, 图片预览以及直接上传和下载, 无需额外客户端."
 ---
 
 ## 如何进入

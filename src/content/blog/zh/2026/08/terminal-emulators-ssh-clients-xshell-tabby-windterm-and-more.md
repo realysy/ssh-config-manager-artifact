@@ -2,7 +2,7 @@
 title: "终端模拟器: 常见的 SSH 客户端 | Xshell, Tabby, WindTerm, xTerminal ..."
 pubDate: 2026-08-14
 tags: ["终端模拟器", "终端", "SSH", "连接管理", "xshell"]
-description: "介绍了常见的、作者用过的终端模拟器/SSH客户端, 包括但不限于: Xshell, Tabby, WindTerm, xTerminal..."
+description: "介绍了常见的, 作者用过的终端模拟器/SSH客户端, 包括但不限于: Xshell, Tabby, WindTerm, xTerminal..."
 ---
 
 - Xshell 与 Mobaxterm：

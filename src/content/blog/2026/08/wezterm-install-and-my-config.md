@@ -1,8 +1,8 @@
 ---
 title: "WezTerm Terminal Emulator - Cross-Platform, High-Performance, Versatile, and User-Friendly"
 pubDate: 2026-08-14
-tags: ["wezterm", "terminal-emulator", "terminal", "ssh", "xshell"]
-description: "An overview of common terminal emulators and SSH clients the author has used, including but not limited to: Xshell, Tabby, WindTerm, xTerminal..."
+tags: ["wezterm", "terminal-emulator", "terminal", "ssh", "configuration"]
+description: "A comprehensive guide to installing and configuring WezTerm, featuring cross-platform tab title setups, dynamic CWD reporting, and Lua configs."
 lang: en
 ---
 

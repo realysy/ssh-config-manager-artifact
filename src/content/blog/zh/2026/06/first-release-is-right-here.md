@@ -1,6 +1,8 @@
 ---
-title: "首个正式版来了！"
-pubDate: 2026-06-20
+title: "使用 Github Action 进行 CI/CD"
+pubDate: 2026-06-23
+tags: ["开发日志", "CI/CD", "GitHub Actions", "跨平台"]
+description: "分享如何使用 GitHub Actions 进行 CI/CD, 将 SSH Config Manager 自动编译为 Windows, Linux 和 macOS 的跨平台二进制文件."
 ---
 
 SSH Config Manager 的首个正式版来了。

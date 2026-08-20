@@ -1,6 +1,8 @@
 ---
 title: "Use Github Action for CI CD"
 pubDate: 2026-06-23
+tags: ["DevLog", "CI/CD", "GitHub Actions", "Cross-Platform"]
+description: "How I use GitHub Actions for CI/CD to compile SSH Config Manager into cross-platform binaries for Windows, Linux, and macOS."
 ---
 
 This should be mine second use of github action. I don't remember when is the first time. just remembering that at that time, I didn't know many things of this workflow. But at this time, I believe I roughly understand the overal workflow of github action.

@@ -1,6 +1,8 @@
 ---
-title: "使用 Github Action 进行 CI/CD"
-pubDate: 2026-06-23
+title: "首个正式版来了!"
+pubDate: 2026-06-20
+tags: ["版本发布", "v1.0.0", "SSH", "跨平台"]
+description: "SSH Config Manager 首个正式版发布! 支持 SSH 连接分组管理, 无缝集成多种现代终端, 全面支持 Windows, Linux 和 macOS."
 ---
 
 这应该是我第二次使用 GitHub Action。我不记得第一次是什么时候了，只记得那时对这个工作流的很多东西都不了解。但这一次，我相信我已经大致搞懂了 GitHub Action 的整体工作流程。

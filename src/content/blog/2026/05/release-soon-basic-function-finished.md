@@ -1,6 +1,8 @@
 ---
 title: "Release soon. Basic function has completed"
 pubDate: 2026-05-11
+tags: ["DevLog", "SSH", "WezTerm"]
+description: "A development log of SSH Config Manager: core features like group-based SSH management, config compatibility, and WezTerm integration are now complete."
 ---
 
 The basic function of this tool has complete: 

@@ -2,7 +2,7 @@
 title: "File Manager"
 pubDate: 2026-08-18
 order: 10200
-description: "File manager using SSH Config Manager (SMGR): remote file viewer, editor, image viewer and upload/download."
+description: "Manage remote files seamlessly with SMGR's built-in SFTP file manager. Edit code, preview images, and upload/download files directly from your browser."
 ---
 
 ## How to Access
