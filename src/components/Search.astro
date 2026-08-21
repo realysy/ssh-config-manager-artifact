@@ -58,13 +58,36 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
             showSubResults: true,
             showImages: false,
             resetStyles: false,
-            bundlePath: `${baseUrl}pagefind/`, // 🌟 核心: 明确指定索引文件所在目录
+            bundlePath: `${baseUrl}pagefind/`,
             translations: {
               placeholder: document.documentElement.lang === 'zh' ? '搜索文档和博客...' : 'Search docs and blog...',
               zero_results: document.documentElement.lang === 'zh' ? '未找到相关结果' : 'No results found',
               searching: document.documentElement.lang === 'zh' ? '搜索中...' : 'Searching...',
             }
           });
+
+          // 🌟 核心优化: 监听 DOM 变化, 实现点击"加载更多"后自动平滑滚动到新结果
+          const resultsArea = document.querySelector('.pagefind-ui__results-area');
+          if (resultsArea) {
+            const observer = new MutationObserver((mutations) => {
+              for (const mutation of mutations) {
+                // 当检测到子节点发生变化 (即 Pagefind 插入了新的结果)
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                  // 过滤出新增的 .pagefind-ui__result 节点
+                  const newResults = Array.from(mutation.addedNodes).filter(
+                    node => node.nodeType === 1 && node.classList.contains('pagefind-ui__result')
+                  );
+                  if (newResults.length > 0) {
+                    // 将第一批新结果平滑滚动到可视区域边缘
+                    newResults[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                  }
+                }
+              }
+            });
+            // 仅监听子节点的增删
+            observer.observe(resultsArea, { childList: true });
+          }
+
           // 自动聚焦输入框
           setTimeout(() => {
             const input = document.querySelector('.pagefind-ui__search-input');
@@ -132,11 +155,12 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
   .search-modal-content {
     position: relative;
     width: 90%;
-    max-width: 640px;
+    max-width: 70vh;
+    max-height: 80vh;
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
+    overflow: auto;
     padding: 20px;
   }
 

@@ -53,7 +53,7 @@ body {
 /* ❌ 移除: 顶部导航行底部的紫色装饰线伪元素 */
 
 /* 标题移除渐变色, 采用高对比度的纯色, 彰显专业感 */
-.top-bar h1 {
+.top-bar .site-logo {
   margin: 0;
   border: none;
   padding: 0;
@@ -628,7 +628,7 @@ a:hover {
     overflow: visible;
   }
 
-  .top-bar h1 {
+  .top-bar .site-logo {
     font-size: 1.4em;
     width: 100%;
     min-width: 0;
@@ -684,7 +684,7 @@ a:hover {
   border-bottom-color: #30363d;
 }
 
-[data-theme="dark"] .top-bar h1 {
+[data-theme="dark"] .top-bar .site-logo {
   color: #e6edf3;
 }
 
