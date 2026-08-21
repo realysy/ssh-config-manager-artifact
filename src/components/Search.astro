@@ -40,8 +40,44 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
     let pagefindUI = null;
     let loaded = false;
 
-    // 从 meta 标签读取 base URL, 完美兼容 GitHub Pages 子路径
     const baseUrl = document.querySelector('meta[name="base-url"]')?.content || '/';
+
+    // 全局监听输入框变化, 实时将搜索词保存到 localStorage
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.matches && e.target.matches('.pagefind-ui__search-input')) {
+        try {
+          localStorage.setItem('smgr_search_query', e.target.value);
+        } catch (err) {
+          // 忽略隐私模式下的 localStorage 报错
+        }
+      }
+    });
+
+    // 辅助函数, 使用原生 setter 恢复搜索词并触发 Pagefind 搜索
+    function restoreSearchQuery(input) {
+      try {
+        const savedQuery = localStorage.getItem('smgr_search_query') || '';
+        
+        // 使用原生 setter 确保能触发 Pagefind 内部绑定的事件监听器
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        if (nativeInputValueSetter) {
+          nativeInputValueSetter.call(input, savedQuery);
+        } else {
+          input.value = savedQuery;
+        }
+        
+        // 触发 input 事件让 Pagefind 执行搜索
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // 聚焦并全选, 方便用户直接输入新词覆盖
+        input.focus();
+        if (savedQuery) {
+          input.select();
+        }
+      } catch (err) {
+        input.focus();
+      }
+    }
 
     function openSearch() {
       modal.style.display = 'flex';
@@ -66,7 +102,7 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
             }
           });
 
-          // 🌟 核心优化: 监听 DOM 变化, 实现点击"加载更多"后自动平滑滚动到新结果
+          // 监听 DOM 变化, 实现点击"加载更多"后自动平滑滚动到新结果
           const resultsArea = document.querySelector('.pagefind-ui__results-area');
           if (resultsArea) {
             const observer = new MutationObserver((mutations) => {
@@ -88,17 +124,18 @@ const isZh = getLangFromPath(currentPath, baseUrl) === 'zh';
             observer.observe(resultsArea, { childList: true });
           }
 
-          // 自动聚焦输入框
+          // 🌟 使用 restoreSearchQuery focus 逻辑
           setTimeout(() => {
             const input = document.querySelector('.pagefind-ui__search-input');
-            if (input) input.focus();
+            if (input) restoreSearchQuery(input);
           }, 100);
           loaded = true;
         };
         document.body.appendChild(script);
       } else {
+        // 🌟 已加载状态下, 同样恢复搜索词并全选
         const input = document.querySelector('.pagefind-ui__search-input');
-        if (input) input.focus();
+        if (input) restoreSearchQuery(input);
       }
     }
 
