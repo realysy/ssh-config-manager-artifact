@@ -26,7 +26,10 @@ const langSwitchText = isZh ? 'EN' : '中文';
 <div class="top-bar" data-pagefind-ignore>
   <div class="site-logo">
     <a href={homeHref} class="home-link">
-      <img src={`${baseUrl}favicon.ico`} alt="" style="width:1em;height:1em;vertical-align:-0.1em;margin-right:0.4em;" />
+      <img src=`${baseUrl}favicon.ico`
+        alt=`${SITE_CONFIG.appName} ${isZh ? '图标' : 'Logo'}`
+        style="width:1em;height:1em;vertical-align:-0.1em;margin-right:0.4em;" 
+      />
       {SITE_CONFIG.appName}
     </a>
   </div>
