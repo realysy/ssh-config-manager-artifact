@@ -570,6 +570,8 @@ a:hover {
 }
 
 #lightbox-img {
+  z-index: 1;
+  position: relative;
   transition: transform 0.15s ease-out;
   transform-origin: 0 0;
   user-select: none;
@@ -585,6 +587,37 @@ a:hover {
 #lightbox-img.grabbing {
   cursor: grabbing;
 }
+
+/* 灯箱左右切换按钮基础样式 */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(20, 20, 20, 0.6); /* 稍微加深背景 */
+  backdrop-filter: blur(4px); /* 增加毛玻璃效果，与底部工具栏呼应 */
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* 🌟 增加边框，确保在任何背景下都可见 */
+  color: #fff;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1001; /* 🌟 强制最高层级，防止被图片的 transform 遮挡 */
+  transition: background 0.2s, transform 0.2s;
+  opacity: 0.9;
+}
+
+.lightbox-nav:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.lightbox-prev { left: 20px; }
+.lightbox-next { right: 20px; }
+
 
 /* 响应式设计 - 移动端及小屏设备优化 */
 @media (max-width: 768px), 
@@ -638,6 +671,13 @@ a:hover {
   .screenshots-grid {
     grid-template-columns: 1fr;
   }
+
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+  }
+  .lightbox-prev { left: 10px; }
+  .lightbox-next { right: 10px; }
 
   .lang-switch-btn .lang-text {
     display: none !important;
