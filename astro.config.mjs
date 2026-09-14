@@ -153,17 +153,31 @@ const homeMaxDate = getMaxGitDate(homeDeps.map(p => path.join(cwd, p)));
 
 // 3. 博客列表页特定依赖
 const blogListDeps = [
-  'src/components/BlogCard.astro',
+  'src/components/blog/BlogListPage.astro',    // 列表页
+  'src/components/blog/BlogListStyles.astro',  // 列表页中博客列表样式
+  'src/components/blog/BlogCard.astro',        // 列表页中博客卡片样式
+  'src/components/MarkdownStyles.astro',       // 若列表页未引用可略
   'src/utils/extractTags.ts',
-  'src/components/BlogListStyles.astro',
 ];
 const blogListMaxDate = getMaxGitDate(blogListDeps.map(p => path.join(cwd, p)));
 
 // 4. 博客详情页依赖 (极致精细化：中英文模板分离)
-const enBlogPostDeps = ['src/pages/blog/[...slug].astro', 'src/components/Giscus.astro'];
+const enBlogPostDeps = [
+  'src/pages/blog/[...slug].astro',
+  'src/components/blog/BlogPostPage.astro',    // 新增, 详情页渲染逻辑所在
+  'src/components/blog/BlogPostStyles.astro',  // 新增
+  'src/components/MarkdownStyles.astro',       // 新增, markdown 内容样式现在在这里
+  'src/components/Giscus.astro',
+];
 const enBlogPostMaxDate = getMaxGitDate(enBlogPostDeps.map(p => path.join(cwd, p)));
 
-const zhBlogPostDeps = ['src/pages/zh/blog/[...slug].astro', 'src/components/Giscus.astro'];
+const zhBlogPostDeps = [
+  'src/pages/zh/blog/[...slug].astro',
+  'src/components/blog/BlogPostPage.astro',    // 新增
+  'src/components/blog/BlogPostStyles.astro',  // 新增
+  'src/components/MarkdownStyles.astro',       // 新增
+  'src/components/Giscus.astro',
+];
 const zhBlogPostMaxDate = getMaxGitDate(zhBlogPostDeps.map(p => path.join(cwd, p)));
 
 // 文档详情页及列表页的依赖组件 (Sidebar, TOC, PrevNext 等)
@@ -172,10 +186,15 @@ const docDeps = [
   'src/pages/zh/doc/[...slug].astro',
   'src/pages/doc/index.astro',
   'src/pages/zh/doc/index.astro',
+  'src/components/docs/DocIndexPage.astro',    // 新增, 文档首页渲染逻辑所在
+  'src/components/docs/DocPostPage.astro',     // 新增, 文档详情页渲染逻辑所在
   'src/components/docs/DocSidebar.astro',
   'src/components/docs/DocTOC.astro',
   'src/components/docs/DocPrevNext.astro',
   'src/components/docs/DocStyles.astro',
+  'src/components/docs/IndexNode.astro',       // 补上, 首页目录渲染
+  'src/components/docs/SidebarNode.astro',     // 补上, 侧边栏递归渲染
+  'src/components/MarkdownStyles.astro',       // 新增, 文档正文 markdown 样式
 ];
 const docMaxDate = getMaxGitDate(docDeps.map(p => path.join(cwd, p)));
 
