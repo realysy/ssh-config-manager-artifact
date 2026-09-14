@@ -1,0 +1,25 @@
+<!-- src/components/blog/BlogListStyles.astro -->
+<!-- 博客列表页样式: 包含标题与网格布局, 便于跨工程迁移 -->
+<style is:global>
+  .blog-main-title {
+    font-size: 2em;
+    margin-bottom: 32px;
+    /* 🛠️ 修复: 替换原有的 #667eea, 统一为科技蓝 */
+    border-bottom: 2px solid #0969da;
+    padding-bottom: 12px;
+    /* 🛠️ 修复: 替换原有的 #24292f, 与全局 H1 标题颜色统一 */
+    color: #1f2328;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    align-items: stretch; /* 强制同一行的卡片高度完全一致 */
+  }
+
+  /* 暗色模式适配 */
+  [data-theme="dark"] .blog-main-title {
+    color: #e6edf3;
+  }
+</style>

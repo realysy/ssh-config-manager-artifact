@@ -1,0 +1,87 @@
+---
+// src/components/blog/BlogListPage.astro
+// 博客列表页共享组件: 通过 lang 参数区分中英文, 避免中英文代码重复
+
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import BlogListStyles from "@/components/blog/BlogListStyles.astro";
+import BlogCard from "@/components/blog/BlogCard.astro";
+import { SITE_CONFIG } from '@/utils/config';
+import { getGroupedPosts, getDisplayPost } from "@/utils/getPostsByLang";
+import { getAutoCover } from "@/utils/getAutoCover";
+
+interface Props {
+  lang: 'en' | 'zh';
+}
+
+const { lang } = Astro.props;
+const isZh = lang === 'zh';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith("/")) baseUrl += "/";
+
+const groupedPosts: Awaited<ReturnType<typeof getGroupedPosts>> =
+  await getGroupedPosts();
+groupedPosts.sort((a, b) => {
+  const postA = getDisplayPost(a, lang);
+  const postB = getDisplayPost(b, lang);
+  return (
+    (postB?.data.pubDate?.getTime() || 0) - (postA?.data.pubDate?.getTime() || 0)
+  );
+});
+
+function getColorIndex(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash) % 6;
+}
+
+const seoTitle = isZh
+  ? `博客 - ${SITE_CONFIG.appName}`
+  : `Blog - ${SITE_CONFIG.appName}`;
+const seoDesc = isZh
+  ? `探索 ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) 的最新开发动态, 版本发布日志, 以及终端配置与 SSH 管理的深度实用教程.`
+  : `Explore the latest development updates, release notes, and in-depth tutorials on terminal configuration and SSH management for ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}).`;
+const heading = isZh ? "📝 开发博客" : "📝 Development Blog";
+const emptyText = isZh ? "暂无文章." : "No posts yet.";
+const hrefPrefix = isZh ? "zh/blog/" : "blog/";
+---
+
+<Layout title={seoTitle} lang={lang} description={seoDesc}>
+  <BlogListStyles />
+
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <h1 class="blog-main-title">{heading}</h1>
+
+      <div class="blog-grid">
+        {
+          groupedPosts.length > 0 ? (
+            groupedPosts.map((group) => {
+              const post = getDisplayPost(group, lang);
+              const coverUrl = getAutoCover(post.body);
+              const colorIdx = getColorIndex(group.coreSlug);
+
+              return (
+                <BlogCard
+                  post={post}
+                  coverUrl={coverUrl}
+                  colorIdx={colorIdx}
+                  href={`${baseUrl}${hrefPrefix}${group.coreSlug}/`}
+                  lang={lang}
+                />
+              );
+            })
+          ) : (
+            <p>{emptyText}</p>
+          )
+        }
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>

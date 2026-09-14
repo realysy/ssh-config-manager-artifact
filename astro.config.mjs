@@ -8,10 +8,12 @@ import fs from 'fs';
 import { fileURLToPath } from 'url'; 
 import compress from 'astro-compress'; 
 
-// 提取 base 配置，方便后续在 serialize 中复用
+// 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
+const SITE = 'https://www.mctek.site/';
+// 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
 const SITE_BASE = '/ssh-config-manager-artifact';
-const cwd = process.cwd();
 
+const cwd = process.cwd();
 const blogDir = path.join(cwd, 'src/content/blog');  // 博客目录与时间戳 Map
 const docsDir = path.join(cwd, 'src/content/docs');  // 文档目录与时间戳 Map
 
@@ -185,7 +187,6 @@ console.log(`[Sitemap] 🕒 依赖时间戳计算完成:
  - 文档(${docMaxDate?.toISOString()})`);
 
 // 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
-// 🛡️ 自定义 Astro 集成: 构建后清理 HTML 注释 & 修复 Markdown 内部链接
 function postBuildCleanup() {
   return {
     name: 'post-build-cleanup',
@@ -291,9 +292,7 @@ function postBuildCleanup() {
 
 // https://astro.build/config
 export default defineConfig({
-  // 替换为您的实际 GitHub Pages URL, eg: https://realysy.github.io or 自定义域名站点地址
-  site: 'https://www.mctek.site/', 
-  // 如果是项目主页非 username.github.io 且未绑定自定义域名, 必须加上仓库名作为 base
+  site: SITE, 
   base: SITE_BASE, 
 
   integrations: [

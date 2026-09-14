@@ -1,0 +1,11 @@
+<!-- src/components/blog/BlogPostStyles.astro -->
+<!-- 博客详情页样式: 复用 MarkdownStyles, 便于跨工程迁移 -->
+
+import MarkdownStyles from "@/components/MarkdownStyles.astro";
+---
+
+<MarkdownStyles />
+
+<style is:global>
+  /* 博客正文区域可根据需要追加博客专属样式, 目前留空占位 */
+</style>
