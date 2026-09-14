@@ -1,60 +1,24 @@
 ---
-// src/pages/doc/[...slug].astro
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import DocSidebar from "@/components/docs/DocSidebar.astro";
-import DocTOC from "@/components/docs/DocTOC.astro";
-import DocPrevNext from "@/components/docs/DocPrevNext.astro";
-import DocStyles from "@/components/docs/DocStyles.astro";
-import { getCollection, render } from "astro:content";
-import { SITE_CONFIG } from '@/utils/config';
-import { buildDocTree, flattenDocTree } from "@/utils/docTree";
+// src/pages/zh/doc/[...slug].astro
+// 中文文档详情页面: 复用 DocPostPage 组件
+
+import DocPostPage from "@/components/docs/DocPostPage.astro";
+import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs
-    .filter(doc => doc.id.startsWith("zh/") && doc.data.category !== true) 
-    .map(doc => ({
-      params: { slug: doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '') },
-      props: { doc },
-    }));
+    .filter(doc => doc.id.startsWith("zh/") && doc.data.category !== true)
+    .map(doc => {
+      const slug = doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
+      return {
+        params: { slug },
+        props: { doc, slug },
+      };
+    });
 }
 
-const { doc } = Astro.props;
-const { Content, headings } = await render(doc);
-const slug = doc.id.replace(/^zh\//, '').replace(/\.mdx?$/, '');
-
-// 🌟 核心重构: 构建树并展平，确保 Prev/Next 能完美跨越文件夹边界
-const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith("zh/"));
-const tree = buildDocTree(allDocs, 'zh/');
-const flatDocs = flattenDocTree(tree);
-
-const currentIndex = flatDocs.findIndex(d => d.slug === slug);
-const prevDoc = currentIndex > 0 ? flatDocs[currentIndex - 1] : null;
-const nextDoc = currentIndex < flatDocs.length - 1 ? flatDocs[currentIndex + 1] : null;
-
-const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
+const { doc, slug } = Astro.props;
 ---
 
-<Layout title={seoTitle} lang="zh" description={doc.data.description}>
-  <DocStyles />
-  <!-- 🌟 修改: 增加 doc-page class 触发宽屏自适应布局 -->
-  <div class="page-wrapper doc-page">
-    <Header />
-    <div class="container doc-layout">
-      <DocSidebar lang="zh" currentSlug={slug} />
-      <main class="doc-content markdown-content">
-        <h1>{doc.data.title}</h1>
-        <Content />
-        <DocPrevNext 
-          lang="zh"
-          prev={prevDoc ? { title: prevDoc.title, slug: prevDoc.slug } : null}
-          next={nextDoc ? { title: nextDoc.title, slug: nextDoc.slug } : null}
-        />
-      </main>
-      <DocTOC headings={headings} lang="zh" />
-    </div>
-    <Footer />
-  </div>
-</Layout>
+<DocPostPage lang="zh" doc={doc} slug={slug} />

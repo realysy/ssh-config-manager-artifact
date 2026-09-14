@@ -1,44 +1,8 @@
 ---
 // src/pages/doc/index.astro
-// 英文文档首页: 显示所有文档目录分类
+// 英文文档首页: 渲染逻辑统一封装在 DocIndexPage 组件
 
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import DocStyles from "@/components/docs/DocStyles.astro";
-import IndexNode from "@/components/docs/IndexNode.astro";
-import { getCollection } from "astro:content";
-import { SITE_CONFIG } from '@/utils/config';
-import { buildDocTree } from "@/utils/docTree";
-
-let baseUrl = import.meta.env.BASE_URL;
-if (!baseUrl.endsWith("/")) baseUrl += "/";
-
-// 🌟 核心配置: 英文 Collection 前缀为 'en/', URL 前缀为空
-const collectionPrefix = 'en/';
-const urlPrefix = ''; 
-
-const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collectionPrefix));
-const roots = buildDocTree(allDocs, collectionPrefix);
+import DocIndexPage from "@/components/docs/DocIndexPage.astro";
 ---
 
-<Layout 
-  title=`Documentation - ${SITE_CONFIG.appName}`
-  lang="en"
-  description=`The official documentation for ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}). Comprehensive guides on installation, SSH group management, and the built-in SFTP file manager.`
->
-  <DocStyles />
-  <div class="page-wrapper">
-    <Header />
-    <div class="container">
-      <h1 class="doc-main-title">📚 Documentation</h1>
-      <div class="doc-index-list">
-        <!-- 🌟 核心优化: 使用递归组件渲染, 完美支持任意深度和不对称结构 -->
-        {roots.map(root => (
-          <IndexNode node={root} baseUrl={baseUrl} urlPrefix={urlPrefix} isRoot={true} />
-        ))}
-      </div>
-    </div>
-    <Footer />
-  </div>
-</Layout>
+<DocIndexPage lang="en" />

@@ -1,0 +1,58 @@
+---
+// src/components/docs/DocPostPage.astro
+// 文档详情页共享组件: 通过 lang 参数区分中英文
+
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import DocSidebar from "@/components/docs/DocSidebar.astro";
+import DocTOC from "@/components/docs/DocTOC.astro";
+import DocPrevNext from "@/components/docs/DocPrevNext.astro";
+import DocStyles from "@/components/docs/DocStyles.astro";
+import { getCollection, render } from "astro:content";
+import { SITE_CONFIG } from '@/utils/config';
+import { buildDocTree, flattenDocTree } from "@/utils/docTree";
+
+interface Props {
+  lang: 'en' | 'zh';
+  doc: any;
+  slug: string;
+}
+
+const { lang, doc, slug } = Astro.props;
+const { Content, headings } = await render(doc);
+
+// 🌟 核心重构: 构建树并展平, 确保 Prev/Next 能完美跨越文件夹边界
+const collectionPrefix = lang === 'zh' ? 'zh/' : 'en/';
+const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collectionPrefix));
+const tree = buildDocTree(allDocs, collectionPrefix);
+const flatDocs = flattenDocTree(tree);
+
+const currentIndex = flatDocs.findIndex(d => d.slug === slug);
+const prevDoc = currentIndex > 0 ? flatDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < flatDocs.length - 1 ? flatDocs[currentIndex + 1] : null;
+
+const seoTitle = `${doc.data.title} | ${SITE_CONFIG.appName} Docs`;
+---
+
+<Layout title={seoTitle} lang={lang} description={doc.data.description}>
+  <DocStyles />
+  {/* 🌟 增加 doc-page class 触发宽屏自适应布局 */}
+  <div class="page-wrapper doc-page">
+    <Header />
+    <div class="container doc-layout">
+      <DocSidebar lang={lang} currentSlug={slug} />
+      <main class="doc-content markdown-content">
+        <h1>{doc.data.title}</h1>
+        <Content />
+        <DocPrevNext
+          lang={lang}
+          prev={prevDoc ? { title: prevDoc.title, slug: prevDoc.slug } : null}
+          next={nextDoc ? { title: nextDoc.title, slug: nextDoc.slug } : null}
+        />
+      </main>
+      <DocTOC headings={headings} lang={lang} />
+    </div>
+    <Footer />
+  </div>
+</Layout>

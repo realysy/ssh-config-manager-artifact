@@ -1,0 +1,55 @@
+---
+// src/components/docs/DocIndexPage.astro
+// 文档首页共享组件: 通过 lang 参数区分中英文, 避免中英文代码重复
+
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import DocStyles from "@/components/docs/DocStyles.astro";
+import IndexNode from "@/components/docs/IndexNode.astro";
+import { getCollection } from "astro:content";
+import { SITE_CONFIG } from '@/utils/config';
+import { buildDocTree } from "@/utils/docTree";
+
+interface Props {
+  lang: 'en' | 'zh';
+}
+
+const { lang } = Astro.props;
+const isZh = lang === 'zh';
+
+let baseUrl = import.meta.env.BASE_URL;
+if (!baseUrl.endsWith("/")) baseUrl += "/";
+
+// 🌟 核心配置: 中英文 Collection 前缀分别为 'zh/' 与 'en/', URL 前缀中文为 'zh/' 英文为空
+const collectionPrefix = isZh ? 'zh/' : 'en/';
+const urlPrefix = isZh ? 'zh/' : '';
+
+const allDocs = (await getCollection("docs")).filter(d => d.id.startsWith(collectionPrefix));
+const roots = buildDocTree(allDocs, collectionPrefix);
+
+const seoTitle = isZh
+  ? `文档 - ${SITE_CONFIG.appName}`
+  : `Documentation - ${SITE_CONFIG.appName}`;
+const seoDesc = isZh
+  ? `${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}) 的官方技术文档, 涵盖下载, 安装, SSH 分组管理, 内置 SFTP 文件管理器使用等详尽的操作指南与教程.`
+  : `The official documentation for ${SITE_CONFIG.appName} (${SITE_CONFIG.appShortName}). Comprehensive guides on installation, SSH group management, and the built-in SFTP file manager.`;
+const heading = isZh ? "📚 文档" : "📚 Documentation";
+---
+
+<Layout title={seoTitle} lang={lang} description={seoDesc}>
+  <DocStyles />
+  <div class="page-wrapper">
+    <Header />
+    <div class="container">
+      <h1 class="doc-main-title">{heading}</h1>
+      <div class="doc-index-list">
+        {/* 🌟 核心优化: 使用递归组件渲染, 完美支持任意深度和不对称结构 */}
+        {roots.map(root => (
+          <IndexNode node={root} baseUrl={baseUrl} urlPrefix={urlPrefix} isRoot={true} />
+        ))}
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Layout>
