@@ -6,4 +6,4 @@ SSH Config Manager (SMGR): A tool for group-based visual management of SSH conne
 
 - Download: [Github releases](https://github.com/realysy/ssh-config-manager-artifact/releases)
 
-![Main Screen](src/assets/screenshots/main_page.png)
+![Main Screen](src/assets/cover.png)
