@@ -321,6 +321,9 @@ function initThemeToggle() {
       ? (isZh ? '切换到亮色模式' : 'Switch to light mode') 
       : (isZh ? '切换到暗黑模式' : 'Switch to dark mode');
     toggleBtn.setAttribute('data-tooltip', tooltipText);
+
+    // 🌗 派发主题变更事件, 供 Giscus 等需要感知主题的组件监听
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
   }
 }
 

@@ -18,6 +18,9 @@ const giscusLang = lang === 'zh' ? 'zh-CN' : 'en';
     const placeholder = document.getElementById('giscus-placeholder');
     if (!placeholder) return;
 
+    const getCurrentGiscusTheme = () =>
+      document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -33,7 +36,8 @@ const giscusLang = lang === 'zh' ? 'zh-CN' : 'en';
           script.setAttribute('data-reactions-enabled', '1');
           script.setAttribute('data-emit-metadata', '0');
           script.setAttribute('data-input-position', 'bottom');
-          script.setAttribute('data-theme', 'light');
+          // 🌗 初始主题跟随站点当前主题, 避免暗色模式下出现白色评论区
+          script.setAttribute('data-theme', getCurrentGiscusTheme());
           // 从占位符的 data 属性中读取语言
           script.setAttribute('data-lang', placeholder.dataset.lang || 'en');
           script.setAttribute('crossorigin', 'anonymous');
